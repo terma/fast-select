@@ -1,0 +1,66 @@
+Scenario: com.github.terma.zeros.h2.H2FilterByTwoIndexes@5a61f5df done
+Volume: 1000000, duration: 60 sec, threads: 5, avg time: 28 msec, count: 293, sum: 585302
+Scenario: com.github.terma.zeros.ZerosFilterByTwoIndexes@6f94fa3e done
+Volume: 1000000, duration: 60 sec, threads: 5, avg time: 6 msec, count: 300, sum: 601753
+Scenario: com.github.terma.zeros.h2.H2FilterBy4G1Risk@5a61f5df done
+Volume: 1000000, duration: 60 sec, threads: 5, avg time: 113 msec, count: 271, sum: 2146123
+Scenario: com.github.terma.zeros.ZerosFilterBy4G1Risk@6f94fa3e done
+Volume: 1000000, duration: 60 sec, threads: 5, avg time: 20 msec, count: 295, sum: 2361861
+Scenario: com.github.terma.zeros.ZerosFilterBy4G1Risk@6f94fa3e done
+Volume: 1000000, duration: 60 sec, threads: 5, avg time: 22 msec, count: 295, sum: 2361253
+Scenario: com.github.terma.zeros.ZerosFilterBy4G1Risk@6f94fa3e done
+Volume: 1000000, duration: 60 sec, threads: 5, avg time: 26 msec, count: 295, sum: 11803688
+Scenario: com.github.terma.zeros.ZerosFilterBy4G1Risk@6f94fa3e done
+Volume: 1000000, duration: 60 sec, threads: 5, avg time: 21 msec, count: 295, sum: 2359603
+Scenario: com.github.terma.zeros.ZerosFilterBy4G1Risk@6f94fa3e done
+Volume: 1000000, duration: 30 sec, threads: 5, avg time: 23 msec, count: 6375, sum: 51011873
+Scenario: com.github.terma.zeros.h2.H2FilterBy4G1Risk@5a61f5df done
+Volume: 1000000, duration: 30 sec, threads: 5, avg time: 583 msec, count: 259, sum: 2033582
+Scenario: com.github.terma.zeros.ZerosFilterBy4G1Risk@6f94fa3e done
+Volume: 1000000, duration: 30 sec, threads: 5, avg time: 25 msec, count: 5796, sum: 46361490
+Scenario: com.github.terma.zeros.ZerosDirectFilterBy4G1Risk@2b193f2d done
+Volume: 200000, duration: 30 sec, threads: 5, avg time: 50 msec, count: 2955, sum: 47042010
+Scenario: com.github.terma.zeros.ZerosDirectFilterBy4G1Risk@2b193f2d done 
+Volume: 200000, duration: 30 sec, threads: 5, avg time: 26 msec, count: 5566, sum: 467653
+Scenario: com.github.terma.zeros.ZerosDirectFilterBy4G1Risk@2b193f2d done 
+Volume: 1000000, duration: 30 sec, threads: 5, avg time: 110 msec, count: 1356, sum: 621577
+Scenario: com.github.terma.zeros.ZerosDirectFilterBy4G1Risk@2b193f2d done 
+Volume: 1000000, duration: 30 sec, threads: 5, avg time: 273 msec, count: 550, sum: 4402165
+Scenario: com.github.terma.zeros.ZerosDirectFilterBy4G1Risk@2b193f2d done 
+Volume: 1000000, duration: 30 sec, threads: 5, avg time: 291 msec, count: 520, sum: 4161992
+Scenario: com.github.terma.zeros.ZerosDirectFilterBy4G1Risk@2b193f2d done 
+Volume: 1000000, duration: 30 sec, threads: 5, avg time: 152 msec, count: 987, sum: 7894313
+Scenario: com.github.terma.zeros.ZerosDirectFilterBy4G1Risk@2b193f2d done 
+Volume: 1000000, duration: 30 sec, threads: 5, avg time: 143 msec, count: 1046, sum: 8367202
+Scenario: com.github.terma.zeros.ZerosDirectFilterBy4G1Risk@2b193f2d done 
+Volume: 1000000, duration: 30 sec, threads: 5, avg time: 131 msec, count: 1141, sum: 9127767
+Scenario: com.github.terma.zeros.ZerosDirectFilterBy4G1Risk@2b193f2d done 
+Volume: 1000000, duration: 30 sec, threads: 5, avg time: 133 msec, count: 1122, sum: 8972561
+Scenario: com.github.terma.zeros.ZerosDirectFilterBy4G1Risk@2b193f2d done
+Volume: 1000000, duration: 30 sec, threads: 5, avg time: 127 msec, count: 1183, sum: 9464092
+Scenario: com.github.terma.zeros.ZerosDirectFilter10G5R1C40S100D@2b193f2d done 
+Volume: 1000000, duration: 30 sec, threads: 5, avg time: 72 msec, count: 2060, sum: 4682
+Scenario: com.github.terma.zeros.ZerosDirectFilter10G5R1C40S100D@2b193f2d done 
+Volume: 200000, duration: 30 sec, threads: 5, avg time: 13 msec, count: 10896, sum: 4411
+Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 done
+Volume: 200000, duration: 30 sec, threads: 5, avg time: 0 msec, count: 193969, sum: 82252
+Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 done 
+Volume: 1000000, duration: 30 sec, threads: 5, avg time: 4 msec, count: 37519, sum: 82943
+Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 done 
+Volume: 1000000, duration: 30 sec, threads: 5, avg time: 3 msec, count: 38253, sum: 85882
+Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 done 
+Volume: 1000000, duration: 30 sec, threads: 5, avg time: 3 msec, count: 40771, sum: 84654
+Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 done 
+Volume: 3000000, duration: 30 sec, threads: 5, avg time: 11 msec, count: 12670, sum: 87893
+Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 done 
+Volume: 3000000, duration: 30 sec, threads: 5, avg time: 10 msec, count: 14624, sum: 87549
+Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 done 
+Volume: 3000000, duration: 30 sec, threads: 5, avg time: 10 msec, count: 13828, sum: 89207
+Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 done 
+Volume: 3000000, duration: 30 sec, threads: 5, avg time: 10 msec, count: 13947, sum: 86009
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: BloomFilterAndDirect {blockSize: 30000, data: 3000000, indexes: 6}} done 
+Volume: 3000000, duration: 30 sec, threads: 5, avg time: 11 msec, count: 13014, sum: 86938
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: BloomFilterAndDirect {blockSize: 1000, data: 1000000, indexes: 6}} done 
+Volume: 1000000, duration: 30 sec, threads: 5, avg time: 3 msec, count: 38603, sum: 83115
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: BloomFilterAndDirect {blockSize: 1000, data: 1000000, indexes: 6, class: class com.github.terma.zeros.SomeData}} done 
+Volume: 1000000, duration: 30 sec, threads: 5, avg time: 3 msec, count: 39098, sum: 82434
