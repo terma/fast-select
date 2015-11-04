@@ -4,7 +4,7 @@
 
     <groupId>com.github.terma</groupId>
     <artifactId>fast-select</artifactId>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
 
     <name>Fast Select</name>
     <description>Read Only In-Memory Storage with Fast MultiFilter Select</description>
@@ -168,7 +168,7 @@
         <developerConnection>scm:git:https://github.com/terma/fast-select.git</developerConnection>
         <connection>scm:git:https://github.com/terma/fast-select.git</connection>
         <url>https://github.com/terma/gigaspace-web-console</url>
-        <tag>fast-select-1.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
 </project>
