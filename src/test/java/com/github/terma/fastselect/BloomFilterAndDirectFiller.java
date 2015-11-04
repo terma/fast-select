@@ -14,16 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.github.terma.zeros;
+package com.github.terma.fastselect;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class BloomFilterAndDirectFiller {
 
-    public static final BloomFilterAndDirect database =
-            new BloomFilterAndDirect(SomeData.class, "g", "r", "s", "c", "d", "o");
     private static final Random RANDOM = new Random();
+
+    public static FastSelect database;
 
     private final long itemsToCreate;
     private int count;
@@ -39,37 +41,33 @@ public class BloomFilterAndDirectFiller {
 
     public void run() {
         System.out.println("Filler started");
-        try {
-            unsafeRun();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("Filler finished");
-    }
+        final long start = System.currentTimeMillis();
 
-    private void unsafeRun() throws Exception {
-        long start = System.currentTimeMillis();
+        final List<SomeData> data = new ArrayList<>();
 
         for (int i = 0; i < itemsToCreate; i++) {
 
-            SomeData data = new SomeData();
-            data.r = RANDOM.nextInt(Benchmark.R_MAX);
-            data.g = RANDOM.nextInt(Benchmark.G_MAX);
-            data.s = RANDOM.nextInt(Benchmark.S_MAX);
-            data.o = RANDOM.nextInt(Benchmark.O_MAX);
-            data.c = RANDOM.nextInt(Benchmark.C_MAX);
-            data.d = RANDOM.nextInt(Benchmark.D_MAX);
+            SomeData item = new SomeData();
+            item.r = RANDOM.nextInt(Benchmark.R_MAX);
+            item.g = RANDOM.nextInt(Benchmark.G_MAX);
+            item.s = RANDOM.nextInt(Benchmark.S_MAX);
+            item.o = RANDOM.nextInt(Benchmark.O_MAX);
+            item.c = RANDOM.nextInt(Benchmark.C_MAX);
+            item.d = RANDOM.nextInt(Benchmark.D_MAX);
 
-            database.add(data);
+            data.add(item);
 
             if (i % 10000 == 0) System.out.print(".");
         }
+        database = new FastSelect(SomeData.class, data, new String[]{"g", "r", "s", "c", "d", "o"});
+
         System.out.println();
 
         time += System.currentTimeMillis() - start;
         count++;
 
         System.out.println("Created " + itemsToCreate + " count " + count + " average time " + time / count + " msec");
+        System.out.println("Filler finished");
     }
 
 }

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.github.terma.zeros;
+package com.github.terma.fastselect;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -32,6 +32,7 @@ public class Benchmark {
     public static void main(String[] args) throws Exception {
         final long warmupDurationSec = 30;
         final long testDurationSec = 30;
+//        final int volume = 3000000;
         final int volume = 1000000;
 //        final int volume = 200000;
         final int readers = 5;

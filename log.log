@@ -48,3 +48,19 @@ Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 don
 Volume: 1000000, duration: 30 sec, threads: 5, avg time: 4 msec, count: 37519, sum: 82943
 Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 done 
 Volume: 1000000, duration: 30 sec, threads: 5, avg time: 3 msec, count: 38253, sum: 85882
+Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 done 
+Volume: 1000000, duration: 30 sec, threads: 5, avg time: 3 msec, count: 40771, sum: 84654
+Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 done 
+Volume: 3000000, duration: 30 sec, threads: 5, avg time: 11 msec, count: 12670, sum: 87893
+Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 done 
+Volume: 3000000, duration: 30 sec, threads: 5, avg time: 10 msec, count: 14624, sum: 87549
+Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 done 
+Volume: 3000000, duration: 30 sec, threads: 5, avg time: 10 msec, count: 13828, sum: 89207
+Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 done 
+Volume: 3000000, duration: 30 sec, threads: 5, avg time: 10 msec, count: 13947, sum: 86009
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: BloomFilterAndDirect {blockSize: 30000, data: 3000000, indexes: 6}} done 
+Volume: 3000000, duration: 30 sec, threads: 5, avg time: 11 msec, count: 13014, sum: 86938
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: BloomFilterAndDirect {blockSize: 1000, data: 1000000, indexes: 6}} done 
+Volume: 1000000, duration: 30 sec, threads: 5, avg time: 3 msec, count: 38603, sum: 83115
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: BloomFilterAndDirect {blockSize: 1000, data: 1000000, indexes: 6, class: class com.github.terma.zeros.SomeData}} done 
+Volume: 1000000, duration: 30 sec, threads: 5, avg time: 3 msec, count: 39098, sum: 82434

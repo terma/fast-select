@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.github.terma.zeros;
+package com.github.terma.fastselect;
 
 import junit.framework.Assert;
 import org.junit.Test;
@@ -24,37 +24,39 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class BloomFilterAndDirectTest {
-
-    private BloomFilterAndDirect<TestObject> database = new BloomFilterAndDirect<>(
-            TestObject.class, "value1", "value2");
+public class FastSelectTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfRequestedIndexColumnNotExistent() {
-        database.select(new MultiRequest[]{new MultiRequest("a", new int[]{34})});
+        new FastSelect<>(TestObject.class, Collections.emptyList(), "value1", "value2")
+                .select(new MultiRequest[]{new MultiRequest("a", new int[]{34})});
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfTryToCreateAndNoRequestedIndexColumnInClass() {
-        new BloomFilterAndDirect<TestObject>(TestObject.class, "a");
+        new FastSelect<>(TestObject.class, Collections.<TestObject>emptyList(), "a");
     }
 
     @Test(expected = NullPointerException.class)
     public void shouldThrowExceptionIfRequestNull() {
-        database.select(null);
+        new FastSelect<>(TestObject.class, Collections.emptyList(), "value1", "value2").select(null);
     }
 
     @Test
     public void shouldSelectEmptyResultIfNoData() {
-        List result = database.select(new MultiRequest[]{new MultiRequest("value1", new int[]{34})});
+        List result = new FastSelect<>(TestObject.class, Collections.emptyList(), "value1", "value2")
+                .select(new MultiRequest[]{new MultiRequest("value1", new int[]{34})});
         Assert.assertEquals(0, result.size());
     }
 
     @Test
     public void shouldSelectIfPresentByOneField() {
-        database.add(new TestObject(12, 0));
-        database.add(new TestObject(9, 0));
-        database.add(new TestObject(1000, 0));
+        FastSelect<TestObject> database = new FastSelect<>(
+                TestObject.class, Arrays.asList(
+                new TestObject(12, 0),
+                new TestObject(9, 0),
+                new TestObject(1000, 0)
+        ), "value1", "value2");
 
         List result = database.select(new MultiRequest[]{new MultiRequest("value1", new int[]{12})});
 
@@ -63,9 +65,14 @@ public class BloomFilterAndDirectTest {
 
     @Test
     public void shouldSelectIfPresentByTwoFields() {
-        database.add(new TestObject(11, 4));
-        database.add(new TestObject(11, 5));
-        database.add(new TestObject(13, 6));
+        FastSelect<TestObject> database = new FastSelect<>(
+                TestObject.class, Arrays.asList(
+                new TestObject(11, 4),
+                new TestObject(11, 5),
+                new TestObject(12, 6)
+        ), "value1", "value2");
+
+
         List result = database.select(new MultiRequest[]{
                 new MultiRequest("value1", new int[]{11}),
                 new MultiRequest("value2", new int[]{4})
@@ -76,14 +83,30 @@ public class BloomFilterAndDirectTest {
 
     @Test
     public void shouldSelectIfPresentByMultipleValues() {
-        database.add(new TestObject(11, 4));
-        database.add(new TestObject(11, 5));
-        database.add(new TestObject(13, 6));
+        FastSelect<TestObject> database = new FastSelect<>(
+                TestObject.class, Arrays.asList(
+                new TestObject(11, 4),
+                new TestObject(11, 5),
+                new TestObject(12, 6)
+        ), "value1", "value2");
+
         List result = database.select(new MultiRequest[]{
                 new MultiRequest("value2", new int[]{4, 5})
         });
 
         Assert.assertEquals(Arrays.asList(new TestObject(11, 4), new TestObject(11, 5)), result);
+    }
+
+    @Test
+    public void shouldProvideAccessForItems() {
+        FastSelect<TestObject> database = new FastSelect<>(
+                TestObject.class, Arrays.asList(
+                new TestObject(11, 4),
+                new TestObject(11, 5)
+        ), "value1", "value2");
+
+
+        Assert.assertEquals(Arrays.asList(new TestObject(11, 4), new TestObject(11, 5)), database.getItems());
     }
 
     static class TestObject {

@@ -14,19 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.github.terma.zeros;
+package com.github.terma.fastselect;
 
-import java.lang.invoke.MethodHandle;
+public interface Callback<T> {
 
-public class MultiRequest {
-
-    public final String name;
-    public final int[] values;
-    public MethodHandle mh;
-
-    public MultiRequest(String name, int[] values) {
-        this.name = name;
-        this.values = values;
-    }
+    void data(T data);
 
 }
