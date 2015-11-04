@@ -23,7 +23,7 @@ import java.util.*;
  */
 public final class FastSelect<T> {
 
-    private final static int BLOCK_SIZE = 1000;
+    private final static int BLOCK_SIZE = 10000;
 
     private final Class dataClass;
     private final String[] indexColumns;
@@ -93,7 +93,7 @@ public final class FastSelect<T> {
                 opa:
                 for (final T obj : block.data) {
                     for (final MultiRequest request : where) {
-                        final Integer v = (Integer) request.mh.invoke(obj);
+                        final int v = (int) request.mh.invoke(obj);
 
                         if (Arrays.binarySearch(request.values, v) < 0) {
                             continue opa;

@@ -64,3 +64,15 @@ Scenario: BloomFilterAndDirect10G5R1C40S100D {database: BloomFilterAndDirect {bl
 Volume: 1000000, duration: 30 sec, threads: 5, avg time: 3 msec, count: 38603, sum: 83115
 Scenario: BloomFilterAndDirect10G5R1C40S100D {database: BloomFilterAndDirect {blockSize: 1000, data: 1000000, indexes: 6, class: class com.github.terma.zeros.SomeData}} done 
 Volume: 1000000, duration: 30 sec, threads: 5, avg time: 3 msec, count: 39098, sum: 82434
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 1000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 43 msec, count: 3443, sum: 89018
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 39 msec, count: 3824, sum: 86061
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 39 msec, count: 3838, sum: 82705
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 43 msec, count: 3474, sum: 79555
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 45 msec, count: 3347, sum: 87095
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 33 msec, count: 4622, sum: 87960

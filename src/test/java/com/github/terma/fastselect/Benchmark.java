@@ -33,7 +33,7 @@ public class Benchmark {
         final long warmupDurationSec = 30;
         final long testDurationSec = 30;
 //        final int volume = 3000000;
-        final int volume = 1000000;
+        final int volume = 10000000;
 //        final int volume = 200000;
         final int readers = 5;
 //        final Scenario scenario = new ZerosDirectFilterBy4G1Risk();
