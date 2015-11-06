@@ -1,134 +1,249 @@
-Scenario: com.github.terma.zeros.h2.H2FilterByTwoIndexes@5a61f5df done
-Volume: 1000000, duration: 60 sec, threads: 5, avg time: 28 msec, count: 293, sum: 585302
-Scenario: com.github.terma.zeros.ZerosFilterByTwoIndexes@6f94fa3e done
-Volume: 1000000, duration: 60 sec, threads: 5, avg time: 6 msec, count: 300, sum: 601753
-Scenario: com.github.terma.zeros.h2.H2FilterBy4G1Risk@5a61f5df done
-Volume: 1000000, duration: 60 sec, threads: 5, avg time: 113 msec, count: 271, sum: 2146123
-Scenario: com.github.terma.zeros.ZerosFilterBy4G1Risk@6f94fa3e done
-Volume: 1000000, duration: 60 sec, threads: 5, avg time: 20 msec, count: 295, sum: 2361861
-Scenario: com.github.terma.zeros.ZerosFilterBy4G1Risk@6f94fa3e done
-Volume: 1000000, duration: 60 sec, threads: 5, avg time: 22 msec, count: 295, sum: 2361253
-Scenario: com.github.terma.zeros.ZerosFilterBy4G1Risk@6f94fa3e done
-Volume: 1000000, duration: 60 sec, threads: 5, avg time: 26 msec, count: 295, sum: 11803688
-Scenario: com.github.terma.zeros.ZerosFilterBy4G1Risk@6f94fa3e done
-Volume: 1000000, duration: 60 sec, threads: 5, avg time: 21 msec, count: 295, sum: 2359603
-Scenario: com.github.terma.zeros.ZerosFilterBy4G1Risk@6f94fa3e done
-Volume: 1000000, duration: 30 sec, threads: 5, avg time: 23 msec, count: 6375, sum: 51011873
-Scenario: com.github.terma.zeros.h2.H2FilterBy4G1Risk@5a61f5df done
-Volume: 1000000, duration: 30 sec, threads: 5, avg time: 583 msec, count: 259, sum: 2033582
-Scenario: com.github.terma.zeros.ZerosFilterBy4G1Risk@6f94fa3e done
-Volume: 1000000, duration: 30 sec, threads: 5, avg time: 25 msec, count: 5796, sum: 46361490
-Scenario: com.github.terma.zeros.ZerosDirectFilterBy4G1Risk@2b193f2d done
-Volume: 200000, duration: 30 sec, threads: 5, avg time: 50 msec, count: 2955, sum: 47042010
-Scenario: com.github.terma.zeros.ZerosDirectFilterBy4G1Risk@2b193f2d done 
-Volume: 200000, duration: 30 sec, threads: 5, avg time: 26 msec, count: 5566, sum: 467653
-Scenario: com.github.terma.zeros.ZerosDirectFilterBy4G1Risk@2b193f2d done 
-Volume: 1000000, duration: 30 sec, threads: 5, avg time: 110 msec, count: 1356, sum: 621577
-Scenario: com.github.terma.zeros.ZerosDirectFilterBy4G1Risk@2b193f2d done 
-Volume: 1000000, duration: 30 sec, threads: 5, avg time: 273 msec, count: 550, sum: 4402165
-Scenario: com.github.terma.zeros.ZerosDirectFilterBy4G1Risk@2b193f2d done 
-Volume: 1000000, duration: 30 sec, threads: 5, avg time: 291 msec, count: 520, sum: 4161992
-Scenario: com.github.terma.zeros.ZerosDirectFilterBy4G1Risk@2b193f2d done 
-Volume: 1000000, duration: 30 sec, threads: 5, avg time: 152 msec, count: 987, sum: 7894313
-Scenario: com.github.terma.zeros.ZerosDirectFilterBy4G1Risk@2b193f2d done 
-Volume: 1000000, duration: 30 sec, threads: 5, avg time: 143 msec, count: 1046, sum: 8367202
-Scenario: com.github.terma.zeros.ZerosDirectFilterBy4G1Risk@2b193f2d done 
-Volume: 1000000, duration: 30 sec, threads: 5, avg time: 131 msec, count: 1141, sum: 9127767
-Scenario: com.github.terma.zeros.ZerosDirectFilterBy4G1Risk@2b193f2d done 
-Volume: 1000000, duration: 30 sec, threads: 5, avg time: 133 msec, count: 1122, sum: 8972561
-Scenario: com.github.terma.zeros.ZerosDirectFilterBy4G1Risk@2b193f2d done
-Volume: 1000000, duration: 30 sec, threads: 5, avg time: 127 msec, count: 1183, sum: 9464092
-Scenario: com.github.terma.zeros.ZerosDirectFilter10G5R1C40S100D@2b193f2d done 
-Volume: 1000000, duration: 30 sec, threads: 5, avg time: 72 msec, count: 2060, sum: 4682
-Scenario: com.github.terma.zeros.ZerosDirectFilter10G5R1C40S100D@2b193f2d done 
-Volume: 200000, duration: 30 sec, threads: 5, avg time: 13 msec, count: 10896, sum: 4411
-Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 done
-Volume: 200000, duration: 30 sec, threads: 5, avg time: 0 msec, count: 193969, sum: 82252
-Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 done 
-Volume: 1000000, duration: 30 sec, threads: 5, avg time: 4 msec, count: 37519, sum: 82943
-Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 done 
-Volume: 1000000, duration: 30 sec, threads: 5, avg time: 3 msec, count: 38253, sum: 85882
-Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 done 
-Volume: 1000000, duration: 30 sec, threads: 5, avg time: 3 msec, count: 40771, sum: 84654
-Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 done 
-Volume: 3000000, duration: 30 sec, threads: 5, avg time: 11 msec, count: 12670, sum: 87893
-Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 done 
-Volume: 3000000, duration: 30 sec, threads: 5, avg time: 10 msec, count: 14624, sum: 87549
-Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 done 
-Volume: 3000000, duration: 30 sec, threads: 5, avg time: 10 msec, count: 13828, sum: 89207
-Scenario: com.github.terma.zeros.BloomFilterAndDirect10G5R1C40S100D@3d075dc0 done 
-Volume: 3000000, duration: 30 sec, threads: 5, avg time: 10 msec, count: 13947, sum: 86009
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: BloomFilterAndDirect {blockSize: 30000, data: 3000000, indexes: 6}} done 
-Volume: 3000000, duration: 30 sec, threads: 5, avg time: 11 msec, count: 13014, sum: 86938
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: BloomFilterAndDirect {blockSize: 1000, data: 1000000, indexes: 6}} done 
-Volume: 1000000, duration: 30 sec, threads: 5, avg time: 3 msec, count: 38603, sum: 83115
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: BloomFilterAndDirect {blockSize: 1000, data: 1000000, indexes: 6, class: class com.github.terma.zeros.SomeData}} done 
-Volume: 1000000, duration: 30 sec, threads: 5, avg time: 3 msec, count: 39098, sum: 82434
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 1000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 43 msec, count: 3443, sum: 89018
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 39 msec, count: 3824, sum: 86061
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 39 msec, count: 3838, sum: 82705
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 43 msec, count: 3474, sum: 79555
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 45 msec, count: 3347, sum: 87095
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 33 msec, count: 4622, sum: 87960
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 729 msec, count: 207, sum: 3990
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 35 msec, count: 4317, sum: 87808
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 37 msec, count: 4000, sum: 86060
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 1000000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 38 msec, count: 3934, sum: 85313
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 34 msec, count: 4347, sum: 83465
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 701 msec, count: 216, sum: 3101 <- no bloom filter
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 43 msec, count: 3473, sum: 87197
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 42 msec, count: 3561, sum: 78392
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 10 msec, count: 15087, sum: 279170
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 650 msec, count: 237, sum: 1209824
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 773 msec, count: 196, sum: 1320587, zero count: 111
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 701 msec, count: 217, sum: 1292601, zero count: 132
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 1000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 680 msec, count: 228, sum: 1189490, zero count: 141
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 100, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 145 msec, count: 1041, sum: 1226112, zero count: 663
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 100, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 137 msec, count: 1101, sum: 1130187, zero count: 714
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 0 msec, count: 1893847, sum: 18359, zero count: 1876196
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 0 msec, count: 58289897, sum: 0, zero count: 58289897
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 0 msec, count: 69504418, sum: 0, zero count: 69504418
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 0 msec, count: 42330934, sum: 0, zero count: 42330934
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 0 msec, count: 7352412, sum: 191162712, zero count: 0
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 0 msec, count: 7390185, sum: 192144810, zero count: 0
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 100, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 0 msec, count: 7402945, sum: 207282460, zero count: 0
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 1000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 4 msec, count: 35099, sum: 157243520, zero count: 0
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 100000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 207 msec, count: 727, sum: 35826560, zero count: 0
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 100000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 40 msec, count: 748, sum: 36861440, zero count: 0
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 1000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 0 msec, count: 37759, sum: 169160320, zero count: 0
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 1000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 0 msec, count: 40106, sum: 179674880, zero count: 0sum per count: 4480
-Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 1000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
-Volume: 10000000, duration: 30 sec, threads: 5, avg time: 0 msec, count: 34977, sum: 156696960, zero count: 0, sum per count: 4480
+/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/bin/java -Didea.launcher.port=7532 "-Didea.launcher.bin.path=/Applications/IntelliJ IDEA 15 EAP.app/Contents/bin" -Dfile.encoding=UTF-8 -classpath "/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/lib/charsets.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/lib/deploy.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/lib/ext/cldrdata.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/lib/ext/dnsns.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/lib/ext/jfxrt.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/lib/ext/localedata.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/lib/ext/nashorn.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/lib/ext/sunec.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/lib/ext/sunjce_provider.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/lib/ext/sunpkcs11.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/lib/ext/zipfs.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/lib/javaws.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/lib/jce.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/lib/jfr.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/lib/jfxswt.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/lib/jsse.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/lib/management-agent.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/lib/plugin.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/lib/resources.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/lib/rt.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/lib/ant-javafx.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/lib/dt.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/lib/javafx-mx.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/lib/jconsole.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/lib/sa-jdi.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/lib/tools.jar:/Users/terma/Projects/processing-prototype/target/test-classes:/Users/terma/Projects/processing-prototype/target/classes:/Users/terma/.m2/repository/com/h2database/h2/1.4.190/h2-1.4.190.jar:/Users/terma/.m2/repository/mysql/mysql-connector-java/5.1.37/mysql-connector-java-5.1.37.jar:/Users/terma/.m2/repository/junit/junit/4.10/junit-4.10.jar:/Users/terma/.m2/repository/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar:/Users/terma/.m2/repository/org/openjdk/jmh/jmh-core/1.11.2/jmh-core-1.11.2.jar:/Users/terma/.m2/repository/net/sf/jopt-simple/jopt-simple/4.6/jopt-simple-4.6.jar:/Users/terma/.m2/repository/org/apache/commons/commons-math3/3.2/commons-math3-3.2.jar:/Users/terma/.m2/repository/org/openjdk/jmh/jmh-generator-annprocess/1.11.2/jmh-generator-annprocess-1.11.2.jar:/Applications/IntelliJ IDEA 15 EAP.app/Contents/lib/idea_rt.jar" com.intellij.rt.execution.application.AppMain com.github.terma.fastselect.Benchmark
+# JMH 1.11.2 (released 8 days ago)
+# VM version: JDK 1.8.0_20, VM 25.20-b23
+# VM invoker: /Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/bin/java
+# VM options: -Xmx4g
+# Warmup: 1 iterations, 30 s each
+# Measurement: 1 iterations, 30 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.terma.fastselect.Benchmark.case10G5R4C20S40D
+# Parameters: (blockSize = 10, volume = 100000)
+
+# Run progress: 0.00% complete, ETA 00:09:00
+# Fork: 1 of 1
+# Warmup Iteration   1: Filler started
+..........
+Created 100000 count 1 average time 246 msec
+Filler finished
+0.011 ms/op
+Iteration   1: 0.011 ms/op
+
+
+Result "case10G5R4C20S40D":
+  0.011 ms/op
+
+
+# JMH 1.11.2 (released 8 days ago)
+# VM version: JDK 1.8.0_20, VM 25.20-b23
+# VM invoker: /Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/bin/java
+# VM options: -Xmx4g
+# Warmup: 1 iterations, 30 s each
+# Measurement: 1 iterations, 30 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.terma.fastselect.Benchmark.case10G5R4C20S40D
+# Parameters: (blockSize = 10, volume = 1000000)
+
+# Run progress: 11.11% complete, ETA 00:08:06
+# Fork: 1 of 1
+# Warmup Iteration   1: Filler started
+....................................................................................................
+Created 1000000 count 1 average time 1548 msec
+Filler finished
+0.011 ms/op
+Iteration   1: 0.011 ms/op
+
+
+Result "case10G5R4C20S40D":
+  0.011 ms/op
+
+
+# JMH 1.11.2 (released 8 days ago)
+# VM version: JDK 1.8.0_20, VM 25.20-b23
+# VM invoker: /Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/bin/java
+# VM options: -Xmx4g
+# Warmup: 1 iterations, 30 s each
+# Measurement: 1 iterations, 30 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.terma.fastselect.Benchmark.case10G5R4C20S40D
+# Parameters: (blockSize = 10, volume = 10000000)
+
+# Run progress: 22.22% complete, ETA 00:07:10
+# Fork: 1 of 1
+# Warmup Iteration   1: Filler started
+........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+Created 10000000 count 1 average time 20908 msec
+Filler finished
+0.012 ms/op
+Iteration   1: 0.011 ms/op
+
+
+Result "case10G5R4C20S40D":
+  0.011 ms/op
+
+
+# JMH 1.11.2 (released 8 days ago)
+# VM version: JDK 1.8.0_20, VM 25.20-b23
+# VM invoker: /Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/bin/java
+# VM options: -Xmx4g
+# Warmup: 1 iterations, 30 s each
+# Measurement: 1 iterations, 30 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.terma.fastselect.Benchmark.case10G5R4C20S40D
+# Parameters: (blockSize = 1000, volume = 100000)
+
+# Run progress: 33.33% complete, ETA 00:06:49
+# Fork: 1 of 1
+# Warmup Iteration   1: Filler started
+..........
+Created 100000 count 1 average time 176 msec
+Filler finished
+2.277 ms/op
+Iteration   1: 2.275 ms/op
+
+
+Result "case10G5R4C20S40D":
+  2.275 ms/op
+
+
+# JMH 1.11.2 (released 8 days ago)
+# VM version: JDK 1.8.0_20, VM 25.20-b23
+# VM invoker: /Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/bin/java
+# VM options: -Xmx4g
+# Warmup: 1 iterations, 30 s each
+# Measurement: 1 iterations, 30 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.terma.fastselect.Benchmark.case10G5R4C20S40D
+# Parameters: (blockSize = 1000, volume = 1000000)
+
+# Run progress: 44.44% complete, ETA 00:05:31
+# Fork: 1 of 1
+# Warmup Iteration   1: Filler started
+....................................................................................................
+Created 1000000 count 1 average time 472 msec
+Filler finished
+2.269 ms/op
+Iteration   1: 2.267 ms/op
+
+
+Result "case10G5R4C20S40D":
+  2.267 ms/op
+
+
+# JMH 1.11.2 (released 8 days ago)
+# VM version: JDK 1.8.0_20, VM 25.20-b23
+# VM invoker: /Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/bin/java
+# VM options: -Xmx4g
+# Warmup: 1 iterations, 30 s each
+# Measurement: 1 iterations, 30 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.terma.fastselect.Benchmark.case10G5R4C20S40D
+# Parameters: (blockSize = 1000, volume = 10000000)
+
+# Run progress: 55.56% complete, ETA 00:04:21
+# Fork: 1 of 1
+# Warmup Iteration   1: Filler started
+........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+Created 10000000 count 1 average time 6290 msec
+Filler finished
+2.422 ms/op
+Iteration   1: 2.411 ms/op
+
+
+Result "case10G5R4C20S40D":
+  2.411 ms/op
+
+
+# JMH 1.11.2 (released 8 days ago)
+# VM version: JDK 1.8.0_20, VM 25.20-b23
+# VM invoker: /Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/bin/java
+# VM options: -Xmx4g
+# Warmup: 1 iterations, 30 s each
+# Measurement: 1 iterations, 30 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.terma.fastselect.Benchmark.case10G5R4C20S40D
+# Parameters: (blockSize = 100000, volume = 100000)
+
+# Run progress: 66.67% complete, ETA 00:03:16
+# Fork: 1 of 1
+# Warmup Iteration   1: Filler started
+..........
+Created 100000 count 1 average time 165 msec
+Filler finished
+7.317 ms/op
+Iteration   1: 7.338 ms/op
+
+
+Result "case10G5R4C20S40D":
+  7.338 ms/op
+
+
+# JMH 1.11.2 (released 8 days ago)
+# VM version: JDK 1.8.0_20, VM 25.20-b23
+# VM invoker: /Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/bin/java
+# VM options: -Xmx4g
+# Warmup: 1 iterations, 30 s each
+# Measurement: 1 iterations, 30 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.terma.fastselect.Benchmark.case10G5R4C20S40D
+# Parameters: (blockSize = 100000, volume = 1000000)
+
+# Run progress: 77.78% complete, ETA 00:02:09
+# Fork: 1 of 1
+# Warmup Iteration   1: Filler started
+....................................................................................................
+Created 1000000 count 1 average time 464 msec
+Filler finished
+77.197 ms/op
+Iteration   1: 78.420 ms/op
+
+
+Result "case10G5R4C20S40D":
+  78.420 ms/op
+
+
+# JMH 1.11.2 (released 8 days ago)
+# VM version: JDK 1.8.0_20, VM 25.20-b23
+# VM invoker: /Library/Java/JavaVirtualMachines/jdk1.8.0_20.jdk/Contents/Home/jre/bin/java
+# VM options: -Xmx4g
+# Warmup: 1 iterations, 30 s each
+# Measurement: 1 iterations, 30 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: com.github.terma.fastselect.Benchmark.case10G5R4C20S40D
+# Parameters: (blockSize = 100000, volume = 10000000)
+
+# Run progress: 88.89% complete, ETA 00:01:04
+# Fork: 1 of 1
+# Warmup Iteration   1: Filler started
+........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+Created 10000000 count 1 average time 6104 msec
+Filler finished
+103.718 ms/op
+Iteration   1: 106.839 ms/op
+
+
+Result "case10G5R4C20S40D":
+  106.839 ms/op
+
+
+# Run complete. Total time: 00:09:42
+
+Benchmark                    (blockSize)  (volume)  Mode  Cnt    Score   Error  Units
+Benchmark.case10G5R4C20S40D           10    100000  avgt         0.011          ms/op
+Benchmark.case10G5R4C20S40D           10   1000000  avgt         0.011          ms/op
+Benchmark.case10G5R4C20S40D           10  10000000  avgt         0.011          ms/op
+Benchmark.case10G5R4C20S40D         1000    100000  avgt         2.275          ms/op
+Benchmark.case10G5R4C20S40D         1000   1000000  avgt         2.267          ms/op
+Benchmark.case10G5R4C20S40D         1000  10000000  avgt         2.411          ms/op
+Benchmark.case10G5R4C20S40D       100000    100000  avgt         7.338          ms/op
+Benchmark.case10G5R4C20S40D       100000   1000000  avgt        78.420          ms/op
+Benchmark.case10G5R4C20S40D       100000  10000000  avgt       106.839          ms/op
+
+Process finished with exit code 0
