@@ -76,3 +76,59 @@ Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 1
 Volume: 10000000, duration: 30 sec, threads: 5, avg time: 45 msec, count: 3347, sum: 87095
 Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
 Volume: 10000000, duration: 30 sec, threads: 5, avg time: 33 msec, count: 4622, sum: 87960
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 729 msec, count: 207, sum: 3990
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 35 msec, count: 4317, sum: 87808
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 37 msec, count: 4000, sum: 86060
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 1000000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 38 msec, count: 3934, sum: 85313
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 34 msec, count: 4347, sum: 83465
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 701 msec, count: 216, sum: 3101 <- no bloom filter
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 43 msec, count: 3473, sum: 87197
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 42 msec, count: 3561, sum: 78392
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 10 msec, count: 15087, sum: 279170
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 650 msec, count: 237, sum: 1209824
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 773 msec, count: 196, sum: 1320587, zero count: 111
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 701 msec, count: 217, sum: 1292601, zero count: 132
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 1000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 680 msec, count: 228, sum: 1189490, zero count: 141
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 100, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 145 msec, count: 1041, sum: 1226112, zero count: 663
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 100, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 137 msec, count: 1101, sum: 1130187, zero count: 714
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 0 msec, count: 1893847, sum: 18359, zero count: 1876196
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 0 msec, count: 58289897, sum: 0, zero count: 58289897
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 0 msec, count: 69504418, sum: 0, zero count: 69504418
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 0 msec, count: 42330934, sum: 0, zero count: 42330934
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 0 msec, count: 7352412, sum: 191162712, zero count: 0
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 10, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 0 msec, count: 7390185, sum: 192144810, zero count: 0
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 100, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 0 msec, count: 7402945, sum: 207282460, zero count: 0
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 1000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 4 msec, count: 35099, sum: 157243520, zero count: 0
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 100000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 207 msec, count: 727, sum: 35826560, zero count: 0
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 100000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 40 msec, count: 748, sum: 36861440, zero count: 0
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 1000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 0 msec, count: 37759, sum: 169160320, zero count: 0
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 1000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 0 msec, count: 40106, sum: 179674880, zero count: 0sum per count: 4480
+Scenario: BloomFilterAndDirect10G5R1C40S100D {database: FastSelect {blockSize: 1000, data: 10000000, indexes: 6, class: class com.github.terma.fastselect.SomeData}} done 
+Volume: 10000000, duration: 30 sec, threads: 5, avg time: 0 msec, count: 34977, sum: 156696960, zero count: 0, sum per count: 4480

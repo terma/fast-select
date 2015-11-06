@@ -19,19 +19,23 @@ package com.github.terma.fastselect;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class BloomFilterAndDirectFiller {
 
-    private static final Random RANDOM = new Random();
-
     public static FastSelect database;
 
+    private final int blockSize;
     private final long itemsToCreate;
     private int count;
     private long time;
 
+    public BloomFilterAndDirectFiller(int blockSize, int itemsToCreate) {
+        this.blockSize=blockSize;
+        this.itemsToCreate = itemsToCreate;
+    }
+
     public BloomFilterAndDirectFiller(int itemsToCreate) {
+        this.blockSize = 1000;
         this.itemsToCreate = itemsToCreate;
     }
 
@@ -45,21 +49,35 @@ public class BloomFilterAndDirectFiller {
 
         final List<SomeData> data = new ArrayList<>();
 
-        for (int i = 0; i < itemsToCreate; i++) {
+        opa:
+        for (int r = 0; r < Benchmark.R_MAX; r++) {
+            for (int g = 0; g < Benchmark.G_MAX; g++) {
+                for (int s = 0; s < Benchmark.S_MAX; s++) {
+                    for (int o = 0; o < Benchmark.O_MAX; o++) {
+                        for (int c = 0; c < Benchmark.C_MAX; c++) {
+                            for (int d = 0; d < Benchmark.D_MAX; d++) {
+                                if (data.size() >= itemsToCreate) break opa;
 
-            SomeData item = new SomeData();
-            item.r = RANDOM.nextInt(Benchmark.R_MAX);
-            item.g = RANDOM.nextInt(Benchmark.G_MAX);
-            item.s = RANDOM.nextInt(Benchmark.S_MAX);
-            item.o = RANDOM.nextInt(Benchmark.O_MAX);
-            item.c = RANDOM.nextInt(Benchmark.C_MAX);
-            item.d = RANDOM.nextInt(Benchmark.D_MAX);
+                                SomeData item = new SomeData();
+                                item.r = r;
+                                item.g = g;
+                                item.s = s;
+                                item.o = o;
+                                item.c = c;
+                                item.d = d;
+                                data.add(item);
 
-            data.add(item);
+                                if (data.size() % 10000 == 0) System.out.print(".");
+                            }
+                        }
+                    }
+                }
 
-            if (i % 10000 == 0) System.out.print(".");
+            }
         }
-        database = new FastSelect(SomeData.class, data, new String[]{"g", "r", "s", "c", "d", "o"});
+
+//        Collections.shuffle(data); // to be more like real
+        database = new FastSelect(blockSize, SomeData.class, data, new String[]{"g", "r", "s", "c", "d", "o"});
 
         System.out.println();
 

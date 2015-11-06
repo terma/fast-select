@@ -91,10 +91,29 @@ public class FastSelectTest {
         ), "value1", "value2");
 
         List result = database.select(new MultiRequest[]{
-                new MultiRequest("value2", new int[]{4, 5})
+                new MultiRequest("value2", new int[]{4, 5, 11, 12, 15})
         });
 
         Assert.assertEquals(Arrays.asList(new TestObject(11, 4), new TestObject(11, 5)), result);
+    }
+
+    @Test
+    public void shouldSelectWhenMoreThanBlockSize() {
+        FastSelect<TestObject> database = new FastSelect<>(2,
+                TestObject.class, Arrays.asList(
+                new TestObject(11, 4),
+                new TestObject(11, 5),
+                new TestObject(12, 6),
+                new TestObject(12, 4)
+        ), "value1", "value2");
+
+        List result = database.select(new MultiRequest[]{
+                new MultiRequest("value2", new int[]{4, 5, 11, 12, 15})
+        });
+
+        Assert.assertEquals(Arrays.asList(
+                new TestObject(11, 4), new TestObject(11, 5),
+                new TestObject(12, 4)), result);
     }
 
     @Test

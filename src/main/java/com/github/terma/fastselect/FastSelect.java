@@ -23,25 +23,31 @@ import java.util.*;
  */
 public final class FastSelect<T> {
 
-    private final static int BLOCK_SIZE = 10000;
+    private final static int DEFAULT_BLOCK_SIZE = 10;
 
+    private final int blockSize;
     private final Class dataClass;
     private final String[] indexColumns;
     private final MethodHandlerRepository mhRepo;
     private final List<Block<T>> blocks;
 
-    public FastSelect(final Class dataClass, final List<T> data, final String... indexColumns) {
+    public FastSelect(final int blockSize, final Class dataClass, final List<T> data, final String... indexColumns) {
+        this.blockSize = blockSize;
         this.dataClass = dataClass;
         this.indexColumns = indexColumns;
         this.mhRepo = new MethodHandlerRepository(dataClass, indexColumns);
         this.blocks = createBlocks(data);
     }
 
+    public FastSelect(final Class dataClass, final List<T> data, final String... indexColumns) {
+        this(DEFAULT_BLOCK_SIZE, dataClass, data, indexColumns);
+    }
+
     private List<Block<T>> createBlocks(final List<T> data) {
         final List<Block<T>> blocks = new ArrayList<>();
 
         for (final T row : data) {
-            if (blocks.isEmpty() || blocks.get(blocks.size() - 1).data.size() == BLOCK_SIZE)
+            if (blocks.isEmpty() || blocks.get(blocks.size() - 1).data.size() == blockSize)
                 blocks.add(createBlock());
 
             Block<T> block = blocks.get(blocks.size() - 1);
@@ -80,9 +86,9 @@ public final class FastSelect<T> {
     }
 
     public void select(final MultiRequest[] where, final Callback<T> callback) {
-        for (final MultiRequest request : where) {
-            request.mh = mhRepo.get(request.name);
-            Arrays.sort(request.values);
+        for (final MultiRequest condition : where) {
+            condition.mh = mhRepo.get(condition.name);
+            Arrays.sort(condition.values);
         }
 
         for (final Block<T> block : blocks) {
@@ -114,7 +120,7 @@ public final class FastSelect<T> {
 
             boolean p = false;
             for (final int value : request.values) {
-                p = p || columnBitSet.get(value);
+                p = p | columnBitSet.get(value);
             }
             if (!p) return false;
         }
@@ -137,7 +143,7 @@ public final class FastSelect<T> {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " {blockSize: " + BLOCK_SIZE + ", data: " + size()
+        return getClass().getSimpleName() + " {blockSize: " + blockSize + ", data: " + size()
                 + ", indexes: " + indexColumns.length + ", class: " + dataClass + "}";
     }
 
