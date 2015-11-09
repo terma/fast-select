@@ -136,6 +136,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>commons-primitives</groupId>
+            <artifactId>commons-primitives</artifactId>
+            <version>20041207.202534</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>1.4.190</version>
@@ -147,6 +153,12 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.37</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjdk.jol</groupId>
+            <artifactId>jol-core</artifactId>
+            <version>0.3.2</version>
         </dependency>
 
         <dependency>

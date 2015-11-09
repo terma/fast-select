@@ -24,39 +24,39 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class FastSelectTest {
+public class ObjectFastSelectTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfRequestedIndexColumnNotExistent() {
-        new FastSelect<>(TestObject.class, Collections.emptyList(), "value1", "value2")
+        new ObjectFastSelect<>(1, TestObject.class, "value1", "value2")
                 .select(new MultiRequest[]{new MultiRequest("a", new int[]{34})});
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfTryToCreateAndNoRequestedIndexColumnInClass() {
-        new FastSelect<>(TestObject.class, Collections.<TestObject>emptyList(), "a");
+        new ObjectFastSelect<>(1, TestObject.class, "a");
     }
 
     @Test(expected = NullPointerException.class)
     public void shouldThrowExceptionIfRequestNull() {
-        new FastSelect<>(TestObject.class, Collections.emptyList(), "value1", "value2").select(null);
+        new ObjectFastSelect<>(1, TestObject.class, "value1", "value2").select(null);
     }
 
     @Test
     public void shouldSelectEmptyResultIfNoData() {
-        List result = new FastSelect<>(TestObject.class, Collections.emptyList(), "value1", "value2")
+        List result = new ObjectFastSelect<>(1, TestObject.class, "value1", "value2")
                 .select(new MultiRequest[]{new MultiRequest("value1", new int[]{34})});
         Assert.assertEquals(0, result.size());
     }
 
     @Test
     public void shouldSelectIfPresentByOneField() {
-        FastSelect<TestObject> database = new FastSelect<>(
-                TestObject.class, Arrays.asList(
+        ObjectFastSelect<TestObject> database = new ObjectFastSelect<>(
+                1, TestObject.class, "value1", "value2");
+        database.addAll(Arrays.asList(
                 new TestObject(12, 0),
                 new TestObject(9, 0),
-                new TestObject(1000, 0)
-        ), "value1", "value2");
+                new TestObject(1000, 0)));
 
         List result = database.select(new MultiRequest[]{new MultiRequest("value1", new int[]{12})});
 
@@ -65,13 +65,13 @@ public class FastSelectTest {
 
     @Test
     public void shouldSelectIfPresentByTwoFields() {
-        FastSelect<TestObject> database = new FastSelect<>(
-                TestObject.class, Arrays.asList(
+        ObjectFastSelect<ObjectFastSelectTest.TestObject> database = new ObjectFastSelect<>(
+                10, TestObject.class, "value1", "value2");
+        database.addAll(Arrays.asList(
                 new TestObject(11, 4),
                 new TestObject(11, 5),
                 new TestObject(12, 6)
-        ), "value1", "value2");
-
+        ));
 
         List result = database.select(new MultiRequest[]{
                 new MultiRequest("value1", new int[]{11}),
@@ -83,12 +83,13 @@ public class FastSelectTest {
 
     @Test
     public void shouldSelectIfPresentByMultipleValues() {
-        FastSelect<TestObject> database = new FastSelect<>(
-                TestObject.class, Arrays.asList(
+        ObjectFastSelect<ObjectFastSelectTest.TestObject> database = new ObjectFastSelect<>(
+                1, TestObject.class, "value1", "value2");
+        database.addAll(Arrays.asList(
                 new TestObject(11, 4),
                 new TestObject(11, 5),
                 new TestObject(12, 6)
-        ), "value1", "value2");
+        ));
 
         List result = database.select(new MultiRequest[]{
                 new MultiRequest("value2", new int[]{4, 5, 11, 12, 15})
@@ -99,13 +100,14 @@ public class FastSelectTest {
 
     @Test
     public void shouldSelectWhenMoreThanBlockSize() {
-        FastSelect<TestObject> database = new FastSelect<>(2,
-                TestObject.class, Arrays.asList(
+        ObjectFastSelect<ObjectFastSelectTest.TestObject> database = new ObjectFastSelect<>(2,
+                TestObject.class, "value1", "value2");
+        database.addAll(Arrays.asList(
                 new TestObject(11, 4),
                 new TestObject(11, 5),
                 new TestObject(12, 6),
                 new TestObject(12, 4)
-        ), "value1", "value2");
+        ));
 
         List result = database.select(new MultiRequest[]{
                 new MultiRequest("value2", new int[]{4, 5, 11, 12, 15})
@@ -118,12 +120,12 @@ public class FastSelectTest {
 
     @Test
     public void shouldProvideAccessForItems() {
-        FastSelect<TestObject> database = new FastSelect<>(
-                TestObject.class, Arrays.asList(
+        ObjectFastSelect<TestObject> database = new ObjectFastSelect<>(
+                1, TestObject.class, "value1", "value2");
+        database.addAll(Arrays.asList(
                 new TestObject(11, 4),
                 new TestObject(11, 5)
-        ), "value1", "value2");
-
+        ));
 
         Assert.assertEquals(Arrays.asList(new TestObject(11, 4), new TestObject(11, 5)), database.getItems());
     }

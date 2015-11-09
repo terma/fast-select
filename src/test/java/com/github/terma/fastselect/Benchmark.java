@@ -25,8 +25,8 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@Fork(value = 1, jvmArgs = "-Xmx4g")
-@BenchmarkMode({Mode.AverageTime, Mode.Throughput})
+@Fork(value = 1, jvmArgs = "-Xmx6g")
+@BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
 @Warmup(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
@@ -40,13 +40,16 @@ public class Benchmark {
     public static final int S_MAX = 100;
     public static final int D_MAX = 100;
 
-    @Param({"10", "1000", "100000"})
-//    @Param({"10"})
+    @Param({"1000", "100000"})
     private int blockSize;
 
-    @Param({"100000", "1000000", "10000000"})
-//    @Param({"100000"})
+    @Param({"10000000", "100000000"})
     private int volume;
+
+    @Param({"ArrayLayoutFastSelect"}) // "ObjectFastSelect"
+    private String impl;
+
+    private FastSelect fastSelect;
 
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
@@ -58,8 +61,19 @@ public class Benchmark {
     }
 
     @Setup
-    public void init() {
-        new BloomFilterAndDirectFiller(blockSize, volume).run();
+    public void init() throws InterruptedException {
+        final MemMeter memMeter = new MemMeter();
+
+        if (ArrayLayoutFastSelect.class.getSimpleName().equals(impl)) {
+            new ArrayLayoutFastSelectFiller(blockSize, volume).run();
+            fastSelect = ArrayLayoutFastSelectFiller.database;
+        } else if (ObjectFastSelect.class.getSimpleName().equals(impl)) {
+            new ObjectFastSelectFiller(blockSize, volume).run();
+            fastSelect = ObjectFastSelectFiller.database;
+        }
+
+        System.out.println(ArrayLayoutFastSelectFiller.database.size());
+        System.out.println("Used mem: " + memMeter.getUsedMb() + " mb, volume: " + volume);
     }
 
     @org.openjdk.jmh.annotations.Benchmark
@@ -74,7 +88,7 @@ public class Benchmark {
                 new MultiRequest("d", new int[]{0, 90, 99, 5, 34, 22, 26, 8, 5, 6, 7, 5, 6, 34, 35, 36, 37, 38, 39, 21, 70, 71, 74, 76, 78, 79, 10, 11, 22, 33, 44, 55, 66})
         };
 
-        List r = BloomFilterAndDirectFiller.database.select(requests);
+        List r = fastSelect.select(requests);
 
         for (Object r1 : r) {
             queried++;
