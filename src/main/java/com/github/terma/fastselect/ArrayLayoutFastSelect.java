@@ -137,12 +137,12 @@ public final class ArrayLayoutFastSelect<T> implements FastSelect<T> {
         }
 
         for (final Block block : blocks) {
-            if (!inBlock(where, block)) break;
+            if (!inBlock(where, block)) continue;
 
             // block good for direct search
             try {
                 opa:
-                for (int i = block.start; i < block.size; i++) {
+                for (int i = block.start; i < block.start + block.size; i++) {
                     for (final MultiRequest request : where) {
 
                         Column column = columnsByNames.get(request.name);

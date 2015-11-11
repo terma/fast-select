@@ -28,7 +28,7 @@ public class ArrayLayoutFastSelectTest {
 
     @Test
     public void shouldSelectEmptyResultIfNoData() {
-        List result = new ArrayLayoutFastSelect<>(10, TestObject.class, Arrays.asList(
+        List result = new ArrayLayoutFastSelect<>(10, TestIntByte.class, Arrays.asList(
                 new ArrayLayoutFastSelect.Column("value1", int.class),
                 new ArrayLayoutFastSelect.Column("value2", byte.class)
         ))
@@ -38,112 +38,95 @@ public class ArrayLayoutFastSelectTest {
 
     @Test
     public void shouldSelectIfPresentByOneField() {
-        ArrayLayoutFastSelect database = new ArrayLayoutFastSelect<>(10, TestObject.class,
+        ArrayLayoutFastSelect<TestIntByte> database = new ArrayLayoutFastSelect<>(10, TestIntByte.class,
                 Arrays.asList(
                         new ArrayLayoutFastSelect.Column("value1", int.class),
                         new ArrayLayoutFastSelect.Column("value2", byte.class)
                 ));
         database.addAll(Arrays.asList(
-                new TestObject(12, (byte) 0),
-                new TestObject(9, (byte) 0),
-                new TestObject(1000, (byte) 0)));
+                new TestIntByte(12, (byte) 0),
+                new TestIntByte(9, (byte) 0),
+                new TestIntByte(1000, (byte) 0)));
 
         List result = database.select(new MultiRequest[]{new MultiRequest("value1", new int[]{12})});
 
-        Assert.assertEquals(Collections.singletonList(new TestObject(12, (byte) 0)), result);
+        Assert.assertEquals(Collections.singletonList(new TestIntByte(12, (byte) 0)), result);
     }
 
     @Test
     public void shouldSelectIfTwoBlocks() {
-        ArrayLayoutFastSelect database = new ArrayLayoutFastSelect<>(1, TestObject.class,
+        ArrayLayoutFastSelect<TestIntByte> database = new ArrayLayoutFastSelect<>(1, TestIntByte.class,
                 Arrays.asList(
                         new ArrayLayoutFastSelect.Column("value1", int.class),
                         new ArrayLayoutFastSelect.Column("value2", byte.class)
                 ));
         database.addAll(Arrays.asList(
-                new TestObject(12, (byte) 0),
-                new TestObject(9, (byte) 0),
-                new TestObject(1000, (byte) 0)));
+                new TestIntByte(12, (byte) 0),
+                new TestIntByte(9, (byte) 0),
+                new TestIntByte(1000, (byte) 0)));
 
         List result = database.select(new MultiRequest[]{new MultiRequest("value1", new int[]{12})});
 
-        Assert.assertEquals(Collections.singletonList(new TestObject(12, (byte) 0)), result);
+        Assert.assertEquals(Collections.singletonList(new TestIntByte(12, (byte) 0)), result);
     }
 
-//    @Test
-//    public void shouldSelectIfPresentByTwoFields() {
-//        ObjectFastSelect<TestObject> database = new ObjectFastSelect<>(
-//                TestObject.class, Arrays.asList(
-//                new TestObject(11, (byte) 4),
-//                new TestObject(11, (byte) 5),
-//                new TestObject(12, (byte) 6)
-//        ), "value1", "value2");
-//
-//
-//        List result = database.select(new MultiRequest[]{
-//                new MultiRequest("value1", new int[]{11}),
-//                new MultiRequest("value2", new int[]{4})
-//        });
-//
-//        Assert.assertEquals(Collections.singletonList(new TestObject(11, (byte) 4)), result);
-//    }
-//
-//    @Test
-//    public void shouldSelectIfPresentByMultipleValues() {
-//        ObjectFastSelect<TestObject> database = new ObjectFastSelect<>(
-//                TestObject.class, Arrays.asList(
-//                new TestObject(11, (byte) 4),
-//                new TestObject(11, (byte) 5),
-//                new TestObject(12, (byte) 6)
-//        ), "value1", "value2");
-//
-//        List result = database.select(new MultiRequest[]{
-//                new MultiRequest("value2", new int[]{4, 5, 11, 12, 15})
-//        });
-//
-//        Assert.assertEquals(Arrays.asList(new TestObject(11, (byte) 4), new TestObject(11, (byte) 5)), result);
-//    }
-//
-//    @Test
-//    public void shouldSelectWhenMoreThanBlockSize() {
-//        ObjectFastSelect<TestObject> database = new ObjectFastSelect<>(2,
-//                TestObject.class, Arrays.asList(
-//                new TestObject(11, (byte) 4),
-//                new TestObject(11, (byte) 5),
-//                new TestObject(12, (byte) 6),
-//                new TestObject(12, (byte) 4)
-//        ), "value1", "value2");
-//
-//        List result = database.select(new MultiRequest[]{
-//                new MultiRequest("value2", new int[]{4, 5, 11, 12, 15})
-//        });
-//
-//        Assert.assertEquals(Arrays.asList(
-//                new TestObject(11, (byte) 4), new TestObject(11, (byte) 5),
-//                new TestObject(12, (byte) 4)), result);
-//    }
-//
-//    @Test
-//    public void shouldProvideAccessForItems() {
-//        ObjectFastSelect<TestObject> database = new ObjectFastSelect<>(
-//                TestObject.class, Arrays.asList(
-//                new TestObject(11, (byte) 4),
-//                new TestObject(11, (byte) 5)
-//        ), "value1", "value2");
-//
-//
-//        Assert.assertEquals(Arrays.asList(new TestObject(11, (byte) 4), new TestObject(11, (byte) 5)), database.getItems());
-//    }
+    @Test
+    public void shouldSelectByLongField() {
+        ArrayLayoutFastSelect<TestLongShort> database = new ArrayLayoutFastSelect<>(1, TestLongShort.class,
+                Collections.singletonList(new ArrayLayoutFastSelect.Column("long1", long.class)));
+        database.addAll(Arrays.asList(
+                new TestLongShort(12L, (short) 0),
+                new TestLongShort(9, (short) 0),
+                new TestLongShort(1000, (short) 0)));
 
-    static class TestObject {
+        List result = database.select(new MultiRequest[]{new MultiRequest("long1", new int[]{12})});
+
+        Assert.assertEquals(Collections.singletonList(new TestLongShort(12, (short) 0)), result);
+    }
+
+    @Test
+    public void shouldSelectByShortField() {
+        ArrayLayoutFastSelect<TestLongShort> database = new ArrayLayoutFastSelect<>(1, TestLongShort.class,
+                Arrays.asList(
+                        new ArrayLayoutFastSelect.Column("long1", long.class),
+                        new ArrayLayoutFastSelect.Column("short1", short.class)
+                ));
+        database.addAll(Arrays.asList(
+                new TestLongShort(12L, (short) 5),
+                new TestLongShort(9, (short) 3),
+                new TestLongShort(1000, (short) 0)));
+
+        List result = database.select(new MultiRequest[]{new MultiRequest("short1", new int[]{0})});
+
+        Assert.assertEquals(Collections.singletonList(new TestLongShort(1000, (short) 0)), result);
+    }
+
+    @Test
+    public void shouldProvideSize() {
+        ArrayLayoutFastSelect<TestIntByte> database = new ArrayLayoutFastSelect<>(1, TestIntByte.class,
+                Arrays.asList(
+                        new ArrayLayoutFastSelect.Column("value1", int.class),
+                        new ArrayLayoutFastSelect.Column("value2", byte.class)
+                ));
+        database.addAll(Arrays.asList(
+                new TestIntByte(12, (byte) 0),
+                new TestIntByte(9, (byte) 0),
+                new TestIntByte(1000, (byte) 0)));
+
+        Assert.assertEquals(3, database.size());
+    }
+
+    static class TestIntByte {
         public int value1;
         public byte value2;
 
-        TestObject() {
+        @SuppressWarnings("unused")
+            // empty constructor for database to be able restore object
+        TestIntByte() {
             this(0, (byte) 0);
         }
 
-        TestObject(int value, byte value2) {
+        TestIntByte(int value, byte value2) {
             this.value1 = value;
             this.value2 = value2;
         }
@@ -152,7 +135,7 @@ public class ArrayLayoutFastSelectTest {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            TestObject that = (TestObject) o;
+            TestIntByte that = (TestIntByte) o;
             return value1 == that.value1 &&
                     value2 == that.value2;
         }
@@ -161,6 +144,45 @@ public class ArrayLayoutFastSelectTest {
         public int hashCode() {
             return Objects.hash(value1, value2);
         }
+    }
+
+    static class TestLongShort {
+        public long long1;
+        public short short1;
+
+        @SuppressWarnings("unused")
+            // empty constructor for database to be able restore object
+        TestLongShort() {
+            this(0, (byte) 0);
+        }
+
+        TestLongShort(long long1, short short1) {
+            this.long1 = long1;
+            this.short1 = short1;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            TestLongShort that = (TestLongShort) o;
+            return long1 == that.long1 &&
+                    short1 == that.short1;
+        }
+
+        @Override
+        public String toString() {
+            return "TestLongShort{" +
+                    "long1=" + long1 +
+                    ", short1=" + short1 +
+                    '}';
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(long1, short1);
+        }
+
     }
 
 }
