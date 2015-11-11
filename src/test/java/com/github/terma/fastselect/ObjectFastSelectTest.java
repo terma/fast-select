@@ -131,8 +131,9 @@ public class ObjectFastSelectTest {
     }
 
     static class TestObject {
-        public final int value1;
-        public final int value2;
+
+        public int value1;
+        public int value2;
 
         TestObject(int value, int value2) {
             this.value1 = value;
