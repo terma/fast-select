@@ -79,7 +79,7 @@ public final class ObjectFastSelect<T> implements FastSelect<T> {
         }
 
         for (final Block<T> block : blocks) {
-            if (!inBlock(where, block)) break;
+            if (!inBlock(where, block)) continue;
 
             // block good for direct search
             try {
@@ -99,6 +99,13 @@ public final class ObjectFastSelect<T> implements FastSelect<T> {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    @Override
+    public int count(MultiRequest[] where) {
+        final CountCallback<T> countCallback = new CountCallback<>();
+        select(where, countCallback);
+        return countCallback.getCount();
     }
 
     private boolean inBlock(MultiRequest[] requests, Block<T> block) {

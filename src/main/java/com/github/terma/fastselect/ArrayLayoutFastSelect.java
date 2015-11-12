@@ -16,12 +16,9 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
-import org.apache.commons.collections.primitives.ArrayByteList;
-import org.apache.commons.collections.primitives.ArrayIntList;
 import org.apache.commons.collections.primitives.ArrayLongList;
 import org.apache.commons.collections.primitives.ArrayShortList;
 
-import java.lang.invoke.MethodHandle;
 import java.util.*;
 
 /**
@@ -62,11 +59,11 @@ public final class ArrayLayoutFastSelect<T> implements FastSelect<T> {
             if (column.type == long.class) {
                 column.data = new ArrayLongList();
             } else if (column.type == int.class) {
-                column.data = new ArrayIntList();
+                column.data = new FastIntList();
             } else if (column.type == short.class) {
                 column.data = new ArrayShortList();
             } else if (column.type == byte.class) {
-                column.data = new ArrayByteList();
+                column.data = new FastByteList();
             } else {
                 throw new IllegalArgumentException("!");
             }
@@ -91,7 +88,7 @@ public final class ArrayLayoutFastSelect<T> implements FastSelect<T> {
                         indexValue = (int) v;
                     } else if (column.type == int.class) {
                         int v = (int) mhRepo.get(column.name).invoke(row);
-                        ((ArrayIntList) column.data).add(v);
+                        ((FastIntList) column.data).add(v);
                         indexValue = v;
                     } else if (column.type == short.class) {
                         short v = (short) mhRepo.get(column.name).invoke(row);
@@ -99,7 +96,7 @@ public final class ArrayLayoutFastSelect<T> implements FastSelect<T> {
                         indexValue = v;
                     } else if (column.type == byte.class) {
                         byte v = (byte) mhRepo.get(column.name).invoke(row);
-                        ((ArrayByteList) column.data).add(v);
+                        ((FastByteList) column.data).add(v);
                         indexValue = v;
                     } else {
                         throw new IllegalArgumentException("!");
@@ -130,31 +127,31 @@ public final class ArrayLayoutFastSelect<T> implements FastSelect<T> {
         return result.getResult();
     }
 
-    @Override
-    public void select(final MultiRequest[] where, final Callback<T> callback) {
+    public void select(final MultiRequest[] where, final ArrayLayoutCallback callback) {
         for (final MultiRequest condition : where) {
+            condition.column = columnsByNames.get(condition.name);
             Arrays.sort(condition.values);
         }
+        try {
+            for (final Block block : blocks) {
+                if (!inBlock(where, block)) continue;
 
-        for (final Block block : blocks) {
-            if (!inBlock(where, block)) continue;
-
-            // block good for direct search
-            try {
+                // block good for direct search
+                final int end = block.start + block.size;
                 opa:
-                for (int i = block.start; i < block.start + block.size; i++) {
+                for (int i = block.start; i < end; i++) {
                     for (final MultiRequest request : where) {
-
-                        Column column = columnsByNames.get(request.name);
+                        final Class type = request.column.type;
+                        final Object data = request.column.data;
                         int value = 0;
-                        if (column.type == long.class) {
-                            value = (int) ((ArrayLongList) column.data).get(i);
-                        } else if (column.type == int.class) {
-                            value = ((ArrayIntList) column.data).get(i);
-                        } else if (column.type == short.class) {
-                            value = ((ArrayShortList) column.data).get(i);
-                        } else if (column.type == byte.class) {
-                            value = ((ArrayByteList) column.data).get(i);
+                        if (type == byte.class) {
+                            value = ((FastByteList) data).data[i];
+                        } else if (type == short.class) {
+                            value = ((ArrayShortList) data).get(i);
+                        } else if (type == long.class) {
+                            value = (int) ((ArrayLongList) data).get(i);
+                        } else if (type == int.class) {
+                            value = ((FastIntList) data).data[i];
                         }
 
                         if (Arrays.binarySearch(request.values, value) < 0) {
@@ -162,26 +159,24 @@ public final class ArrayLayoutFastSelect<T> implements FastSelect<T> {
                         }
                     }
 
-                    final T o = dataClass.newInstance();
-                    for (final Column column : columns) {
-                        MethodHandle methodHandle = mhRepo.set(column.name);
-
-                        if (column.type == long.class) {
-                            methodHandle.invoke(o, ((ArrayLongList) column.data).get(i));
-                        } else if (column.type == int.class) {
-                            methodHandle.invoke(o, ((ArrayIntList) column.data).get(i));
-                        } else if (column.type == short.class) {
-                            methodHandle.invoke(o, ((ArrayShortList) column.data).get(i));
-                        } else if (column.type == byte.class) {
-                            methodHandle.invoke(o, ((ArrayByteList) column.data).get(i));
-                        }
-                    }
-                    callback.data(o);
+                    callback.data(i);
                 }
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
             }
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void select(final MultiRequest[] where, final Callback<T> callback) {
+        select(where, new ArrayToObjectCallback<>(dataClass, columns, mhRepo, callback));
+    }
+
+    @Override
+    public int count(MultiRequest[] where) {
+        final CountArrayLayoutCallback countCallback = new CountArrayLayoutCallback();
+        select(where, countCallback);
+        return countCallback.getCount();
     }
 
     private boolean inBlock(MultiRequest[] requests, Block block) {
@@ -202,11 +197,11 @@ public final class ArrayLayoutFastSelect<T> implements FastSelect<T> {
             if (column.type == long.class) {
                 return ((ArrayLongList) column.data).size();
             } else if (column.type == int.class) {
-                return ((ArrayIntList) column.data).size();
+                return ((FastIntList) column.data).size;
             } else if (column.type == short.class) {
                 return ((ArrayShortList) column.data).size();
             } else if (column.type == byte.class) {
-                return ((ArrayByteList) column.data).size();
+                return ((FastByteList) column.data).size;
             }
         }
         return 0;
@@ -233,6 +228,36 @@ public final class ArrayLayoutFastSelect<T> implements FastSelect<T> {
         public final Map<String, BitSet> columnBitSets = new HashMap<>();
         public int start;
         public int size;
+    }
+
+    static class FastIntList {
+
+        public int[] data = new int[16];
+        public int size = 0;
+
+        public void add(int v) {
+            if (size == data.length) {
+                data = Arrays.copyOf(data, size + 1000);
+            }
+            data[size] = v;
+            size++;
+        }
+
+    }
+
+    static class FastByteList {
+
+        public byte[] data = new byte[16];
+        public int size = 0;
+
+        public void add(byte v) {
+            if (size == data.length) {
+                data = Arrays.copyOf(data, size + 1000);
+            }
+            data[size] = v;
+            size++;
+        }
+
     }
 
 }

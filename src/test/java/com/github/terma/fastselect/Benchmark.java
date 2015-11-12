@@ -22,7 +22,6 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Fork(value = 1, jvmArgs = "-Xmx6g")
@@ -40,13 +39,13 @@ public class Benchmark {
     public static final int S_MAX = 100;
     public static final int D_MAX = 100;
 
-    @Param({"1000", "100000"})
+    @Param({"1000"}) // "100000"
     private int blockSize;
 
-    @Param({"10000000", "100000000"})
+    @Param({"1000000", "10000000"}) // "10000000"
     private int volume;
 
-    @Param({"ArrayLayoutFastSelect"}) // "ObjectFastSelect"
+    @Param({"ArrayLayoutFastSelect", "ObjectFastSelect"}) // "ObjectFastSelect"
     private String impl;
 
     private FastSelect fastSelect;
@@ -72,14 +71,11 @@ public class Benchmark {
             fastSelect = ObjectFastSelectFiller.database;
         }
 
-        System.out.println(ArrayLayoutFastSelectFiller.database.size());
         System.out.println("Used mem: " + memMeter.getUsedMb() + " mb, volume: " + volume);
     }
 
     @org.openjdk.jmh.annotations.Benchmark
     public int case10G5R4C20S40D() throws Exception {
-        int queried = 0;
-
         MultiRequest[] requests = new MultiRequest[]{
                 new MultiRequest("g", new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}),
                 new MultiRequest("r", new int[]{0, 1, 2, 3, 4}),
@@ -88,13 +84,7 @@ public class Benchmark {
                 new MultiRequest("d", new int[]{0, 90, 99, 5, 34, 22, 26, 8, 5, 6, 7, 5, 6, 34, 35, 36, 37, 38, 39, 21, 70, 71, 74, 76, 78, 79, 10, 11, 22, 33, 44, 55, 66})
         };
 
-        List r = fastSelect.select(requests);
-
-        for (Object r1 : r) {
-            queried++;
-        }
-
-        return queried;
+        return fastSelect.count(requests);
     }
 
 }
