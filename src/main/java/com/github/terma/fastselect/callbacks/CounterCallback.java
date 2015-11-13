@@ -14,15 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.github.terma.fastselect;
+package com.github.terma.fastselect.callbacks;
 
-public class SomeData {
+public class CounterCallback implements ArrayLayoutCallback {
 
-    public int g;
-    public int r;
-    public int c;
-    public int o;
-    public int s;
-    public int d;
+    private int count;
 
+    @Override
+    public void data(int position) {
+        count++;
+    }
+
+    public int getCount() {
+        return count;
+    }
 }

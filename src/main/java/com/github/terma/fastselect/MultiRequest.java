@@ -23,6 +23,7 @@ public class MultiRequest {
     public final String name;
     public final int[] values;
     public MethodHandle mh;
+    public FastSelect.Column column;
 
     public MultiRequest(String name, int[] values) {
         this.name = name;

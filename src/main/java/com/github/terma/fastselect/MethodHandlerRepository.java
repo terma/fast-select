@@ -22,26 +22,40 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-final class MethodHandlerRepository {
+public final class MethodHandlerRepository {
 
-    private final Map<String, MethodHandle> data;
+    private final Map<String, MethodHandle> getters;
+    private final Map<String, MethodHandle> setters;
 
-    public MethodHandlerRepository(Class dataClass, String... fields) {
-        final Map<String, MethodHandle> tempData = new HashMap<>();
+    public MethodHandlerRepository(Class dataClass, Map<String, Class> fields) {
+        final Map<String, MethodHandle> tempGetters = new HashMap<>();
+        final Map<String, MethodHandle> tempSetters = new HashMap<>();
         final MethodHandles.Lookup lookup = MethodHandles.lookup();
-        for (final String indexColumn : fields) {
+        for (final Map.Entry<String, Class> field : fields.entrySet()) {
             try {
-                final MethodHandle methodHandle = lookup.findGetter(dataClass, indexColumn, int.class);
-                tempData.put(indexColumn, methodHandle);
+                final MethodHandle getterHandler = lookup.findGetter(dataClass, field.getKey(), field.getValue());
+                final MethodHandle setterHandler = lookup.findSetter(dataClass, field.getKey(), field.getValue());
+                tempGetters.put(field.getKey(), getterHandler);
+                tempSetters.put(field.getKey(), setterHandler);
             } catch (NoSuchFieldException | IllegalAccessException e) {
-                throw new IllegalArgumentException(e);
+                throw new IllegalArgumentException("Can't find field: " + field.getKey()
+                        + " with type: " + field.getValue() + " in " + dataClass, e);
             }
         }
-        this.data = Collections.unmodifiableMap(tempData);
+        this.getters = Collections.unmodifiableMap(tempGetters);
+        this.setters = Collections.unmodifiableMap(tempSetters);
     }
 
     public MethodHandle get(String indexColumn) {
-        final MethodHandle methodHandle = data.get(indexColumn);
+        final MethodHandle methodHandle = getters.get(indexColumn);
+        if (methodHandle == null) throw new IllegalArgumentException("Can't find method handler for " + indexColumn +
+                ". You need to add it to index!");
+        return methodHandle;
+    }
+
+
+    public MethodHandle set(String indexColumn) {
+        final MethodHandle methodHandle = setters.get(indexColumn);
         if (methodHandle == null) throw new IllegalArgumentException("Can't find method handler for " + indexColumn +
                 ". You need to add it to index!");
         return methodHandle;

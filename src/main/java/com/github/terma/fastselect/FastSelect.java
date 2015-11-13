@@ -16,62 +16,96 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
+import com.github.terma.fastselect.callbacks.ArrayLayoutCallback;
+import com.github.terma.fastselect.callbacks.ArrayToObjectCallback;
+import com.github.terma.fastselect.callbacks.Callback;
+import com.github.terma.fastselect.callbacks.ListCallback;
+import org.apache.commons.collections.primitives.ArrayLongList;
+import org.apache.commons.collections.primitives.ArrayShortList;
+
 import java.util.*;
 
 /**
- * Based two step search algorithm (bloom filter + direct scan within block)
+ * Fast Search based two step search algorithm (bloom filter + direct scan within block)
  */
 public final class FastSelect<T> {
 
-    private final static int BLOCK_SIZE = 1000;
-
-    private final Class dataClass;
-    private final String[] indexColumns;
+    private final int blockSize;
+    private final Class<T> dataClass;
     private final MethodHandlerRepository mhRepo;
-    private final List<Block<T>> blocks;
+    private final List<Block> blocks;
+    private final List<Column> columns;
+    private final Map<String, Column> columnsByNames;
 
-    public FastSelect(final Class dataClass, final List<T> data, final String... indexColumns) {
+    public FastSelect(final int blockSize, final Class<T> dataClass, final List<Column> columns) {
+        this.blockSize = blockSize;
         this.dataClass = dataClass;
-        this.indexColumns = indexColumns;
-        this.mhRepo = new MethodHandlerRepository(dataClass, indexColumns);
-        this.blocks = createBlocks(data);
+        this.columns = columns;
+        this.columnsByNames = initColumnsByName(columns);
+        this.mhRepo = new MethodHandlerRepository(dataClass, getColumnsAsMap(columns));
+        this.blocks = new ArrayList<>();
     }
 
-    private List<Block<T>> createBlocks(final List<T> data) {
-        final List<Block<T>> blocks = new ArrayList<>();
+    private static Map<String, Column> initColumnsByName(List<Column> columns) {
+        Map<String, Column> r = new HashMap<>();
+        for (Column column : columns) r.put(column.name, column);
+        return r;
+    }
 
+    private static Map<String, Class> getColumnsAsMap(List<Column> columns) {
+        Map<String, Class> r = new HashMap<>();
+        for (Column column : columns) r.put(column.name, column.type);
+        return r;
+    }
+
+    public void addAll(final List<T> data) {
         for (final T row : data) {
-            if (blocks.isEmpty() || blocks.get(blocks.size() - 1).data.size() == BLOCK_SIZE)
-                blocks.add(createBlock());
+            if (blocks.isEmpty() || blocks.get(blocks.size() - 1).size >= blockSize)
+                blocks.add(createBlock(blocks));
 
-            Block<T> block = blocks.get(blocks.size() - 1);
-            for (String indexColumn : indexColumns) {
+            Block block = blocks.get(blocks.size() - 1);
+            block.size++;
+            for (Column column : columns) {
                 try {
-                    int indexValue = (Integer) mhRepo.get(indexColumn).invoke(row);
-                    block.columnBitSets.get(indexColumn).set(indexValue);
+                    int indexValue;
+
+                    if (column.type == long.class) {
+                        long v = (long) mhRepo.get(column.name).invoke(row);
+                        ((ArrayLongList) column.data).add(v);
+                        indexValue = (int) v;
+                    } else if (column.type == int.class) {
+                        int v = (int) mhRepo.get(column.name).invoke(row);
+                        ((FastIntList) column.data).add(v);
+                        indexValue = v;
+                    } else if (column.type == short.class) {
+                        short v = (short) mhRepo.get(column.name).invoke(row);
+                        ((ArrayShortList) column.data).add(v);
+                        indexValue = v;
+                    } else if (column.type == byte.class) {
+                        byte v = (byte) mhRepo.get(column.name).invoke(row);
+                        ((FastByteList) column.data).add(v);
+                        indexValue = v;
+                    } else {
+                        throw new IllegalArgumentException("!");
+                    }
+
+                    block.columnBitSets.get(column.name).set(indexValue);
                 } catch (Throwable throwable) {
                     throw new RuntimeException(throwable);
                 }
             }
-
-            block.data.add(row);
         }
-
-        return blocks;
     }
 
-    private Block<T> createBlock() {
-        final Block<T> block = new Block<>();
-        for (String indexColumn : indexColumns) {
-            block.columnBitSets.put(indexColumn, new BitSet());
+    private Block createBlock(List<Block> blocks) {
+        final Block block = new Block();
+        block.start = blocks.isEmpty() ? 0 : blocks.get(blocks.size() - 1).start + blocks.get(blocks.size() - 1).size;
+        block.size = 0;
+        for (Column column : columns) {
+            block.columnBitSets.put(column.name, new BitSet());
         }
         return block;
     }
-
-    // countBy("", "g", "r")
-//    public Map<?, Integer> countBy(final MultiRequest[] where, final String[] countBy) {
-//        return null;
-//    }
 
     public List<T> select(final MultiRequest[] where) {
         ListCallback<T> result = new ListCallback<>();
@@ -79,42 +113,46 @@ public final class FastSelect<T> {
         return result.getResult();
     }
 
-    public void select(final MultiRequest[] where, final Callback<T> callback) {
-        for (final MultiRequest request : where) {
-            request.mh = mhRepo.get(request.name);
-            Arrays.sort(request.values);
+    public void select(final MultiRequest[] where, final ArrayLayoutCallback callback) {
+        for (final MultiRequest condition : where) {
+            condition.column = columnsByNames.get(condition.name);
+            Arrays.sort(condition.values);
         }
+        try {
+            for (final Block block : blocks) {
+                if (!inBlock(where, block)) continue;
 
-        for (final Block<T> block : blocks) {
-            if (!inBlock(where, block)) break;
-
-            // block good for direct search
-            try {
+                // block good for direct search
+                final int end = block.start + block.size;
                 opa:
-                for (final T obj : block.data) {
+                for (int i = block.start; i < end; i++) {
                     for (final MultiRequest request : where) {
-                        final Integer v = (Integer) request.mh.invoke(obj);
+                        final int value = request.column.valueAsInt(i);
 
-                        if (Arrays.binarySearch(request.values, v) < 0) {
+                        if (Arrays.binarySearch(request.values, value) < 0) {
                             continue opa;
                         }
                     }
 
-                    callback.data(obj);
+                    callback.data(i);
                 }
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
             }
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private boolean inBlock(MultiRequest[] requests, Block<T> block) {
+    public void select(final MultiRequest[] where, final Callback<T> callback) {
+        select(where, new ArrayToObjectCallback<>(dataClass, columns, mhRepo, callback));
+    }
+
+    private boolean inBlock(MultiRequest[] requests, Block block) {
         for (MultiRequest request : requests) {
             final BitSet columnBitSet = block.columnBitSets.get(request.name);
 
             boolean p = false;
             for (final int value : request.values) {
-                p = p || columnBitSet.get(value);
+                p = p | columnBitSet.get(value);
             }
             if (!p) return false;
         }
@@ -122,29 +160,102 @@ public final class FastSelect<T> {
     }
 
     public int size() {
-        int r = 0;
-        for (Block<T> block : blocks) r += block.data.size();
-        return r;
+        for (Column column : columns) {
+            if (column.type == long.class) {
+                return ((ArrayLongList) column.data).size();
+            } else if (column.type == int.class) {
+                return ((FastIntList) column.data).size;
+            } else if (column.type == short.class) {
+                return ((ArrayShortList) column.data).size();
+            } else if (column.type == byte.class) {
+                return ((FastByteList) column.data).size;
+            }
+        }
+        return 0;
     }
 
-    public List<T> getItems() {
-        final List<T> result = new ArrayList<>();
-        for (final Block<T> block : blocks) {
-            result.addAll(block.data);
-        }
-        return result;
+    public Map<String, Column> getColumnsByNames() {
+        return columnsByNames;
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " {blockSize: " + BLOCK_SIZE + ", data: " + size()
-                + ", indexes: " + indexColumns.length + ", class: " + dataClass + "}";
+        return getClass().getSimpleName() + " {blockSize: " + blockSize + ", data: " + size()
+                + ", indexes: " + columns.size() + ", class: " + dataClass + "}";
     }
 
-    private static class Block<T> {
+    public static class Column {
 
+        public final String name;
+        public final Class type;
+        public final Object data;
+
+        public Column(final String name, final Class type) {
+            this.name = name;
+            this.type = type;
+
+            if (type == long.class) {
+                data = new ArrayLongList();
+            } else if (type == int.class) {
+                data = new FastIntList();
+            } else if (type == short.class) {
+                data = new ArrayShortList();
+            } else if (type == byte.class) {
+                data = new FastByteList();
+            } else {
+                throw new IllegalArgumentException("Unsupportable column type: " + type);
+            }
+        }
+
+        public int valueAsInt(final int position) {
+            if (type == byte.class) {
+                return ((FastByteList) data).data[position];
+            } else if (type == short.class) {
+                return ((ArrayShortList) data).get(position);
+            } else if (type == long.class) {
+                return (int) ((ArrayLongList) data).get(position);
+            } else if (type == int.class) {
+                return ((FastIntList) data).data[position];
+            } else {
+                throw new IllegalArgumentException("Unknown column type: " + type);
+            }
+        }
+
+    }
+
+    private static class Block {
         public final Map<String, BitSet> columnBitSets = new HashMap<>();
-        public final List<T> data = new ArrayList<>();
+        public int start;
+        public int size;
+    }
+
+    public static class FastIntList {
+
+        public int[] data = new int[16];
+        public int size = 0;
+
+        public void add(int v) {
+            if (size == data.length) {
+                data = Arrays.copyOf(data, size + 1000);
+            }
+            data[size] = v;
+            size++;
+        }
+
+    }
+
+    public static class FastByteList {
+
+        public byte[] data = new byte[16];
+        public int size = 0;
+
+        public void add(byte v) {
+            if (size == data.length) {
+                data = Arrays.copyOf(data, size + 1000);
+            }
+            data[size] = v;
+            size++;
+        }
 
     }
 
