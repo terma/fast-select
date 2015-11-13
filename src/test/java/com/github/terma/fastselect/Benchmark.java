@@ -16,8 +16,8 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
+import com.github.terma.fastselect.callbacks.CounterCallback;
 import com.github.terma.fastselect.callbacks.GroupCountCallback;
-import com.github.terma.fastselect.callbacks.MultiGroupCountCallback;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -93,23 +93,15 @@ public class Benchmark {
 
     //    @org.openjdk.jmh.annotations.Benchmark
     public int countByFiltered10G5R4C20S40D() throws Exception {
-        return fastSelect.count(createWhere());
-    }
-
-    //    @org.openjdk.jmh.annotations.Benchmark
-    public Object groupAndCountFiltered10G5R4C20S40D() throws Exception {
-        GroupCountCallback counter = new GroupCountCallback(
-                ArrayLayoutFastSelectFiller.database.getColumnsByNames().get("r"));
-        fastSelect.select(createWhere(), counter);
-        return counter.getCounters();
+        CounterCallback counterCallback = new CounterCallback();
+        fastSelect.select(createWhere(), counterCallback);
+        return counterCallback.getCount();
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public Object multipleGroupAndCountFiltered10G5R4C20S40D() throws Exception {
-        MultiGroupCountCallback counter = new MultiGroupCountCallback(
-                ArrayLayoutFastSelectFiller.database.getColumnsByNames().get("g"),
-                ArrayLayoutFastSelectFiller.database.getColumnsByNames().get("r")
-        );
+    public Object groupAndCountFiltered10G5R4C20S40D() throws Exception {
+        GroupCountCallback counter = new GroupCountCallback(
+                ArrayLayoutFastSelectFiller.database.getColumnsByNames().get("r"));
         fastSelect.select(createWhere(), counter);
         return counter.getCounters();
     }

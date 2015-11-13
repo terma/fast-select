@@ -16,7 +16,10 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
-import com.github.terma.fastselect.callbacks.*;
+import com.github.terma.fastselect.callbacks.ArrayLayoutCallback;
+import com.github.terma.fastselect.callbacks.ArrayToObjectCallback;
+import com.github.terma.fastselect.callbacks.Callback;
+import com.github.terma.fastselect.callbacks.ListCallback;
 import org.apache.commons.collections.primitives.ArrayLongList;
 import org.apache.commons.collections.primitives.ArrayShortList;
 
@@ -25,7 +28,7 @@ import java.util.*;
 /**
  * Fast Search based two step search algorithm (bloom filter + direct scan within block)
  */
-public final class ArrayLayoutFastSelect<T> implements FastSelect<T> {
+public final class ArrayLayoutFastSelect<T> {
 
     private final int blockSize;
     private final Class<T> dataClass;
@@ -104,7 +107,6 @@ public final class ArrayLayoutFastSelect<T> implements FastSelect<T> {
         return block;
     }
 
-    @Override
     public List<T> select(final MultiRequest[] where) {
         ListCallback<T> result = new ListCallback<>();
         select(where, result);
@@ -140,16 +142,8 @@ public final class ArrayLayoutFastSelect<T> implements FastSelect<T> {
         }
     }
 
-    @Override
     public void select(final MultiRequest[] where, final Callback<T> callback) {
         select(where, new ArrayToObjectCallback<>(dataClass, columns, mhRepo, callback));
-    }
-
-    @Override
-    public int count(MultiRequest[] where) {
-        final CounterCallback countCallback = new CounterCallback();
-        select(where, countCallback);
-        return countCallback.getCount();
     }
 
     private boolean inBlock(MultiRequest[] requests, Block block) {
