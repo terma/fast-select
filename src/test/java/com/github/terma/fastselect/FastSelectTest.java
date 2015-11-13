@@ -116,6 +116,17 @@ public class FastSelectTest {
         Assert.assertEquals(3, database.size());
     }
 
+    @Test
+    public void shouldProvideSizeForLong() {
+        FastSelect<TestLong> database = new FastSelect<>(1, TestLong.class,
+                Collections.singletonList(new FastSelect.Column("value1", long.class)));
+        database.addAll(Arrays.asList(
+                new TestLong(12),
+                new TestLong(9)));
+
+        Assert.assertEquals(2, database.size());
+    }
+
     public static class TestIntByte {
         public int value1;
         public byte value2;
@@ -142,6 +153,14 @@ public class FastSelectTest {
         @Override
         public int hashCode() {
             return Objects.hash(value1, value2);
+        }
+    }
+
+    public static class TestLong {
+        public long value1;
+
+        TestLong(long value) {
+            this.value1 = value;
         }
     }
 
