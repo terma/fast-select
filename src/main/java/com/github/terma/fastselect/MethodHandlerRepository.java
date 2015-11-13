@@ -38,7 +38,8 @@ public final class MethodHandlerRepository {
                 tempGetters.put(field.getKey(), getterHandler);
                 tempSetters.put(field.getKey(), setterHandler);
             } catch (NoSuchFieldException | IllegalAccessException e) {
-                throw new IllegalArgumentException(e);
+                throw new IllegalArgumentException("Can't find field: " + field.getKey()
+                        + " with type: " + field.getValue() + " in " + dataClass, e);
             }
         }
         this.getters = Collections.unmodifiableMap(tempGetters);
