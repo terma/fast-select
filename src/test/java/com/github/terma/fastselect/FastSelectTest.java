@@ -24,13 +24,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class ArrayLayoutFastSelectTest {
+public class FastSelectTest {
 
     @Test
     public void shouldSelectEmptyResultIfNoData() {
-        List result = new ArrayLayoutFastSelect<>(10, TestIntByte.class, Arrays.asList(
-                new ArrayLayoutFastSelect.Column("value1", int.class),
-                new ArrayLayoutFastSelect.Column("value2", byte.class)
+        List result = new FastSelect<>(10, TestIntByte.class, Arrays.asList(
+                new FastSelect.Column("value1", int.class),
+                new FastSelect.Column("value2", byte.class)
         ))
                 .select(new MultiRequest[]{new MultiRequest("value1", new int[]{34})});
         Assert.assertEquals(0, result.size());
@@ -38,10 +38,10 @@ public class ArrayLayoutFastSelectTest {
 
     @Test
     public void shouldSelectIfPresentByOneField() {
-        ArrayLayoutFastSelect<TestIntByte> database = new ArrayLayoutFastSelect<>(10, TestIntByte.class,
+        FastSelect<TestIntByte> database = new FastSelect<>(10, TestIntByte.class,
                 Arrays.asList(
-                        new ArrayLayoutFastSelect.Column("value1", int.class),
-                        new ArrayLayoutFastSelect.Column("value2", byte.class)
+                        new FastSelect.Column("value1", int.class),
+                        new FastSelect.Column("value2", byte.class)
                 ));
         database.addAll(Arrays.asList(
                 new TestIntByte(12, (byte) 0),
@@ -55,10 +55,10 @@ public class ArrayLayoutFastSelectTest {
 
     @Test
     public void shouldSelectIfTwoBlocks() {
-        ArrayLayoutFastSelect<TestIntByte> database = new ArrayLayoutFastSelect<>(1, TestIntByte.class,
+        FastSelect<TestIntByte> database = new FastSelect<>(1, TestIntByte.class,
                 Arrays.asList(
-                        new ArrayLayoutFastSelect.Column("value1", int.class),
-                        new ArrayLayoutFastSelect.Column("value2", byte.class)
+                        new FastSelect.Column("value1", int.class),
+                        new FastSelect.Column("value2", byte.class)
                 ));
         database.addAll(Arrays.asList(
                 new TestIntByte(12, (byte) 0),
@@ -72,8 +72,8 @@ public class ArrayLayoutFastSelectTest {
 
     @Test
     public void shouldSelectByLongField() {
-        ArrayLayoutFastSelect<TestLongShort> database = new ArrayLayoutFastSelect<>(1, TestLongShort.class,
-                Collections.singletonList(new ArrayLayoutFastSelect.Column("long1", long.class)));
+        FastSelect<TestLongShort> database = new FastSelect<>(1, TestLongShort.class,
+                Collections.singletonList(new FastSelect.Column("long1", long.class)));
         database.addAll(Arrays.asList(
                 new TestLongShort(12L, (short) 0),
                 new TestLongShort(9, (short) 0),
@@ -86,10 +86,10 @@ public class ArrayLayoutFastSelectTest {
 
     @Test
     public void shouldSelectByShortField() {
-        ArrayLayoutFastSelect<TestLongShort> database = new ArrayLayoutFastSelect<>(1, TestLongShort.class,
+        FastSelect<TestLongShort> database = new FastSelect<>(1, TestLongShort.class,
                 Arrays.asList(
-                        new ArrayLayoutFastSelect.Column("long1", long.class),
-                        new ArrayLayoutFastSelect.Column("short1", short.class)
+                        new FastSelect.Column("long1", long.class),
+                        new FastSelect.Column("short1", short.class)
                 ));
         database.addAll(Arrays.asList(
                 new TestLongShort(12L, (short) 5),
@@ -103,10 +103,10 @@ public class ArrayLayoutFastSelectTest {
 
     @Test
     public void shouldProvideSize() {
-        ArrayLayoutFastSelect<TestIntByte> database = new ArrayLayoutFastSelect<>(1, TestIntByte.class,
+        FastSelect<TestIntByte> database = new FastSelect<>(1, TestIntByte.class,
                 Arrays.asList(
-                        new ArrayLayoutFastSelect.Column("value1", int.class),
-                        new ArrayLayoutFastSelect.Column("value2", byte.class)
+                        new FastSelect.Column("value1", int.class),
+                        new FastSelect.Column("value2", byte.class)
                 ));
         database.addAll(Arrays.asList(
                 new TestIntByte(12, (byte) 0),

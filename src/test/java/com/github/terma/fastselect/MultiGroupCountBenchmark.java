@@ -39,10 +39,10 @@ public class MultiGroupCountBenchmark {
     @Param({"10000000"})
     private int volume;
 
-    @Param({"ArrayLayoutFastSelect"})
+    @Param({"FastSelect"})
     private String impl;
 
-    private ArrayLayoutFastSelect fastSelect;
+    private FastSelect fastSelect;
 
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
@@ -63,8 +63,8 @@ public class MultiGroupCountBenchmark {
     @org.openjdk.jmh.annotations.Benchmark
     public Object test() throws Exception {
         MultiGroupCountCallback counter = new MultiGroupCountCallback(
-                ArrayLayoutFastSelectFiller.database.getColumnsByNames().get("g"),
-                ArrayLayoutFastSelectFiller.database.getColumnsByNames().get("r")
+                FastSelectFiller.database.getColumnsByNames().get("g"),
+                FastSelectFiller.database.getColumnsByNames().get("r")
         );
         fastSelect.select(com.github.terma.fastselect.Benchmark.createWhere(), counter);
         return counter.getCounters();

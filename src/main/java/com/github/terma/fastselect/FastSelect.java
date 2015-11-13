@@ -28,7 +28,7 @@ import java.util.*;
 /**
  * Fast Search based two step search algorithm (bloom filter + direct scan within block)
  */
-public final class ArrayLayoutFastSelect<T> {
+public final class FastSelect<T> {
 
     private final int blockSize;
     private final Class<T> dataClass;
@@ -37,7 +37,7 @@ public final class ArrayLayoutFastSelect<T> {
     private final List<Column> columns;
     private final Map<String, Column> columnsByNames;
 
-    public ArrayLayoutFastSelect(final int blockSize, final Class<T> dataClass, final List<Column> columns) {
+    public FastSelect(final int blockSize, final Class<T> dataClass, final List<Column> columns) {
         this.blockSize = blockSize;
         this.dataClass = dataClass;
         this.columns = columns;

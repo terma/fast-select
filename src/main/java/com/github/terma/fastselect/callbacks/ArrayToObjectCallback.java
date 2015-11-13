@@ -16,7 +16,7 @@ limitations under the License.
 
 package com.github.terma.fastselect.callbacks;
 
-import com.github.terma.fastselect.ArrayLayoutFastSelect;
+import com.github.terma.fastselect.FastSelect;
 import com.github.terma.fastselect.MethodHandlerRepository;
 import org.apache.commons.collections.primitives.ArrayLongList;
 import org.apache.commons.collections.primitives.ArrayShortList;
@@ -27,11 +27,11 @@ import java.util.List;
 public class ArrayToObjectCallback<T> implements ArrayLayoutCallback {
 
     private final Class<T> dataClass;
-    private final List<ArrayLayoutFastSelect.Column> columns;
+    private final List<FastSelect.Column> columns;
     private final MethodHandlerRepository mhRepo;
     private final Callback<T> callback;
 
-    public ArrayToObjectCallback(final Class<T> dataClass, final List<ArrayLayoutFastSelect.Column> columns,
+    public ArrayToObjectCallback(final Class<T> dataClass, final List<FastSelect.Column> columns,
                                  final MethodHandlerRepository mhRepo, final Callback<T> callback) {
         this.dataClass = dataClass;
         this.columns = columns;
@@ -44,17 +44,17 @@ public class ArrayToObjectCallback<T> implements ArrayLayoutCallback {
         try {
             final T o = dataClass.newInstance();
 
-            for (final ArrayLayoutFastSelect.Column column : columns) {
+            for (final FastSelect.Column column : columns) {
                 MethodHandle methodHandle = mhRepo.set(column.name);
 
                 if (column.type == long.class) {
                     methodHandle.invoke(o, ((ArrayLongList) column.data).get(position));
                 } else if (column.type == int.class) {
-                    methodHandle.invoke(o, ((ArrayLayoutFastSelect.FastIntList) column.data).data[position]);
+                    methodHandle.invoke(o, ((FastSelect.FastIntList) column.data).data[position]);
                 } else if (column.type == short.class) {
                     methodHandle.invoke(o, ((ArrayShortList) column.data).get(position));
                 } else if (column.type == byte.class) {
-                    methodHandle.invoke(o, ((ArrayLayoutFastSelect.FastByteList) column.data).data[position]);
+                    methodHandle.invoke(o, ((FastSelect.FastByteList) column.data).data[position]);
                 }
             }
 

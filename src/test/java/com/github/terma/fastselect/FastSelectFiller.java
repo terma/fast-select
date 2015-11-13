@@ -20,15 +20,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ArrayLayoutFastSelectFiller {
+public class FastSelectFiller {
 
-    public static ArrayLayoutFastSelect<RealData> database;
+    public static FastSelect<RealData> database;
 
     private final int blockSize;
     private final long itemsToCreate;
     private long time;
 
-    public ArrayLayoutFastSelectFiller(int blockSize, int itemsToCreate) {
+    public FastSelectFiller(int blockSize, int itemsToCreate) {
         this.blockSize = blockSize;
         this.itemsToCreate = itemsToCreate;
     }
@@ -37,16 +37,16 @@ public class ArrayLayoutFastSelectFiller {
         System.out.println("Filler started");
         final long start = System.currentTimeMillis();
 
-        database = new ArrayLayoutFastSelect<>(blockSize, RealData.class, Arrays.asList(
-                new ArrayLayoutFastSelect.Column("r", byte.class),
-                new ArrayLayoutFastSelect.Column("g", byte.class),
-                new ArrayLayoutFastSelect.Column("s", byte.class),
-                new ArrayLayoutFastSelect.Column("o", byte.class),
-                new ArrayLayoutFastSelect.Column("c", byte.class),
-                new ArrayLayoutFastSelect.Column("m", byte.class),
-                new ArrayLayoutFastSelect.Column("d", short.class),
-                new ArrayLayoutFastSelect.Column("uid1", long.class),
-                new ArrayLayoutFastSelect.Column("uid2", long.class)
+        database = new FastSelect<>(blockSize, RealData.class, Arrays.asList(
+                new FastSelect.Column("r", byte.class),
+                new FastSelect.Column("g", byte.class),
+                new FastSelect.Column("s", byte.class),
+                new FastSelect.Column("o", byte.class),
+                new FastSelect.Column("c", byte.class),
+                new FastSelect.Column("m", byte.class),
+                new FastSelect.Column("d", short.class),
+                new FastSelect.Column("uid1", long.class),
+                new FastSelect.Column("uid2", long.class)
         ));
 
         final List<RealData> data = new ArrayList<>();

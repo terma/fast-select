@@ -16,7 +16,7 @@ limitations under the License.
 
 package com.github.terma.fastselect.callbacks;
 
-import com.github.terma.fastselect.ArrayLayoutFastSelect;
+import com.github.terma.fastselect.FastSelect;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,9 +24,9 @@ import java.util.Map;
 public class GroupCountCallback implements ArrayLayoutCallback {
 
     private final Map<Integer, Integer> counter = new HashMap<>();
-    private final ArrayLayoutFastSelect.Column groupBy;
+    private final FastSelect.Column groupBy;
 
-    public GroupCountCallback(final ArrayLayoutFastSelect.Column groupBy) {
+    public GroupCountCallback(final FastSelect.Column groupBy) {
         this.groupBy = groupBy;
     }
 

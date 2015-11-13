@@ -47,10 +47,10 @@ public class Benchmark {
     @Param({"1000000"}) // "10000000"
     private int volume;
 
-    @Param({"ArrayLayoutFastSelect"})
+    @Param({"FastSelect"})
     private String impl;
 
-    private ArrayLayoutFastSelect fastSelect;
+    private FastSelect fastSelect;
 
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
@@ -71,11 +71,11 @@ public class Benchmark {
         };
     }
 
-    public static ArrayLayoutFastSelect initDatabase(int blockSize, int volume) {
+    public static FastSelect initDatabase(int blockSize, int volume) {
         final MemMeter memMeter = new MemMeter();
 
-        new ArrayLayoutFastSelectFiller(blockSize, volume).run();
-        ArrayLayoutFastSelect fastSelect = ArrayLayoutFastSelectFiller.database;
+        new FastSelectFiller(blockSize, volume).run();
+        FastSelect fastSelect = FastSelectFiller.database;
 
         System.out.println("Used mem: " + memMeter.getUsedMb() + " mb, volume: " + volume);
         return fastSelect;
@@ -85,8 +85,8 @@ public class Benchmark {
     public void init() throws InterruptedException {
         final MemMeter memMeter = new MemMeter();
 
-        new ArrayLayoutFastSelectFiller(blockSize, volume).run();
-        fastSelect = ArrayLayoutFastSelectFiller.database;
+        new FastSelectFiller(blockSize, volume).run();
+        fastSelect = FastSelectFiller.database;
 
         System.out.println("Used mem: " + memMeter.getUsedMb() + " mb, volume: " + volume);
     }
@@ -101,7 +101,7 @@ public class Benchmark {
     @org.openjdk.jmh.annotations.Benchmark
     public Object groupAndCountFiltered10G5R4C20S40D() throws Exception {
         GroupCountCallback counter = new GroupCountCallback(
-                ArrayLayoutFastSelectFiller.database.getColumnsByNames().get("r"));
+                FastSelectFiller.database.getColumnsByNames().get("r"));
         fastSelect.select(createWhere(), counter);
         return counter.getCounters();
     }

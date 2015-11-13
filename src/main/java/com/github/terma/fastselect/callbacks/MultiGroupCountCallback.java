@@ -16,7 +16,7 @@ limitations under the License.
 
 package com.github.terma.fastselect.callbacks;
 
-import com.github.terma.fastselect.ArrayLayoutFastSelect;
+import com.github.terma.fastselect.FastSelect;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,15 +24,15 @@ import java.util.Map;
 public class MultiGroupCountCallback implements ArrayLayoutCallback {
 
     private final Map<Integer, Object> counters = new HashMap<>();
-    private final ArrayLayoutFastSelect.Column first;
-    private final ArrayLayoutFastSelect.Column[] middle;
-    private final ArrayLayoutFastSelect.Column last;
+    private final FastSelect.Column first;
+    private final FastSelect.Column[] middle;
+    private final FastSelect.Column last;
 
-    public MultiGroupCountCallback(final ArrayLayoutFastSelect.Column... groupBy) {
+    public MultiGroupCountCallback(final FastSelect.Column... groupBy) {
         this.first = groupBy[0];
         this.last = groupBy[groupBy.length - 1];
 
-        this.middle = new ArrayLayoutFastSelect.Column[groupBy.length - 2];
+        this.middle = new FastSelect.Column[groupBy.length - 2];
         System.arraycopy(groupBy, 1, middle, 0, middle.length);
     }
 
@@ -50,7 +50,7 @@ public class MultiGroupCountCallback implements ArrayLayoutCallback {
     public void data(final int position) {
         Map<Integer, Object> counter = getNestedMapMapOrNew(counters, first.valueAsInt(position));
 
-        for (ArrayLayoutFastSelect.Column m : middle) {
+        for (FastSelect.Column m : middle) {
             counter = getNestedMapMapOrNew(counter, m.valueAsInt(position));
         }
 

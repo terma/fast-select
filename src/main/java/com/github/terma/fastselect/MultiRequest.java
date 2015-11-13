@@ -17,14 +17,13 @@ limitations under the License.
 package com.github.terma.fastselect;
 
 import java.lang.invoke.MethodHandle;
-import java.util.BitSet;
 
 public class MultiRequest {
 
     public final String name;
     public final int[] values;
     public MethodHandle mh;
-    public ArrayLayoutFastSelect.Column column;
+    public FastSelect.Column column;
 
     public MultiRequest(String name, int[] values) {
         this.name = name;

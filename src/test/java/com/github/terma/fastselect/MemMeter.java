@@ -26,9 +26,9 @@ public class MemMeter {
         int volume = 100000000;
 
         final MemMeter memMeter = new MemMeter();
-        new ArrayLayoutFastSelectFiller(1000, volume).run();
+        new FastSelectFiller(1000, volume).run();
 
-        System.out.println(ArrayLayoutFastSelectFiller.database.size());
+        System.out.println(FastSelectFiller.database.size());
         System.out.println("Used mem: " + memMeter.getUsedMb() + " mb, volume: " + volume);
     }
 

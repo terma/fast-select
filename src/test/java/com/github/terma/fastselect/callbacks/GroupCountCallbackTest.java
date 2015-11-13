@@ -1,6 +1,6 @@
 package com.github.terma.fastselect.callbacks;
 
-import com.github.terma.fastselect.ArrayLayoutFastSelect;
+import com.github.terma.fastselect.FastSelect;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -10,15 +10,15 @@ public class GroupCountCallbackTest {
 
     @Test
     public void empty() {
-        ArrayLayoutFastSelect.Column column1 = new ArrayLayoutFastSelect.Column("1", int.class);
+        FastSelect.Column column1 = new FastSelect.Column("1", int.class);
         GroupCountCallback groupCountCallback = new GroupCountCallback(column1);
         Assert.assertEquals(new HashMap<>(), groupCountCallback.getCounters());
     }
 
     @Test
     public void nonEmpty() {
-        ArrayLayoutFastSelect.Column column1 = new ArrayLayoutFastSelect.Column("1", int.class);
-        ((ArrayLayoutFastSelect.FastIntList) column1.data).add(1);
+        FastSelect.Column column1 = new FastSelect.Column("1", int.class);
+        ((FastSelect.FastIntList) column1.data).add(1);
 
         GroupCountCallback multiGroupCountCallback = new GroupCountCallback(column1);
         multiGroupCountCallback.data(0);
@@ -29,9 +29,9 @@ public class GroupCountCallbackTest {
 
     @Test
     public void nonEmptyMulti() {
-        ArrayLayoutFastSelect.Column column1 = new ArrayLayoutFastSelect.Column("1", int.class);
-        ((ArrayLayoutFastSelect.FastIntList) column1.data).add(1);
-        ((ArrayLayoutFastSelect.FastIntList) column1.data).add(5);
+        FastSelect.Column column1 = new FastSelect.Column("1", int.class);
+        ((FastSelect.FastIntList) column1.data).add(1);
+        ((FastSelect.FastIntList) column1.data).add(5);
 
         GroupCountCallback multiGroupCountCallback = new GroupCountCallback(column1);
         multiGroupCountCallback.data(0);
@@ -46,7 +46,7 @@ public class GroupCountCallbackTest {
 
     @Test(expected = ArrayIndexOutOfBoundsException.class)
     public void throwExceptionIfNotExistentPosition() {
-        ArrayLayoutFastSelect.Column column1 = new ArrayLayoutFastSelect.Column("1", int.class);
+        FastSelect.Column column1 = new FastSelect.Column("1", int.class);
 
         GroupCountCallback groupCountCallback = new GroupCountCallback(column1);
         groupCountCallback.data(66);
