@@ -39,13 +39,13 @@ public class Benchmark {
     public static final int S_MAX = 100;
     public static final int D_MAX = 100;
 
-    @Param({"1000"}) // "100000"
+    @Param({"100"}) // "100000"
     private int blockSize;
 
-    @Param({"1000000", "10000000"}) // "10000000"
+    @Param({"10000000"}) // "10000000"
     private int volume;
 
-    @Param({"ArrayLayoutFastSelect", "ObjectFastSelect"}) // "ObjectFastSelect"
+    @Param({"ArrayLayoutFastSelect"}) // "ObjectFastSelect"
     private String impl;
 
     private FastSelect fastSelect;

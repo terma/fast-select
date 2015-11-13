@@ -53,3 +53,7 @@ Benchmark.case10G5R4C20S40D         1000  ArrayLayoutFastSelect   1000000  avgt 
 Benchmark.case10G5R4C20S40D         1000  ArrayLayoutFastSelect  10000000  avgt       19.529          ms/op
 Benchmark.case10G5R4C20S40D         1000       ObjectFastSelect   1000000  avgt       20.114          ms/op
 Benchmark.case10G5R4C20S40D         1000       ObjectFastSelect  10000000  avgt       28.830          ms/op
+
+### super block 100 and block 100
+Benchmark                    (blockSize)                 (impl)  (volume)  Mode  Cnt   Score   Error  Units
+Benchmark.case10G5R4C20S40D          100  ArrayLayoutFastSelect  10000000  avgt       12.264          ms/op
