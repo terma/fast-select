@@ -16,6 +16,7 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
+import com.github.terma.fastselect.callbacks.*;
 import org.apache.commons.collections.primitives.ArrayLongList;
 import org.apache.commons.collections.primitives.ArrayShortList;
 
@@ -141,18 +142,7 @@ public final class ArrayLayoutFastSelect<T> implements FastSelect<T> {
                 opa:
                 for (int i = block.start; i < end; i++) {
                     for (final MultiRequest request : where) {
-                        final Class type = request.column.type;
-                        final Object data = request.column.data;
-                        int value = 0;
-                        if (type == byte.class) {
-                            value = ((FastByteList) data).data[i];
-                        } else if (type == short.class) {
-                            value = ((ArrayShortList) data).get(i);
-                        } else if (type == long.class) {
-                            value = (int) ((ArrayLongList) data).get(i);
-                        } else if (type == int.class) {
-                            value = ((FastIntList) data).data[i];
-                        }
+                        final int value = request.column.valueAsInt(i);
 
                         if (Arrays.binarySearch(request.values, value) < 0) {
                             continue opa;
@@ -174,7 +164,7 @@ public final class ArrayLayoutFastSelect<T> implements FastSelect<T> {
 
     @Override
     public int count(MultiRequest[] where) {
-        final CountArrayLayoutCallback countCallback = new CountArrayLayoutCallback();
+        final CounterCallback countCallback = new CounterCallback();
         select(where, countCallback);
         return countCallback.getCount();
     }
@@ -207,6 +197,10 @@ public final class ArrayLayoutFastSelect<T> implements FastSelect<T> {
         return 0;
     }
 
+    public Map<String, Column> getColumnsByNames() {
+        return columnsByNames;
+    }
+
     @Override
     public String toString() {
         return getClass().getSimpleName() + " {blockSize: " + blockSize + ", data: " + size()
@@ -222,6 +216,21 @@ public final class ArrayLayoutFastSelect<T> implements FastSelect<T> {
             this.name = name;
             this.type = type;
         }
+
+        public int valueAsInt(final int position) {
+            if (type == byte.class) {
+                return ((FastByteList) data).data[position];
+            } else if (type == short.class) {
+                return ((ArrayShortList) data).get(position);
+            } else if (type == long.class) {
+                return (int) ((ArrayLongList) data).get(position);
+            } else if (type == int.class) {
+                return ((FastIntList) data).data[position];
+            } else {
+                throw new IllegalArgumentException("Unknown column type: " + type);
+            }
+        }
+
     }
 
     private static class Block {
@@ -230,7 +239,7 @@ public final class ArrayLayoutFastSelect<T> implements FastSelect<T> {
         public int size;
     }
 
-    static class FastIntList {
+    public static class FastIntList {
 
         public int[] data = new int[16];
         public int size = 0;
@@ -245,7 +254,7 @@ public final class ArrayLayoutFastSelect<T> implements FastSelect<T> {
 
     }
 
-    static class FastByteList {
+    public static class FastByteList {
 
         public byte[] data = new byte[16];
         public int size = 0;

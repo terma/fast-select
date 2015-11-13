@@ -14,22 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.github.terma.fastselect;
+package com.github.terma.fastselect.callbacks;
 
-import java.util.ArrayList;
-import java.util.List;
+public class CounterCallback implements ArrayLayoutCallback {
 
-public class ListCallback<T> implements Callback<T> {
-
-    private final List<T> result = new ArrayList<>();
+    private int count;
 
     @Override
-    public void data(T data) {
-        result.add(data);
+    public void data(int position) {
+        count++;
     }
 
-    public List<T> getResult() {
-        return result;
+    public int getCount() {
+        return count;
     }
-
 }

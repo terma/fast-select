@@ -14,17 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.github.terma.fastselect;
+package com.github.terma.fastselect.callbacks;
 
-import com.github.terma.fastselect.callbacks.Callback;
+public interface ArrayLayoutCallback {
 
-import java.util.List;
-
-public interface FastSelect<T> {
-    List<T> select(MultiRequest[] where);
-
-    void select(MultiRequest[] where, Callback<T> callback);
-
-    int count(MultiRequest[] where);
+    void data(int position);
 
 }

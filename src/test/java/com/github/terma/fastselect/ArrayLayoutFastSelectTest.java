@@ -116,13 +116,12 @@ public class ArrayLayoutFastSelectTest {
         Assert.assertEquals(3, database.size());
     }
 
-    static class TestIntByte {
+    public static class TestIntByte {
         public int value1;
         public byte value2;
 
-        @SuppressWarnings("unused")
-            // empty constructor for database to be able restore object
-        TestIntByte() {
+        // empty constructor for database to be able restore object
+        public TestIntByte() {
             this(0, (byte) 0);
         }
 
@@ -146,13 +145,12 @@ public class ArrayLayoutFastSelectTest {
         }
     }
 
-    static class TestLongShort {
+    public static class TestLongShort {
         public long long1;
         public short short1;
 
-        @SuppressWarnings("unused")
-            // empty constructor for database to be able restore object
-        TestLongShort() {
+        // empty constructor for database to be able restore object
+        public TestLongShort() {
             this(0, (byte) 0);
         }
 

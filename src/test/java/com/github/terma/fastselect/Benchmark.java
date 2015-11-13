@@ -16,6 +16,8 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
+import com.github.terma.fastselect.callbacks.GroupAndCountCallback;
+import com.github.terma.fastselect.callbacks.MultiGroupCountCallback;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -24,7 +26,7 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.util.concurrent.TimeUnit;
 
-@Fork(value = 1, jvmArgs = "-Xmx6g")
+@Fork(value = 0, jvmArgs = "-Xmx6g")
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
@@ -39,16 +41,16 @@ public class Benchmark {
     public static final int S_MAX = 100;
     public static final int D_MAX = 100;
 
-    @Param({"100"}) // "100000"
+    @Param({"1000"}) // "100000"
     private int blockSize;
 
-    @Param({"10000000"}) // "10000000"
+    @Param({"1000000"}) // "10000000"
     private int volume;
 
-    @Param({"ArrayLayoutFastSelect"}) // "ObjectFastSelect"
+    @Param({"ArrayLayoutFastSelect"})
     private String impl;
 
-    private FastSelect fastSelect;
+    private ArrayLayoutFastSelect fastSelect;
 
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
@@ -59,32 +61,57 @@ public class Benchmark {
         new Runner(opt).run();
     }
 
-    @Setup
-    public void init() throws InterruptedException {
-        final MemMeter memMeter = new MemMeter();
-
-        if (ArrayLayoutFastSelect.class.getSimpleName().equals(impl)) {
-            new ArrayLayoutFastSelectFiller(blockSize, volume).run();
-            fastSelect = ArrayLayoutFastSelectFiller.database;
-        } else if (ObjectFastSelect.class.getSimpleName().equals(impl)) {
-            new ObjectFastSelectFiller(blockSize, volume).run();
-            fastSelect = ObjectFastSelectFiller.database;
-        }
-
-        System.out.println("Used mem: " + memMeter.getUsedMb() + " mb, volume: " + volume);
-    }
-
-    @org.openjdk.jmh.annotations.Benchmark
-    public int case10G5R4C20S40D() throws Exception {
-        MultiRequest[] requests = new MultiRequest[]{
+    public static MultiRequest[] createWhere() {
+        return new MultiRequest[]{
                 new MultiRequest("g", new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}),
                 new MultiRequest("r", new int[]{0, 1, 2, 3, 4}),
                 new MultiRequest("c", new int[]{0, 2, 3, 4}),
                 new MultiRequest("s", new int[]{0, 19, 18, 17, 16, 15, 14, 13, 12, 11, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}),
                 new MultiRequest("d", new int[]{0, 90, 99, 5, 34, 22, 26, 8, 5, 6, 7, 5, 6, 34, 35, 36, 37, 38, 39, 21, 70, 71, 74, 76, 78, 79, 10, 11, 22, 33, 44, 55, 66})
         };
+    }
 
-        return fastSelect.count(requests);
+    public static ArrayLayoutFastSelect initDatabase(int blockSize, int volume) {
+        final MemMeter memMeter = new MemMeter();
+
+        new ArrayLayoutFastSelectFiller(blockSize, volume).run();
+        ArrayLayoutFastSelect fastSelect = ArrayLayoutFastSelectFiller.database;
+
+        System.out.println("Used mem: " + memMeter.getUsedMb() + " mb, volume: " + volume);
+        return fastSelect;
+    }
+
+    @Setup
+    public void init() throws InterruptedException {
+        final MemMeter memMeter = new MemMeter();
+
+        new ArrayLayoutFastSelectFiller(blockSize, volume).run();
+        fastSelect = ArrayLayoutFastSelectFiller.database;
+
+        System.out.println("Used mem: " + memMeter.getUsedMb() + " mb, volume: " + volume);
+    }
+
+    //    @org.openjdk.jmh.annotations.Benchmark
+    public int countByFiltered10G5R4C20S40D() throws Exception {
+        return fastSelect.count(createWhere());
+    }
+
+    //    @org.openjdk.jmh.annotations.Benchmark
+    public Object groupAndCountFiltered10G5R4C20S40D() throws Exception {
+        GroupAndCountCallback counter = new GroupAndCountCallback(
+                ArrayLayoutFastSelectFiller.database.getColumnsByNames().get("r"));
+        fastSelect.select(createWhere(), counter);
+        return counter.getCounter();
+    }
+
+    @org.openjdk.jmh.annotations.Benchmark
+    public Object multipleGroupAndCountFiltered10G5R4C20S40D() throws Exception {
+        MultiGroupCountCallback counter = new MultiGroupCountCallback(
+                ArrayLayoutFastSelectFiller.database.getColumnsByNames().get("g"),
+                ArrayLayoutFastSelectFiller.database.getColumnsByNames().get("r")
+        );
+        fastSelect.select(createWhere(), counter);
+        return counter.getCounters();
     }
 
 }

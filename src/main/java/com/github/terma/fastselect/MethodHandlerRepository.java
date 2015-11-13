@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-final class MethodHandlerRepository {
+public final class MethodHandlerRepository {
 
     private final Map<String, MethodHandle> getters;
     private final Map<String, MethodHandle> setters;

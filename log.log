@@ -57,3 +57,13 @@ Benchmark.case10G5R4C20S40D         1000       ObjectFastSelect  10000000  avgt 
 ### super block 100 and block 100
 Benchmark                    (blockSize)                 (impl)  (volume)  Mode  Cnt   Score   Error  Units
 Benchmark.case10G5R4C20S40D          100  ArrayLayoutFastSelect  10000000  avgt       12.264          ms/op
+
+### no more superblock as benefit not so significant 7ms on 10m
+
+### multi group x2 and count with same filtering
+Benchmark                                   (blockSize)                 (impl)  (volume)  Mode  Cnt   Score   Error  Units
+MultipleGroupAndCountFilteredBenchmark.test         1000  ArrayLayoutFastSelect   1000000  avgt       14.048          ms/op
+
+### multi group x2 and count with same filtering
+Benchmark                                   (blockSize)                 (impl)  (volume)  Mode  Cnt   Score   Error  Units
+MultipleGroupAndCountFilteredBenchmark.test         1000  ArrayLayoutFastSelect  10000000  avgt       20.662          ms/op

@@ -14,10 +14,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.github.terma.fastselect;
+package com.github.terma.fastselect.callbacks;
 
-public interface ArrayLayoutCallback {
+import java.util.ArrayList;
+import java.util.List;
 
-    void data(int position);
+public class ListCallback<T> implements Callback<T> {
+
+    private final List<T> result = new ArrayList<>();
+
+    @Override
+    public void data(T data) {
+        result.add(data);
+    }
+
+    public List<T> getResult() {
+        return result;
+    }
 
 }
