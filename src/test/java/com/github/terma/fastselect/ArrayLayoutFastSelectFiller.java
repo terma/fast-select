@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-class ArrayLayoutFastSelectFiller {
+public class ArrayLayoutFastSelectFiller {
 
     public static ArrayLayoutFastSelect<RealData> database;
 

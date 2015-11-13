@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 @State(Scope.Benchmark)
 @Warmup(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
 @Measurement(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
-public class MultiGroupAndCountBenchmark {
+public class MultiGroupCountBenchmark {
 
     @Param({"1000"})
     private int blockSize;
@@ -46,14 +46,14 @@ public class MultiGroupAndCountBenchmark {
 
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
-                .include(".*" + MultiGroupAndCountBenchmark.class.getSimpleName() + ".*")
+                .include(".*" + MultiGroupCountBenchmark.class.getSimpleName() + ".*")
                 .build();
         new Runner(opt).run();
     }
 
     @Setup
     public void init() throws Exception {
-        fastSelect = Benchmark.initDatabase(blockSize, volume);
+        fastSelect = com.github.terma.fastselect.Benchmark.initDatabase(blockSize, volume);
 
         System.out.println(">>>> TRY TEST:");
         System.out.println(test());
@@ -66,7 +66,7 @@ public class MultiGroupAndCountBenchmark {
                 ArrayLayoutFastSelectFiller.database.getColumnsByNames().get("g"),
                 ArrayLayoutFastSelectFiller.database.getColumnsByNames().get("r")
         );
-        fastSelect.select(Benchmark.createWhere(), counter);
+        fastSelect.select(com.github.terma.fastselect.Benchmark.createWhere(), counter);
         return counter.getCounters();
     }
 

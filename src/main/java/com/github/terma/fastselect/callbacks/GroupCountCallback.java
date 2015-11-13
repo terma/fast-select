@@ -38,7 +38,7 @@ public class GroupCountCallback implements ArrayLayoutCallback {
         else counter.put(value, c + 1);
     }
 
-    public Map<Integer, Integer> getCounter() {
+    public Map<Integer, Integer> getCounters() {
         return counter;
     }
 

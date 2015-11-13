@@ -1,4 +1,4 @@
-package com.github.terma.fastselect;
+package com.github.terma.fastselect.callbacks;
 
 import com.github.terma.fastselect.callbacks.CounterCallback;
 import junit.framework.Assert;

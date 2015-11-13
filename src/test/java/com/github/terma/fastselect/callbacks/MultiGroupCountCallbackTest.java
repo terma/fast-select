@@ -1,5 +1,6 @@
-package com.github.terma.fastselect;
+package com.github.terma.fastselect.callbacks;
 
+import com.github.terma.fastselect.ArrayLayoutFastSelect;
 import com.github.terma.fastselect.callbacks.MultiGroupCountCallback;
 import junit.framework.Assert;
 import org.junit.Test;

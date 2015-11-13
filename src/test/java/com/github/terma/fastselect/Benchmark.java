@@ -101,7 +101,7 @@ public class Benchmark {
         GroupCountCallback counter = new GroupCountCallback(
                 ArrayLayoutFastSelectFiller.database.getColumnsByNames().get("r"));
         fastSelect.select(createWhere(), counter);
-        return counter.getCounter();
+        return counter.getCounters();
     }
 
     @org.openjdk.jmh.annotations.Benchmark
