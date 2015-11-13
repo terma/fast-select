@@ -37,7 +37,7 @@ public final class ArrayLayoutFastSelect<T> implements FastSelect<T> {
     public ArrayLayoutFastSelect(final int blockSize, final Class<T> dataClass, final List<Column> columns) {
         this.blockSize = blockSize;
         this.dataClass = dataClass;
-        this.columns = initData(columns);
+        this.columns = columns;
         this.columnsByNames = initColumnsByName(columns);
         this.mhRepo = new MethodHandlerRepository(dataClass, getColumnsAsMap(columns));
         this.blocks = new ArrayList<>();
@@ -53,23 +53,6 @@ public final class ArrayLayoutFastSelect<T> implements FastSelect<T> {
         Map<String, Class> r = new HashMap<>();
         for (Column column : columns) r.put(column.name, column.type);
         return r;
-    }
-
-    private static List<Column> initData(List<Column> columns) {
-        for (Column column : columns) {
-            if (column.type == long.class) {
-                column.data = new ArrayLongList();
-            } else if (column.type == int.class) {
-                column.data = new FastIntList();
-            } else if (column.type == short.class) {
-                column.data = new ArrayShortList();
-            } else if (column.type == byte.class) {
-                column.data = new FastByteList();
-            } else {
-                throw new IllegalArgumentException("!");
-            }
-        }
-        return columns;
     }
 
     public void addAll(final List<T> data) {
@@ -208,13 +191,26 @@ public final class ArrayLayoutFastSelect<T> implements FastSelect<T> {
     }
 
     public static class Column {
-        public String name;
-        public Class type;
-        public Object data;
 
-        public Column(String name, Class type) {
+        public final String name;
+        public final Class type;
+        public final Object data;
+
+        public Column(final String name, final Class type) {
             this.name = name;
             this.type = type;
+
+            if (type == long.class) {
+                data = new ArrayLongList();
+            } else if (type == int.class) {
+                data = new FastIntList();
+            } else if (type == short.class) {
+                data = new ArrayShortList();
+            } else if (type == byte.class) {
+                data = new FastByteList();
+            } else {
+                throw new IllegalArgumentException("Unsupportable column type: " + type);
+            }
         }
 
         public int valueAsInt(final int position) {

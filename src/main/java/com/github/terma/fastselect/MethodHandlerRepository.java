@@ -27,24 +27,6 @@ public final class MethodHandlerRepository {
     private final Map<String, MethodHandle> getters;
     private final Map<String, MethodHandle> setters;
 
-    public MethodHandlerRepository(Class dataClass, String... fields) {
-        final Map<String, MethodHandle> tempGetters = new HashMap<>();
-        final Map<String, MethodHandle> tempSetters = new HashMap<>();
-        final MethodHandles.Lookup lookup = MethodHandles.lookup();
-        for (final String indexColumn : fields) {
-            try {
-                final MethodHandle getterHandler = lookup.findGetter(dataClass, indexColumn, int.class);
-                final MethodHandle setterHandler = lookup.findSetter(dataClass, indexColumn, int.class);
-                tempGetters.put(indexColumn, getterHandler);
-                tempSetters.put(indexColumn, setterHandler);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                throw new IllegalArgumentException(e);
-            }
-        }
-        this.getters = Collections.unmodifiableMap(tempGetters);
-        this.setters = Collections.unmodifiableMap(tempSetters);
-    }
-
     public MethodHandlerRepository(Class dataClass, Map<String, Class> fields) {
         final Map<String, MethodHandle> tempGetters = new HashMap<>();
         final Map<String, MethodHandle> tempSetters = new HashMap<>();

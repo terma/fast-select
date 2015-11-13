@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 @State(Scope.Benchmark)
 @Warmup(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
 @Measurement(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
-public class MultipleGroupAndCountFilteredBenchmark {
+public class MultiGroupAndCountBenchmark {
 
     @Param({"1000"})
     private int blockSize;
@@ -46,7 +46,7 @@ public class MultipleGroupAndCountFilteredBenchmark {
 
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
-                .include(".*" + MultipleGroupAndCountFilteredBenchmark.class.getSimpleName() + ".*")
+                .include(".*" + MultiGroupAndCountBenchmark.class.getSimpleName() + ".*")
                 .build();
         new Runner(opt).run();
     }

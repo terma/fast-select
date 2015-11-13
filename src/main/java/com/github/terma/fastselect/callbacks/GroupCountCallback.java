@@ -21,12 +21,12 @@ import com.github.terma.fastselect.ArrayLayoutFastSelect;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GroupAndCountCallback implements ArrayLayoutCallback {
+public class GroupCountCallback implements ArrayLayoutCallback {
 
     private final Map<Integer, Integer> counter = new HashMap<>();
     private final ArrayLayoutFastSelect.Column groupBy;
 
-    public GroupAndCountCallback(final ArrayLayoutFastSelect.Column groupBy) {
+    public GroupCountCallback(final ArrayLayoutFastSelect.Column groupBy) {
         this.groupBy = groupBy;
     }
 
