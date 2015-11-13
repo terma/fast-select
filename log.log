@@ -67,3 +67,8 @@ MultipleGroupAndCountFilteredBenchmark.test         1000  ArrayLayoutFastSelect 
 ### multi group x2 and count with same filtering
 Benchmark                                   (blockSize)                 (impl)  (volume)  Mode  Cnt   Score   Error  Units
 MultipleGroupAndCountFilteredBenchmark.test         1000  ArrayLayoutFastSelect  10000000  avgt       20.662          ms/op
+
+### after cleanup
+Benchmark                                          (blockSize)      (impl)  (volume)  Mode  Cnt   Score   Error  Units
+CountBenchmark.groupAndCountFiltered10G5R4C20S40D         1000  FastSelect   1000000  avgt       15.197          ms/op
+MultiGroupCountBenchmark.test                             1000  FastSelect  10000000  avgt       23.166          ms/op

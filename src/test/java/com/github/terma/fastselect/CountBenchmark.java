@@ -26,13 +26,13 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.util.concurrent.TimeUnit;
 
-@Fork(value = 0, jvmArgs = "-Xmx6g")
+@Fork(value = 1, jvmArgs = "-Xmx6g")
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
 @Warmup(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
 @Measurement(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
-public class Benchmark {
+public class CountBenchmark {
 
     public static final int G_MAX = 100;
     public static final int R_MAX = 5;
@@ -54,7 +54,7 @@ public class Benchmark {
 
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
-                .include(".*" + Benchmark.class.getSimpleName() + ".*")
+                .include(".*" + CountBenchmark.class.getSimpleName() + ".*")
 //                .addProfiler(HotspotMemoryProfiler.class)
 //                .addProfiler(GCProfiler.class)
                 .build();
@@ -91,14 +91,14 @@ public class Benchmark {
         System.out.println("Used mem: " + memMeter.getUsedMb() + " mb, volume: " + volume);
     }
 
-    //    @org.openjdk.jmh.annotations.Benchmark
+    //    @org.openjdk.jmh.annotations.CountBenchmark
     public int countByFiltered10G5R4C20S40D() throws Exception {
         CounterCallback counterCallback = new CounterCallback();
         fastSelect.select(createWhere(), counterCallback);
         return counterCallback.getCount();
     }
 
-    @org.openjdk.jmh.annotations.Benchmark
+    @Benchmark
     public Object groupAndCountFiltered10G5R4C20S40D() throws Exception {
         GroupCountCallback counter = new GroupCountCallback(
                 FastSelectFiller.database.getColumnsByNames().get("r"));

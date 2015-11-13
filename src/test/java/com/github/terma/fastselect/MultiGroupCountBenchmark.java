@@ -53,20 +53,20 @@ public class MultiGroupCountBenchmark {
 
     @Setup
     public void init() throws Exception {
-        fastSelect = com.github.terma.fastselect.Benchmark.initDatabase(blockSize, volume);
+        fastSelect = CountBenchmark.initDatabase(blockSize, volume);
 
         System.out.println(">>>> TRY TEST:");
         System.out.println(test());
         System.out.println(">>>> TEST RESULT");
     }
 
-    @org.openjdk.jmh.annotations.Benchmark
+    @Benchmark
     public Object test() throws Exception {
         MultiGroupCountCallback counter = new MultiGroupCountCallback(
                 FastSelectFiller.database.getColumnsByNames().get("g"),
                 FastSelectFiller.database.getColumnsByNames().get("r")
         );
-        fastSelect.select(com.github.terma.fastselect.Benchmark.createWhere(), counter);
+        fastSelect.select(CountBenchmark.createWhere(), counter);
         return counter.getCounters();
     }
 

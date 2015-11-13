@@ -54,12 +54,12 @@ public class FastSelectFiller {
 
         opa:
         while (true) {
-            for (int r = 0; r < Benchmark.R_MAX; r++) {
-                for (int g = 0; g < Benchmark.G_MAX; g++) {
-                    for (int s = 0; s < Benchmark.S_MAX; s++) {
-                        for (int o = 0; o < Benchmark.O_MAX; o++) {
-                            for (int c = 0; c < Benchmark.C_MAX; c++) {
-                                for (int d = 0; d < Benchmark.D_MAX; d++) {
+            for (int r = 0; r < CountBenchmark.R_MAX; r++) {
+                for (int g = 0; g < CountBenchmark.G_MAX; g++) {
+                    for (int s = 0; s < CountBenchmark.S_MAX; s++) {
+                        for (int o = 0; o < CountBenchmark.O_MAX; o++) {
+                            for (int c = 0; c < CountBenchmark.C_MAX; c++) {
+                                for (int d = 0; d < CountBenchmark.D_MAX; d++) {
                                     if (count >= itemsToCreate) break opa;
 
                                     RealData item = new RealData();
