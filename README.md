@@ -2,7 +2,7 @@
 [![Coverage Status](https://coveralls.io/repos/terma/fast-select/badge.svg?branch=master&service=github)](https://coveralls.io/github/terma/fast-select?branch=master) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.terma/fast-select/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.terma/fast-select/)
 
 ## Fast-Select 
-In-memory column oriented compact storage optimized for fast search. Free open source under Apache 2.0 license.
+In-memory column oriented compact storage with extremely fast search by multiple criterias. Free open source under Apache 2.0 license.
 
 ## Test on your hardware
 
