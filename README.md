@@ -24,7 +24,11 @@ public class Data {
 ### Init fast select
 
 ```java
-FastSelect<Data> database = new FastSelect<>(Data.class, new FastSelect.Column("a", byte.class), new FastSelect.Column("b", byte.class));
+FastSelect<Data> database = new FastSelect<>(
+    Data.class, 
+    new FastSelect.Column("a", byte.class), 
+    new FastSelect.Column("b", byte.class)
+);
 
 // add your data
 database.addAll(new ArrayList<Data>(...)); 
