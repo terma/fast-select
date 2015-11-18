@@ -20,14 +20,38 @@ import com.github.terma.fastselect.callbacks.ArrayLayoutCallback;
 import com.github.terma.fastselect.callbacks.ArrayToObjectCallback;
 import com.github.terma.fastselect.callbacks.Callback;
 import com.github.terma.fastselect.callbacks.ListCallback;
-import org.apache.commons.collections.primitives.ArrayLongList;
-import org.apache.commons.collections.primitives.ArrayShortList;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.*;
 
 /**
- * Fast Search based two step search algorithm (bloom filter + direct scan within block)
+ * Compact in-memory storage with fast search.
+ * <p>
+ * In Memory implementation for database table. Supports fast search by any combination of columns.
+ * Internal storage has constant size for mem overhead.
+ * <p>
+ * Storage: Column oriented based on array
+ * For example for normal Java object you have 12-16 bytes on object header.
+ * Plus fields alignment depends on JVM and hardware architectures. Could be 4-8 bytes alignment.
+ * Which means you for one object with one int field. You need to allocate 16 bytes on header and 8 bytes
+ * on field on x64 machine with SunJVM. <a href="http://shipilev.net/blog/2014/heapdump-is-a-lie/">Details about JVM object mem layout</a>
+ * When you add new object class internally extract required fields from that object and add this to
+ * particular column data.
+ * <p>
+ * As result you don't need to spend mem on millions of object headers and alignment.
+ * The downside of that each time when you need to get data back as object some time need to be spend on
+ * recreation of your object. Mem as well. You can use references field in data at least for current implementation.
+ * <p>
+ * Search:
+ * Fast Search based two step search algorithm (<a href="https://en.wikipedia.org/wiki/Bloom_filter">Bloom Filter</a>
+ * + direct scan within block)
+ *
+ * @author Artem Stasiuk
+ * @see ArrayLayoutCallback
+ * @see com.github.terma.fastselect.callbacks.GroupCountCallback
+ * @see com.github.terma.fastselect.callbacks.MultiGroupCountCallback
  */
+@ThreadSafe
 public final class FastSelect<T> {
 
     private final int blockSize;
@@ -71,7 +95,7 @@ public final class FastSelect<T> {
 
                     if (column.type == long.class) {
                         long v = (long) mhRepo.get(column.name).invoke(row);
-                        ((ArrayLongList) column.data).add(v);
+                        ((FastLongList) column.data).add(v);
                         indexValue = (int) v;
                     } else if (column.type == int.class) {
                         int v = (int) mhRepo.get(column.name).invoke(row);
@@ -79,7 +103,7 @@ public final class FastSelect<T> {
                         indexValue = v;
                     } else if (column.type == short.class) {
                         short v = (short) mhRepo.get(column.name).invoke(row);
-                        ((ArrayShortList) column.data).add(v);
+                        ((FastShortList) column.data).add(v);
                         indexValue = v;
                     } else if (column.type == byte.class) {
                         byte v = (byte) mhRepo.get(column.name).invoke(row);
@@ -162,11 +186,11 @@ public final class FastSelect<T> {
     public int size() {
         for (Column column : columns) {
             if (column.type == long.class) {
-                return ((ArrayLongList) column.data).size();
+                return ((FastLongList) column.data).size;
             } else if (column.type == int.class) {
                 return ((FastIntList) column.data).size;
             } else if (column.type == short.class) {
-                return ((ArrayShortList) column.data).size();
+                return ((FastShortList) column.data).size;
             } else if (column.type == byte.class) {
                 return ((FastByteList) column.data).size;
             }
@@ -181,11 +205,10 @@ public final class FastSelect<T> {
     @Override
     public String toString() {
         return getClass().getSimpleName() + " {blockSize: " + blockSize + ", data: " + size()
-                + ", indexes: " + columns.size() + ", class: " + dataClass + "}";
+                + ", indexes: " + columns + ", class: " + dataClass + "}";
     }
 
     public static class Column {
-
         public final String name;
         public final Class type;
         public final Object data;
@@ -195,11 +218,11 @@ public final class FastSelect<T> {
             this.type = type;
 
             if (type == long.class) {
-                data = new ArrayLongList();
+                data = new FastLongList();
             } else if (type == int.class) {
                 data = new FastIntList();
             } else if (type == short.class) {
-                data = new ArrayShortList();
+                data = new FastShortList();
             } else if (type == byte.class) {
                 data = new FastByteList();
             } else {
@@ -207,13 +230,18 @@ public final class FastSelect<T> {
             }
         }
 
+        @Override
+        public String toString() {
+            return "Column {name: " + name + ", type: " + type + '}';
+        }
+
         public int valueAsInt(final int position) {
             if (type == byte.class) {
                 return ((FastByteList) data).data[position];
             } else if (type == short.class) {
-                return ((ArrayShortList) data).get(position);
+                return ((FastShortList) data).data[position];
             } else if (type == long.class) {
-                return (int) ((ArrayLongList) data).get(position);
+                return (int) ((FastLongList) data).data[position];
             } else if (type == int.class) {
                 return ((FastIntList) data).data[position];
             } else {
@@ -236,7 +264,37 @@ public final class FastSelect<T> {
 
         public void add(int v) {
             if (size == data.length) {
-                data = Arrays.copyOf(data, size + 1000);
+                data = Arrays.copyOf(data, size + 100000);
+            }
+            data[size] = v;
+            size++;
+        }
+
+    }
+
+    public static class FastShortList {
+
+        public short[] data = new short[16];
+        public int size = 0;
+
+        public void add(short v) {
+            if (size == data.length) {
+                data = Arrays.copyOf(data, size + 100000);
+            }
+            data[size] = v;
+            size++;
+        }
+
+    }
+
+    public static class FastLongList {
+
+        public long[] data = new long[16];
+        public int size = 0;
+
+        public void add(long v) {
+            if (size == data.length) {
+                data = Arrays.copyOf(data, size + 100000);
             }
             data[size] = v;
             size++;
@@ -251,7 +309,7 @@ public final class FastSelect<T> {
 
         public void add(byte v) {
             if (size == data.length) {
-                data = Arrays.copyOf(data, size + 1000);
+                data = Arrays.copyOf(data, size + 100000);
             }
             data[size] = v;
             size++;

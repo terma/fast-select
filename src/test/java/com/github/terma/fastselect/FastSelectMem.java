@@ -16,41 +16,21 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
+import com.github.terma.fastselect.demo.DemoData;
+import com.github.terma.fastselect.demo.DemoUtils;
+import com.github.terma.fastselect.utils.MemMeter;
 import org.openjdk.jmh.runner.RunnerException;
 
-public class MemMeter {
-
-    private final long usedBefore = getUsedNow();
+public class FastSelectMem {
 
     public static void main(String[] args) throws RunnerException, InterruptedException {
-        int volume = 100000000;
+        int volume = 10 * 10 * 1000 * 1000;
 
         final MemMeter memMeter = new MemMeter();
-        new FastSelectFiller(1000, volume).run();
+        FastSelect<DemoData> fastSelect = DemoUtils.createFastSelect(10000, volume);
 
-        System.out.println(FastSelectFiller.database.size());
         System.out.println("Used mem: " + memMeter.getUsedMb() + " mb, volume: " + volume);
-    }
-
-    private static long getUsedNow() {
-        return Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-    }
-
-    public long getUsedMb() {
-        return getUsed() / 1024 / 1024;
-    }
-
-    public long getUsed() {
-        System.gc();
-        System.gc();
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        final long usedAfter = getUsedNow();
-        return Math.max(0, usedAfter - usedBefore);
+        System.out.println(fastSelect.size());
     }
 
 }

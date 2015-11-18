@@ -14,24 +14,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.github.terma.fastselect;
+package com.github.terma.fastselect.demo;
 
-import java.util.Arrays;
+/**
+ * Demo object
+ */
+public class DemoData {
 
-public class MultiRequest {
-
-    public final String name;
-    public final int[] values;
-    public FastSelect.Column column;
-
-    public MultiRequest(String name, int[] values) {
-        this.name = name;
-        this.values = values;
-    }
-
-    @Override
-    public String toString() {
-        return "{ " + "name: " + name + ", values: " + Arrays.toString(values) + '}';
-    }
+    public byte g;
+    public byte r;
+    public byte c;
+    public byte m;
+    public byte o;
+    public byte s;
+    public short d;
+    public long uid1;
+    public long uid2;
 
 }

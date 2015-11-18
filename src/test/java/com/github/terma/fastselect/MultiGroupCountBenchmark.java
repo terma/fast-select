@@ -17,12 +17,15 @@ limitations under the License.
 package com.github.terma.fastselect;
 
 import com.github.terma.fastselect.callbacks.MultiGroupCountCallback;
+import com.github.terma.fastselect.demo.DemoData;
+import com.github.terma.fastselect.demo.DemoUtils;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Fork(value = 1, jvmArgs = "-Xmx6g")
@@ -36,13 +39,13 @@ public class MultiGroupCountBenchmark {
     @Param({"1000"})
     private int blockSize;
 
-    @Param({"10000000"})
+    @Param({"100000000"})
     private int volume;
 
     @Param({"FastSelect"})
     private String impl;
 
-    private FastSelect fastSelect;
+    private FastSelect<DemoData> fastSelect;
 
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
@@ -62,11 +65,12 @@ public class MultiGroupCountBenchmark {
 
     @Benchmark
     public Object test() throws Exception {
+        Map<String, FastSelect.Column> columnsByNames = fastSelect.getColumnsByNames();
         MultiGroupCountCallback counter = new MultiGroupCountCallback(
-                FastSelectFiller.database.getColumnsByNames().get("g"),
-                FastSelectFiller.database.getColumnsByNames().get("r")
+                columnsByNames.get("g"),
+                columnsByNames.get("r")
         );
-        fastSelect.select(CountBenchmark.createWhere(), counter);
+        fastSelect.select(DemoUtils.createWhere(), counter);
         return counter.getCounters();
     }
 

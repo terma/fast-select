@@ -16,6 +16,11 @@ limitations under the License.
 
 package com.github.terma.fastselect.callbacks;
 
+/**
+ * Count of selected record
+ *
+ * @author Artem Stasiuk
+ */
 public class CounterCallback implements ArrayLayoutCallback {
 
     private int count;

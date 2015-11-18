@@ -18,6 +18,8 @@ package com.github.terma.fastselect;
 
 import com.github.terma.fastselect.callbacks.CounterCallback;
 import com.github.terma.fastselect.callbacks.GroupCountCallback;
+import com.github.terma.fastselect.demo.DemoData;
+import com.github.terma.fastselect.demo.DemoUtils;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -34,13 +36,6 @@ import java.util.concurrent.TimeUnit;
 @Measurement(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
 public class CountBenchmark {
 
-    public static final int G_MAX = 100;
-    public static final int R_MAX = 5;
-    public static final int C_MAX = 6;
-    public static final int O_MAX = 2;
-    public static final int S_MAX = 100;
-    public static final int D_MAX = 100;
-
     @Param({"1000"}) // "100000"
     private int blockSize;
 
@@ -50,7 +45,7 @@ public class CountBenchmark {
     @Param({"FastSelect"})
     private String impl;
 
-    private FastSelect fastSelect;
+    private FastSelect<DemoData> fastSelect;
 
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
@@ -61,48 +56,27 @@ public class CountBenchmark {
         new Runner(opt).run();
     }
 
-    public static MultiRequest[] createWhere() {
-        return new MultiRequest[]{
-                new MultiRequest("g", new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}),
-                new MultiRequest("r", new int[]{0, 1, 2, 3, 4}),
-                new MultiRequest("c", new int[]{0, 2, 3, 4}),
-                new MultiRequest("s", new int[]{0, 19, 18, 17, 16, 15, 14, 13, 12, 11, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}),
-                new MultiRequest("d", new int[]{0, 90, 99, 5, 34, 22, 26, 8, 5, 6, 7, 5, 6, 34, 35, 36, 37, 38, 39, 21, 70, 71, 74, 76, 78, 79, 10, 11, 22, 33, 44, 55, 66})
-        };
-    }
-
-    public static FastSelect initDatabase(int blockSize, int volume) {
-        final MemMeter memMeter = new MemMeter();
-
-        new FastSelectFiller(blockSize, volume).run();
-        FastSelect fastSelect = FastSelectFiller.database;
-
-        System.out.println("Used mem: " + memMeter.getUsedMb() + " mb, volume: " + volume);
-        return fastSelect;
+    public static FastSelect<DemoData> initDatabase(int blockSize, int volume) {
+        return DemoUtils.createFastSelect(blockSize, volume);
     }
 
     @Setup
     public void init() throws InterruptedException {
-        final MemMeter memMeter = new MemMeter();
-
-        new FastSelectFiller(blockSize, volume).run();
-        fastSelect = FastSelectFiller.database;
-
-        System.out.println("Used mem: " + memMeter.getUsedMb() + " mb, volume: " + volume);
+        fastSelect = initDatabase(blockSize, volume);
     }
 
     //    @org.openjdk.jmh.annotations.CountBenchmark
     public int countByFiltered10G5R4C20S40D() throws Exception {
         CounterCallback counterCallback = new CounterCallback();
-        fastSelect.select(createWhere(), counterCallback);
+        fastSelect.select(DemoUtils.createWhere(), counterCallback);
         return counterCallback.getCount();
     }
 
     @Benchmark
     public Object groupAndCountFiltered10G5R4C20S40D() throws Exception {
         GroupCountCallback counter = new GroupCountCallback(
-                FastSelectFiller.database.getColumnsByNames().get("r"));
-        fastSelect.select(createWhere(), counter);
+                fastSelect.getColumnsByNames().get("r"));
+        fastSelect.select(DemoUtils.createWhere(), counter);
         return counter.getCounters();
     }
 

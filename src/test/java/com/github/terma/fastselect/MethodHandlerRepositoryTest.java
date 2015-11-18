@@ -36,17 +36,48 @@ public class MethodHandlerRepositoryTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void throwExceptionIfCantAccessField() {
-        new MethodHandlerRepository(B.class, new HashMap<String, Class>() {{
-            put("c", long.class);
-        }});
-    }
-
-    @Test(expected = IllegalArgumentException.class)
     public void throwExceptionIfIncorrectType() {
         new MethodHandlerRepository(C.class, new HashMap<String, Class>() {{
             put("c", int.class);
         }});
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void throwExceptionIfAskAboutUnknownGetter() {
+        new MethodHandlerRepository(C.class, new HashMap<String, Class>() {{
+            put("c", int.class);
+        }}).get("?");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void throwExceptionIfAskAboutUnknownSetter() {
+        new MethodHandlerRepository(C.class, new HashMap<String, Class>() {{
+            put("c", int.class);
+        }}).set("?");
+    }
+
+    @Test
+    public void supportPrivateFields() {
+        new MethodHandlerRepository(Private.class, new HashMap<String, Class>() {{
+            put("field", int.class);
+        }});
+    }
+
+    @Test
+    public void supportPublicFields() {
+        new MethodHandlerRepository(Public.class, new HashMap<String, Class>() {{
+            put("field", int.class);
+        }});
+    }
+
+    public static class Private {
+        @SuppressWarnings("unused")
+        private int field;
+    }
+
+    public static class Public {
+        @SuppressWarnings("unused")
+        public int field;
     }
 
     public static class A {

@@ -14,24 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
+/**
+ * Compact in-memory storage with fast search. Starting point is {@link com.github.terma.fastselect.FastSelect}
+ */
 package com.github.terma.fastselect;
-
-import java.util.Arrays;
-
-public class MultiRequest {
-
-    public final String name;
-    public final int[] values;
-    public FastSelect.Column column;
-
-    public MultiRequest(String name, int[] values) {
-        this.name = name;
-        this.values = values;
-    }
-
-    @Override
-    public String toString() {
-        return "{ " + "name: " + name + ", values: " + Arrays.toString(values) + '}';
-    }
-
-}

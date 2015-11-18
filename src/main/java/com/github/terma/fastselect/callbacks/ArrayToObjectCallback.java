@@ -18,12 +18,12 @@ package com.github.terma.fastselect.callbacks;
 
 import com.github.terma.fastselect.FastSelect;
 import com.github.terma.fastselect.MethodHandlerRepository;
-import org.apache.commons.collections.primitives.ArrayLongList;
-import org.apache.commons.collections.primitives.ArrayShortList;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import java.lang.invoke.MethodHandle;
 import java.util.List;
 
+@NotThreadSafe
 public class ArrayToObjectCallback<T> implements ArrayLayoutCallback {
 
     private final Class<T> dataClass;
@@ -48,11 +48,11 @@ public class ArrayToObjectCallback<T> implements ArrayLayoutCallback {
                 MethodHandle methodHandle = mhRepo.set(column.name);
 
                 if (column.type == long.class) {
-                    methodHandle.invoke(o, ((ArrayLongList) column.data).get(position));
+                    methodHandle.invoke(o, ((FastSelect.FastLongList) column.data).data[position]);
                 } else if (column.type == int.class) {
                     methodHandle.invoke(o, ((FastSelect.FastIntList) column.data).data[position]);
                 } else if (column.type == short.class) {
-                    methodHandle.invoke(o, ((ArrayShortList) column.data).get(position));
+                    methodHandle.invoke(o, ((FastSelect.FastShortList) column.data).data[position]);
                 } else if (column.type == byte.class) {
                     methodHandle.invoke(o, ((FastSelect.FastByteList) column.data).data[position]);
                 }

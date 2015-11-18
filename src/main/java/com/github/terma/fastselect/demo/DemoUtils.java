@@ -14,30 +14,32 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.github.terma.fastselect;
+package com.github.terma.fastselect.demo;
+
+import com.github.terma.fastselect.FastSelect;
+import com.github.terma.fastselect.MultiRequest;
+import com.github.terma.fastselect.utils.MemMeter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FastSelectFiller {
+public abstract class DemoUtils {
 
-    public static FastSelect<RealData> database;
+    public static final int G_MAX = 100;
+    public static final int R_MAX = 5;
+    public static final int C_MAX = 6;
+    public static final int O_MAX = 2;
+    public static final int S_MAX = 100;
+    public static final int D_MAX = 100;
 
-    private final int blockSize;
-    private final long itemsToCreate;
-    private long time;
-
-    public FastSelectFiller(int blockSize, int itemsToCreate) {
-        this.blockSize = blockSize;
-        this.itemsToCreate = itemsToCreate;
-    }
-
-    public void run() {
+    public static FastSelect<DemoData> createFastSelect(int blockSize, int itemsToCreate) {
         System.out.println("Filler started");
+
+        final MemMeter memMeter = new MemMeter();
         final long start = System.currentTimeMillis();
 
-        database = new FastSelect<>(blockSize, RealData.class, Arrays.asList(
+        FastSelect<DemoData> database = new FastSelect<>(blockSize, DemoData.class, Arrays.asList(
                 new FastSelect.Column("r", byte.class),
                 new FastSelect.Column("g", byte.class),
                 new FastSelect.Column("s", byte.class),
@@ -49,20 +51,20 @@ public class FastSelectFiller {
                 new FastSelect.Column("uid2", long.class)
         ));
 
-        final List<RealData> data = new ArrayList<>();
+        final List<DemoData> data = new ArrayList<>();
         int count = 0;
 
         opa:
         while (true) {
-            for (int r = 0; r < CountBenchmark.R_MAX; r++) {
-                for (int g = 0; g < CountBenchmark.G_MAX; g++) {
-                    for (int s = 0; s < CountBenchmark.S_MAX; s++) {
-                        for (int o = 0; o < CountBenchmark.O_MAX; o++) {
-                            for (int c = 0; c < CountBenchmark.C_MAX; c++) {
-                                for (int d = 0; d < CountBenchmark.D_MAX; d++) {
+            for (int r = 0; r < R_MAX; r++) {
+                for (int g = 0; g < G_MAX; g++) {
+                    for (int s = 0; s < S_MAX; s++) {
+                        for (int o = 0; o < O_MAX; o++) {
+                            for (int c = 0; c < C_MAX; c++) {
+                                for (int d = 0; d < D_MAX; d++) {
                                     if (count >= itemsToCreate) break opa;
 
-                                    RealData item = new RealData();
+                                    DemoData item = new DemoData();
                                     item.r = (byte) r;
                                     item.g = (byte) g;
                                     item.s = (byte) s;
@@ -91,27 +93,22 @@ public class FastSelectFiller {
 
         System.out.println();
 
-        time += System.currentTimeMillis() - start;
+        final long time = System.currentTimeMillis() - start;
 
-        System.out.println("Volume: " + itemsToCreate + " average time " + time + " msec");
+        System.out.println("FastSelect prepared, volume: " + itemsToCreate + ", mem used: "
+                + memMeter.getUsedMb() + "Mb, preparation time " + time + " msec");
         System.out.println("Filler finished");
+
+        return database;
     }
 
-    /**
-     * Example layout
-     */
-    public static class RealData {
-
-        public byte g;
-        public byte r;
-        public byte c;
-        public byte m;
-        public byte o;
-        public byte s;
-        public short d;
-        public long uid1;
-        public long uid2;
-
+    public static MultiRequest[] createWhere() {
+        return new MultiRequest[]{
+                new MultiRequest("g", new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}),
+                new MultiRequest("r", new int[]{0, 1, 2, 3, 4}),
+                new MultiRequest("c", new int[]{0, 2, 3, 4}),
+                new MultiRequest("s", new int[]{0, 19, 18, 17, 16, 15, 14, 13, 12, 11, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}),
+                new MultiRequest("d", new int[]{0, 90, 99, 5, 34, 22, 26, 8, 5, 6, 7, 5, 6, 34, 35, 36, 37, 38, 39, 21, 70, 71, 74, 76, 78, 79, 10, 11, 22, 33, 44, 55, 66})
+        };
     }
-
 }

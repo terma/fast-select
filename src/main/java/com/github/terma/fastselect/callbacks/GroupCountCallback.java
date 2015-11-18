@@ -18,9 +18,16 @@ package com.github.terma.fastselect.callbacks;
 
 import com.github.terma.fastselect.FastSelect;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Analog of SQL expression: <pre>select count(COLUMN) from TABLE where CONDITION group by COLUMN</pre>
+ *
+ * @author Artem Stasiuk
+ */
+@NotThreadSafe
 public class GroupCountCallback implements ArrayLayoutCallback {
 
     private final Map<Integer, Integer> counter = new HashMap<>();

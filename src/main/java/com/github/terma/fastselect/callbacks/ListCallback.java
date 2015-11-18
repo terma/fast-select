@@ -16,9 +16,11 @@ limitations under the License.
 
 package com.github.terma.fastselect.callbacks;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.ArrayList;
 import java.util.List;
 
+@NotThreadSafe
 public class ListCallback<T> implements Callback<T> {
 
     private final List<T> result = new ArrayList<>();

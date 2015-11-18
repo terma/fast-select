@@ -17,10 +17,33 @@ limitations under the License.
 package com.github.terma.fastselect.callbacks;
 
 import com.github.terma.fastselect.FastSelect;
+import com.github.terma.fastselect.MultiRequest;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Analog of SQL expression:
+ * <pre>select count(COLUMNS) from TABLE where CONDITION group by COLUMNS (at least 2)</pre>
+ *
+ * Result will be map with submap as child and counter leaf map.
+ *
+ * For example (columns and result object structure):
+ * <dl>
+ * <dt>COLUMN_A, COLUMN_B</dt>
+ * <dd><pre>Map&lt;Integer, Map&lt;Integer, Integer&gt;&gt;</pre></dd>
+ * <dt>COLUMN_A, COLUMN_B, COLUMN_C</dt>
+ * <dd><pre>Map&lt;Integer, Map&lt;Integer, Map&lt;Integer, Integer&gt;&gt;&gt;</pre></dd>
+ * </dl>
+ *
+ * Calling {@link FastSelect#select(MultiRequest[], ArrayLayoutCallback)} twice with same instance is ok.
+ * Result will be counter twice.
+ *
+ * @author Artem Stasiuk
+ * @see GroupCountCallback
+ */
+@NotThreadSafe
 public class MultiGroupCountCallback implements ArrayLayoutCallback {
 
     private final Map<Integer, Object> counters = new HashMap<>();

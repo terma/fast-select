@@ -18,6 +18,7 @@ package com.github.terma.fastselect;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,14 +28,23 @@ public final class MethodHandlerRepository {
     private final Map<String, MethodHandle> getters;
     private final Map<String, MethodHandle> setters;
 
-    public MethodHandlerRepository(Class dataClass, Map<String, Class> fields) {
+    public MethodHandlerRepository(final Class dataClass, final Map<String, Class> fields) {
         final Map<String, MethodHandle> tempGetters = new HashMap<>();
         final Map<String, MethodHandle> tempSetters = new HashMap<>();
         final MethodHandles.Lookup lookup = MethodHandles.lookup();
         for (final Map.Entry<String, Class> field : fields.entrySet()) {
             try {
-                final MethodHandle getterHandler = lookup.findGetter(dataClass, field.getKey(), field.getValue());
-                final MethodHandle setterHandler = lookup.findSetter(dataClass, field.getKey(), field.getValue());
+                final Field fieldReference = dataClass.getDeclaredField(field.getKey());
+                if (fieldReference.getType() != field.getValue()) {
+                    throw new IllegalArgumentException("Unexpected field type: " + field.getValue() + " for "
+                            + dataClass + "." + field.getKey() + "!");
+                }
+
+                // force access if field is private
+                fieldReference.setAccessible(true);
+
+                final MethodHandle getterHandler = lookup.unreflectGetter(fieldReference);
+                final MethodHandle setterHandler = lookup.unreflectSetter(fieldReference);
                 tempGetters.put(field.getKey(), getterHandler);
                 tempSetters.put(field.getKey(), setterHandler);
             } catch (NoSuchFieldException | IllegalAccessException e) {

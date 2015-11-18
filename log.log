@@ -72,3 +72,19 @@ MultipleGroupAndCountFilteredBenchmark.test         1000  ArrayLayoutFastSelect 
 Benchmark                                          (blockSize)      (impl)  (volume)  Mode  Cnt   Score   Error  Units
 CountBenchmark.groupAndCountFiltered10G5R4C20S40D         1000  FastSelect   1000000  avgt       15.197          ms/op
 MultiGroupCountBenchmark.test                             1000  FastSelect  10000000  avgt       23.166          ms/op
+
+### array layout 10m
+293mb
+
+### array layout 100m
+2382mb
+
+### array layout 300m
+7200mb
+
+### 100m
+Benchmark                      (blockSize)      (impl)   (volume)  Mode  Cnt    Score   Error  Units
+MultiGroupCountBenchmark.test         1000  FastSelect  100000000  avgt       178.775          ms/op
+
+### prediction 300m
+434 msec
