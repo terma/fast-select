@@ -20,6 +20,7 @@ import com.github.terma.fastselect.callbacks.ArrayLayoutCallback;
 import com.github.terma.fastselect.callbacks.ArrayToObjectCallback;
 import com.github.terma.fastselect.callbacks.Callback;
 import com.github.terma.fastselect.callbacks.ListCallback;
+import com.github.terma.fastselect.utils.MethodHandlerRepository;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.*;
@@ -153,6 +154,14 @@ public final class FastSelect<T> {
         return result.getResult();
     }
 
+    /**
+     * Main search method. Find data good for your where (filter) condition and call {@link ArrayLayoutCallback#data(int)}
+     * for each of item in result.
+     *
+     * @param where    filter criteria. Could be any combination of fields which you provide as columns during
+     *                 {@link FastSelect} creation.
+     * @param callback callback. Will be called for each item accepted by where.
+     */
     public void select(final MultiRequest[] where, final ArrayLayoutCallback callback) {
         for (final MultiRequest condition : where) {
             condition.column = columnsByNames.get(condition.name);

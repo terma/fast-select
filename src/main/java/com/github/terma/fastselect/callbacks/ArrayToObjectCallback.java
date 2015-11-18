@@ -17,7 +17,7 @@ limitations under the License.
 package com.github.terma.fastselect.callbacks;
 
 import com.github.terma.fastselect.FastSelect;
-import com.github.terma.fastselect.MethodHandlerRepository;
+import com.github.terma.fastselect.utils.MethodHandlerRepository;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.lang.invoke.MethodHandle;
