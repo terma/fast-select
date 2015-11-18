@@ -49,4 +49,4 @@ database.select(where, callback);
 callback.getCounters(); // your result here grouped by field 'a'
 ```
 
-More use cases you can find in javadoc ```java callbacks``` package
+More use cases you can find in javadoc ```callbacks``` package
