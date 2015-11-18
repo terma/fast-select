@@ -1,15 +1,10 @@
 [![Build Status](https://travis-ci.org/terma/fast-select.svg?branch=start)](https://travis-ci.org/terma/fast-select)
 [![Coverage Status](https://coveralls.io/repos/terma/fast-select/badge.svg?branch=master&service=github)](https://coveralls.io/github/terma/fast-select?branch=master) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.terma/fast-select/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.terma/fast-select/)
 
-```xml
-<dependency>
-    <groupId>com.github.terma</groupId>
-    <artifactId>fast-select</artifactId>
-    <version>UP</version>
-</dependency>  
-```
+## Fast-Select 
+In-memory column oriented compact storage optimized for fast search. Free open source under Apache 2.0 license.
 
-## Test Speed
+## Test on your hardware
 
 - Download jar file http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22fast-select%22
 - ```bash
