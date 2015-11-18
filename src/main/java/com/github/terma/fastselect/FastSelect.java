@@ -54,6 +54,8 @@ import java.util.*;
 @ThreadSafe
 public final class FastSelect<T> {
 
+    private final static int DEFAULT_BLOCK_SIZE = 1000;
+
     private final int blockSize;
     private final Class<T> dataClass;
     private final MethodHandlerRepository mhRepo;
@@ -61,6 +63,13 @@ public final class FastSelect<T> {
     private final List<Column> columns;
     private final Map<String, Column> columnsByNames;
 
+    /**
+     *
+     * @param blockSize
+     * @param dataClass
+     * @param columns list of {@link FastSelect.Column} data for them will be extracted from dataClass object
+     *                and used for filtering.
+     */
     public FastSelect(final int blockSize, final Class<T> dataClass, final List<Column> columns) {
         this.blockSize = blockSize;
         this.dataClass = dataClass;
@@ -68,6 +77,10 @@ public final class FastSelect<T> {
         this.columnsByNames = initColumnsByName(columns);
         this.mhRepo = new MethodHandlerRepository(dataClass, getColumnsAsMap(columns));
         this.blocks = new ArrayList<>();
+    }
+
+    public FastSelect(final Class<T> dataClass, final List<Column> columns) {
+        this(DEFAULT_BLOCK_SIZE, dataClass, columns);
     }
 
     private static Map<String, Column> initColumnsByName(List<Column> columns) {
