@@ -63,12 +63,15 @@ public final class FastSelect<T> {
     private final List<Column> columns;
     private final Map<String, Column> columnsByNames;
 
+    public FastSelect(final int blockSize, final Class<T> dataClass, final Column... columns) {
+        this(blockSize, dataClass, Arrays.asList(columns));
+    }
+
     /**
-     *
      * @param blockSize
      * @param dataClass
-     * @param columns list of {@link FastSelect.Column} data for them will be extracted from dataClass object
-     *                and used for filtering.
+     * @param columns   list of {@link FastSelect.Column} data for them will be extracted from dataClass object
+     *                  and used for filtering.
      */
     public FastSelect(final int blockSize, final Class<T> dataClass, final List<Column> columns) {
         this.blockSize = blockSize;
