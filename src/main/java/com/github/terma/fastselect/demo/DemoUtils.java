@@ -27,9 +27,9 @@ import java.util.List;
 public abstract class DemoUtils {
 
     public static final int G_MAX = 100;
-    public static final int R_MAX = 5;
-    public static final int C_MAX = 6;
-    public static final int O_MAX = 2;
+    public static final int R_MAX = 7;
+    public static final int C_MAX = 7;
+    public static final int O_MAX = 3;
     public static final int S_MAX = 100;
     public static final int D_MAX = 100;
 
@@ -56,12 +56,12 @@ public abstract class DemoUtils {
 
         opa:
         while (true) {
-            for (int r = 0; r < R_MAX; r++) {
-                for (int g = 0; g < G_MAX; g++) {
-                    for (int s = 0; s < S_MAX; s++) {
-                        for (int o = 0; o < O_MAX; o++) {
-                            for (int c = 0; c < C_MAX; c++) {
-                                for (int d = 0; d < D_MAX; d++) {
+            for (int r = 1; r < R_MAX; r++) {
+                for (int g = 1; g < G_MAX; g++) {
+                    for (int s = 1; s < S_MAX; s++) {
+                        for (int o = 1; o < O_MAX; o++) {
+                            for (int c = 1; c < C_MAX; c++) {
+                                for (int d = 1; d < D_MAX; d++) {
                                     if (count >= itemsToCreate) break opa;
 
                                     DemoData item = new DemoData();
@@ -104,11 +104,11 @@ public abstract class DemoUtils {
 
     public static MultiRequest[] createWhere() {
         return new MultiRequest[]{
-                new MultiRequest("g", new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}),
-                new MultiRequest("r", new int[]{0, 1, 2, 3, 4}),
-                new MultiRequest("c", new int[]{0, 2, 3, 4}),
-                new MultiRequest("s", new int[]{0, 19, 18, 17, 16, 15, 14, 13, 12, 11, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}),
-                new MultiRequest("d", new int[]{0, 90, 99, 5, 34, 22, 26, 8, 5, 6, 7, 5, 6, 34, 35, 36, 37, 38, 39, 21, 70, 71, 74, 76, 78, 79, 10, 11, 22, 33, 44, 55, 66})
+                new MultiRequest("g", new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}),
+                new MultiRequest("r", new int[]{1, 2, 3, 4, 5, 6}),
+                new MultiRequest("c", new int[]{1, 2, 3, 4}),
+                new MultiRequest("s", new int[]{1, 19, 18, 17, 16, 15, 14, 13, 12, 11, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}),
+                new MultiRequest("d", new int[]{1, 90, 99, 5, 34, 22, 26, 8, 5, 6, 7, 5, 6, 34, 35, 36, 37, 38, 39, 21, 70, 71, 74, 76, 78, 79, 10, 11, 22, 33, 44, 55, 66})
         };
     }
 }

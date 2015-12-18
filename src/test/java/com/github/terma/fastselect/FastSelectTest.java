@@ -71,6 +71,45 @@ public class FastSelectTest {
     }
 
     @Test
+    public void shouldSelectByTwoConditions() {
+        FastSelect<TestIntByte> database = new FastSelect<>(1, TestIntByte.class,
+                Arrays.asList(
+                        new FastSelect.Column("value1", int.class),
+                        new FastSelect.Column("value2", byte.class)
+                ));
+        database.addAll(Arrays.asList(
+                new TestIntByte(12, (byte) 90),
+                new TestIntByte(9, (byte) 91),
+                new TestIntByte(1000, (byte) 89)));
+
+        List result = database.select(new MultiRequest[]{
+                new MultiRequest("value1", new int[]{12}),
+                new MultiRequest("value2", new int[]{90})
+        });
+
+        Assert.assertEquals(Collections.singletonList(new TestIntByte(12, (byte) 90)), result);
+    }
+
+    @Test
+    public void shouldSelectByZero() {
+        FastSelect<TestIntByte> database = new FastSelect<>(1, TestIntByte.class,
+                Arrays.asList(
+                        new FastSelect.Column("value1", int.class),
+                        new FastSelect.Column("value2", byte.class)
+                ));
+        database.addAll(Arrays.asList(
+                new TestIntByte(12, (byte) 0),
+                new TestIntByte(9, (byte) 91),
+                new TestIntByte(1000, (byte) 89)));
+
+        List result = database.select(new MultiRequest[]{
+                new MultiRequest("value2", new int[]{0})
+        });
+
+        Assert.assertEquals(Collections.singletonList(new TestIntByte(12, (byte) 0)), result);
+    }
+
+    @Test
     public void shouldSelectByLongField() {
         FastSelect<TestLongShort> database = new FastSelect<>(1, TestLongShort.class,
                 Collections.singletonList(new FastSelect.Column("long1", long.class)));
@@ -94,11 +133,11 @@ public class FastSelectTest {
         database.addAll(Arrays.asList(
                 new TestLongShort(12L, (short) 5),
                 new TestLongShort(9, (short) 3),
-                new TestLongShort(1000, (short) 0)));
+                new TestLongShort(1000, (short) 1)));
 
-        List result = database.select(new MultiRequest[]{new MultiRequest("short1", new int[]{0})});
+        List result = database.select(new MultiRequest[]{new MultiRequest("short1", new int[]{1})});
 
-        Assert.assertEquals(Collections.singletonList(new TestLongShort(1000, (short) 0)), result);
+        Assert.assertEquals(Collections.singletonList(new TestLongShort(1000, (short) 1)), result);
     }
 
     @Test

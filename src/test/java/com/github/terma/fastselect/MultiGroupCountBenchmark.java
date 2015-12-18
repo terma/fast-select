@@ -49,14 +49,14 @@ public class MultiGroupCountBenchmark {
 
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
-                .include(".*" + MultiGroupCountBenchmark.class.getSimpleName() + ".*")
+                .include("." + MultiGroupCountBenchmark.class.getSimpleName() + ".*")
                 .build();
         new Runner(opt).run();
     }
 
     @Setup
     public void init() throws Exception {
-        fastSelect = CountBenchmark.initDatabase(blockSize, volume);
+        fastSelect = GroupCountBenchmark.initDatabase(blockSize, volume);
 
         System.out.println(">>>> TRY TEST:");
         System.out.println(test());

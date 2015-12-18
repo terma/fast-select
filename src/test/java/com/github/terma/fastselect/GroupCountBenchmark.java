@@ -16,7 +16,7 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
-import com.github.terma.fastselect.callbacks.CounterCallback;
+import com.github.terma.fastselect.callbacks.GroupCountCallback;
 import com.github.terma.fastselect.demo.DemoData;
 import com.github.terma.fastselect.demo.DemoUtils;
 import org.openjdk.jmh.annotations.*;
@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 @State(Scope.Benchmark)
 @Warmup(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
 @Measurement(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
-public class CountBenchmark {
+public class GroupCountBenchmark {
 
     @Param({"1000"}) // "100000"
     private int blockSize;
@@ -47,7 +47,7 @@ public class CountBenchmark {
     private FastSelect<DemoData> fastSelect;
 
     public static void main(String[] args) throws RunnerException {
-        Options opt = new OptionsBuilder().include(".*" + CountBenchmark.class.getSimpleName() + ".*").build();
+        Options opt = new OptionsBuilder().include("." + GroupCountBenchmark.class.getSimpleName() + ".*").build();
         new Runner(opt).run();
     }
 
@@ -61,10 +61,11 @@ public class CountBenchmark {
     }
 
     @Benchmark
-    public int countByFiltered10G5R4C20S40D() throws Exception {
-        CounterCallback counterCallback = new CounterCallback();
-        fastSelect.select(DemoUtils.createWhere(), counterCallback);
-        return counterCallback.getCount();
+    public Object groupAndCountFiltered10G5R4C20S40D() throws Exception {
+        GroupCountCallback counter = new GroupCountCallback(
+                fastSelect.getColumnsByNames().get("r"));
+        fastSelect.select(DemoUtils.createWhere(), counter);
+        return counter.getCounters();
     }
 
 }
