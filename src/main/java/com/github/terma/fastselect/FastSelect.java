@@ -136,7 +136,7 @@ public final class FastSelect<T> {
 
                     } else if (column.type == int.class) {
                         int v = (int) mhRepo.get(column.name).invoke(row);
-                        ((FastIntData) column.data).add(v);
+                        ((IntData) column.data).add(v);
                         block.setColumnBitSet(column, v);
 
                     } else if (column.type == short.class) {
@@ -146,7 +146,7 @@ public final class FastSelect<T> {
 
                     } else if (column.type == byte.class) {
                         byte v = (byte) mhRepo.get(column.name).invoke(row);
-                        ((FastByteData) column.data).add(v);
+                        ((ByteData) column.data).add(v);
                         block.setColumnBitSet(column, v);
 
                     } else {
@@ -258,11 +258,11 @@ public final class FastSelect<T> {
             } else if (type == byte[].class) {
                 data = new MultiByteData();
             } else if (type == int.class) {
-                data = new FastIntData();
+                data = new IntData();
             } else if (type == short.class) {
                 data = new ShortData();
             } else if (type == byte.class) {
-                data = new FastByteData();
+                data = new ByteData();
             } else {
                 throw new IllegalArgumentException("Unsupportable column type: " + type
                         + ". Support byte,short,int,long!");
@@ -276,11 +276,11 @@ public final class FastSelect<T> {
 
         public int valueAsInt(final int position) {
             if (type == byte.class) {
-                return ((FastByteData) data).data[position];
+                return ((ByteData) data).data[position];
             } else if (type == short.class) {
                 return ((ShortData) data).data[position];
             } else if (type == int.class) {
-                return ((FastIntData) data).data[position];
+                return ((IntData) data).data[position];
             } else if (type == long.class) {
                 return (int) ((LongData) data).data[position];
             } else {
