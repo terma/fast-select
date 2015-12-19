@@ -39,7 +39,7 @@ public class MultiGroupCountBenchmark {
     @Param({"1000"})
     private int blockSize;
 
-    @Param({"100000000"})
+    @Param({"1000000"})
     private int volume;
 
     @Param({"FastSelect"})

@@ -20,6 +20,7 @@ import com.github.terma.fastselect.callbacks.ArrayLayoutCallback;
 import com.github.terma.fastselect.callbacks.ArrayToObjectCallback;
 import com.github.terma.fastselect.callbacks.Callback;
 import com.github.terma.fastselect.callbacks.ListCallback;
+import com.github.terma.fastselect.data.*;
 import com.github.terma.fastselect.utils.MethodHandlerRepository;
 
 import javax.annotation.concurrent.ThreadSafe;
@@ -112,25 +113,45 @@ public final class FastSelect<T> {
 
                     if (column.type == long.class) {
                         long v = (long) mhRepo.get(column.name).invoke(row);
-                        ((FastLongList) column.data).add(v);
-                        indexValue = (int) v;
+                        ((LongData) column.data).add(v);
+                        block.setColumnBitSet(column, (int) v);
+
+                    } else if (column.type == long[].class) {
+                        long[] v = (long[]) mhRepo.get(column.name).invoke(row);
+                        ((MultiLongData) column.data).add(v);
+                        // set all bits
+                        for (long v1 : v) block.setColumnBitSet(column, (int) v1);
+
+                    } else if (column.type == short[].class) {
+                        short[] v = (short[]) mhRepo.get(column.name).invoke(row);
+                        ((MultiShortData) column.data).add(v);
+                        // set all bits
+                        for (short v1 : v) block.setColumnBitSet(column, v1);
+
+                    } else if (column.type == byte[].class) {
+                        byte[] v = (byte[]) mhRepo.get(column.name).invoke(row);
+                        ((MultiByteData) column.data).add(v);
+                        // set all bits
+                        for (byte v1 : v) block.setColumnBitSet(column, v1);
+
                     } else if (column.type == int.class) {
                         int v = (int) mhRepo.get(column.name).invoke(row);
-                        ((FastIntList) column.data).add(v);
-                        indexValue = v;
+                        ((FastIntData) column.data).add(v);
+                        block.setColumnBitSet(column, v);
+
                     } else if (column.type == short.class) {
                         short v = (short) mhRepo.get(column.name).invoke(row);
-                        ((FastShortList) column.data).add(v);
-                        indexValue = v;
+                        ((ShortData) column.data).add(v);
+                        block.setColumnBitSet(column, v);
+
                     } else if (column.type == byte.class) {
                         byte v = (byte) mhRepo.get(column.name).invoke(row);
-                        ((FastByteList) column.data).add(v);
-                        indexValue = v;
+                        ((FastByteData) column.data).add(v);
+                        block.setColumnBitSet(column, v);
+
                     } else {
                         throw new IllegalArgumentException("!");
                     }
-
-                    block.columnBitSets.get(column.name).set(indexValue);
                 } catch (Throwable throwable) {
                     throw new RuntimeException(throwable);
                 }
@@ -176,11 +197,7 @@ public final class FastSelect<T> {
                 opa:
                 for (int i = block.start; i < end; i++) {
                     for (final MultiRequest request : where) {
-                        final int value = request.column.valueAsInt(i);
-
-                        if (Arrays.binarySearch(request.values, value) < 0) {
-                            continue opa;
-                        }
+                        if (!request.column.data.check(i, request.values)) continue opa;
                     }
 
                     callback.data(i);
@@ -209,18 +226,7 @@ public final class FastSelect<T> {
     }
 
     public int size() {
-        for (Column column : columns) {
-            if (column.type == long.class) {
-                return ((FastLongList) column.data).size;
-            } else if (column.type == int.class) {
-                return ((FastIntList) column.data).size;
-            } else if (column.type == short.class) {
-                return ((FastShortList) column.data).size;
-            } else if (column.type == byte.class) {
-                return ((FastByteList) column.data).size;
-            }
-        }
-        return 0;
+        return columns.iterator().next().data.size();
     }
 
     public Map<String, Column> getColumnsByNames() {
@@ -234,24 +240,32 @@ public final class FastSelect<T> {
     }
 
     public static class Column {
+
         public final String name;
         public final Class type;
-        public final Object data;
+        public final Data data;
 
         public Column(final String name, final Class type) {
             this.name = name;
             this.type = type;
 
             if (type == long.class) {
-                data = new FastLongList();
+                data = new LongData();
+            } else if (type == long[].class) {
+                data = new MultiLongData();
+            } else if (type == short[].class) {
+                data = new MultiShortData();
+            } else if (type == byte[].class) {
+                data = new MultiByteData();
             } else if (type == int.class) {
-                data = new FastIntList();
+                data = new FastIntData();
             } else if (type == short.class) {
-                data = new FastShortList();
+                data = new ShortData();
             } else if (type == byte.class) {
-                data = new FastByteList();
+                data = new FastByteData();
             } else {
-                throw new IllegalArgumentException("Unsupportable column type: " + type);
+                throw new IllegalArgumentException("Unsupportable column type: " + type
+                        + ". Support byte,short,int,long!");
             }
         }
 
@@ -262,13 +276,13 @@ public final class FastSelect<T> {
 
         public int valueAsInt(final int position) {
             if (type == byte.class) {
-                return ((FastByteList) data).data[position];
+                return ((FastByteData) data).data[position];
             } else if (type == short.class) {
-                return ((FastShortList) data).data[position];
-            } else if (type == long.class) {
-                return (int) ((FastLongList) data).data[position];
+                return ((ShortData) data).data[position];
             } else if (type == int.class) {
-                return ((FastIntList) data).data[position];
+                return ((FastIntData) data).data[position];
+            } else if (type == long.class) {
+                return (int) ((LongData) data).data[position];
             } else {
                 throw new IllegalArgumentException("Unknown column type: " + type);
             }
@@ -280,64 +294,9 @@ public final class FastSelect<T> {
         public final Map<String, BitSet> columnBitSets = new HashMap<>();
         public int start;
         public int size;
-    }
 
-    public static class FastIntList {
-
-        public int[] data = new int[16];
-        public int size = 0;
-
-        public void add(int v) {
-            if (size == data.length) {
-                data = Arrays.copyOf(data, size + 100000);
-            }
-            data[size] = v;
-            size++;
-        }
-
-    }
-
-    public static class FastShortList {
-
-        public short[] data = new short[16];
-        public int size = 0;
-
-        public void add(short v) {
-            if (size == data.length) {
-                data = Arrays.copyOf(data, size + 100000);
-            }
-            data[size] = v;
-            size++;
-        }
-
-    }
-
-    public static class FastLongList {
-
-        public long[] data = new long[16];
-        public int size = 0;
-
-        public void add(long v) {
-            if (size == data.length) {
-                data = Arrays.copyOf(data, size + 100000);
-            }
-            data[size] = v;
-            size++;
-        }
-
-    }
-
-    public static class FastByteList {
-
-        public byte[] data = new byte[16];
-        public int size = 0;
-
-        public void add(byte v) {
-            if (size == data.length) {
-                data = Arrays.copyOf(data, size + 100000);
-            }
-            data[size] = v;
-            size++;
+        public void setColumnBitSet(Column column, int bit) {
+            columnBitSets.get(column.name).set(bit);
         }
 
     }
