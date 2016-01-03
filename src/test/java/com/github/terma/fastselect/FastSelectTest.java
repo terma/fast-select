@@ -30,63 +30,59 @@ public class FastSelectTest {
 
     @Test
     public void shouldSelectEmptyResultIfNoData() {
-        List result = new FastSelect<>(10, TestIntByte.class, asList(
-                new FastSelect.Column("value1", int.class),
-                new FastSelect.Column("value2", byte.class)
-        ))
-                .select(new MultiRequest[]{new MultiRequest("value1", new int[]{34})});
+        List result = new FastSelect<>(10, TestIntByte.class)
+                .select(new Request[]{new Request("value1", new int[]{34})});
         Assert.assertEquals(0, result.size());
     }
 
     @Test
     public void shouldSelectIfPresentByOneField() {
-        FastSelect<TestIntByte> database = new FastSelect<>(10, TestIntByte.class,
-                asList(
-                        new FastSelect.Column("value1", int.class),
-                        new FastSelect.Column("value2", byte.class)
-                ));
+        FastSelect<TestIntByte> database = new FastSelect<>(10, TestIntByte.class);
         database.addAll(asList(
                 new TestIntByte(12, (byte) 0),
                 new TestIntByte(9, (byte) 0),
                 new TestIntByte(1000, (byte) 0)));
 
-        List result = database.select(new MultiRequest[]{new MultiRequest("value1", new int[]{12})});
+        List result = database.select(new Request[]{new Request("value1", new int[]{12})});
 
         Assert.assertEquals(Collections.singletonList(new TestIntByte(12, (byte) 0)), result);
     }
 
-    @Test
-    public void shouldSelectIfTwoBlocks() {
-        FastSelect<TestIntByte> database = new FastSelect<>(1, TestIntByte.class,
-                asList(
-                        new FastSelect.Column("value1", int.class),
-                        new FastSelect.Column("value2", byte.class)
-                ));
+    @Test(expected = IllegalArgumentException.class)
+    public void throwExceptionIfRequestNonExistentColumn() {
+        FastSelect<TestIntByte> database = new FastSelect<>(10, TestIntByte.class);
         database.addAll(asList(
                 new TestIntByte(12, (byte) 0),
                 new TestIntByte(9, (byte) 0),
                 new TestIntByte(1000, (byte) 0)));
 
-        List result = database.select(new MultiRequest[]{new MultiRequest("value1", new int[]{12})});
+        database.select(new Request[]{new Request("a", new int[]{12})});
+    }
+
+    @Test
+    public void shouldSelectIfTwoBlocks() {
+        FastSelect<TestIntByte> database = new FastSelect<>(1, TestIntByte.class);
+        database.addAll(asList(
+                new TestIntByte(12, (byte) 0),
+                new TestIntByte(9, (byte) 0),
+                new TestIntByte(1000, (byte) 0)));
+
+        List result = database.select(new Request[]{new Request("value1", new int[]{12})});
 
         Assert.assertEquals(Collections.singletonList(new TestIntByte(12, (byte) 0)), result);
     }
 
     @Test
     public void shouldSelectByTwoConditions() {
-        FastSelect<TestIntByte> database = new FastSelect<>(1, TestIntByte.class,
-                asList(
-                        new FastSelect.Column("value1", int.class),
-                        new FastSelect.Column("value2", byte.class)
-                ));
+        FastSelect<TestIntByte> database = new FastSelect<>(1, TestIntByte.class);
         database.addAll(asList(
                 new TestIntByte(12, (byte) 90),
                 new TestIntByte(9, (byte) 91),
                 new TestIntByte(1000, (byte) 89)));
 
-        List result = database.select(new MultiRequest[]{
-                new MultiRequest("value1", new int[]{12}),
-                new MultiRequest("value2", new int[]{90})
+        List result = database.select(new Request[]{
+                new Request("value1", new int[]{12}),
+                new Request("value2", new int[]{90})
         });
 
         Assert.assertEquals(Collections.singletonList(new TestIntByte(12, (byte) 90)), result);
@@ -94,18 +90,14 @@ public class FastSelectTest {
 
     @Test
     public void shouldSelectByZero() {
-        FastSelect<TestIntByte> database = new FastSelect<>(1, TestIntByte.class,
-                asList(
-                        new FastSelect.Column("value1", int.class),
-                        new FastSelect.Column("value2", byte.class)
-                ));
+        FastSelect<TestIntByte> database = new FastSelect<>(1, TestIntByte.class);
         database.addAll(asList(
                 new TestIntByte(12, (byte) 0),
                 new TestIntByte(9, (byte) 91),
                 new TestIntByte(1000, (byte) 89)));
 
-        List result = database.select(new MultiRequest[]{
-                new MultiRequest("value2", new int[]{0})
+        List result = database.select(new Request[]{
+                new Request("value2", new int[]{0})
         });
 
         Assert.assertEquals(Collections.singletonList(new TestIntByte(12, (byte) 0)), result);
@@ -113,42 +105,33 @@ public class FastSelectTest {
 
     @Test
     public void shouldSelectByLongField() {
-        FastSelect<TestLongShort> database = new FastSelect<>(1, TestLongShort.class,
-                Collections.singletonList(new FastSelect.Column("long1", long.class)));
+        FastSelect<TestLongShort> database = new FastSelect<>(1, TestLongShort.class);
         database.addAll(asList(
                 new TestLongShort(12L, (short) 0),
                 new TestLongShort(9, (short) 0),
                 new TestLongShort(1000, (short) 0)));
 
-        List result = database.select(new MultiRequest[]{new MultiRequest("long1", new int[]{12})});
+        List result = database.select(new Request[]{new Request("long1", new int[]{12})});
 
         Assert.assertEquals(Collections.singletonList(new TestLongShort(12, (short) 0)), result);
     }
 
     @Test
     public void shouldSelectByShortField() {
-        FastSelect<TestLongShort> database = new FastSelect<>(1, TestLongShort.class,
-                asList(
-                        new FastSelect.Column("long1", long.class),
-                        new FastSelect.Column("short1", short.class)
-                ));
+        FastSelect<TestLongShort> database = new FastSelect<>(1, TestLongShort.class);
         database.addAll(asList(
                 new TestLongShort(12L, (short) 5),
                 new TestLongShort(9, (short) 3),
                 new TestLongShort(1000, (short) 1)));
 
-        List result = database.select(new MultiRequest[]{new MultiRequest("short1", new int[]{1})});
+        List result = database.select(new Request[]{new Request("short1", new int[]{1})});
 
         Assert.assertEquals(Collections.singletonList(new TestLongShort(1000, (short) 1)), result);
     }
 
     @Test
     public void shouldProvideSize() {
-        FastSelect<TestIntByte> database = new FastSelect<>(1, TestIntByte.class,
-                asList(
-                        new FastSelect.Column("value1", int.class),
-                        new FastSelect.Column("value2", byte.class)
-                ));
+        FastSelect<TestIntByte> database = new FastSelect<>(1, TestIntByte.class);
         database.addAll(asList(
                 new TestIntByte(12, (byte) 0),
                 new TestIntByte(9, (byte) 0),
@@ -159,8 +142,7 @@ public class FastSelectTest {
 
     @Test
     public void shouldProvideSizeForLong() {
-        FastSelect<TestLong> database = new FastSelect<>(1, TestLong.class,
-                Collections.singletonList(new FastSelect.Column("value1", long.class)));
+        FastSelect<TestLong> database = new FastSelect<>(1, TestLong.class);
         database.addAll(asList(
                 new TestLong(12),
                 new TestLong(9)));
@@ -170,21 +152,19 @@ public class FastSelectTest {
 
     @Test
     public void supportsLongMultiValuesColumns() {
-        FastSelect<LongMultiValues> database = new FastSelect<>(1, LongMultiValues.class,
-                Collections.singletonList(new FastSelect.Column("a", long[].class)));
+        FastSelect<LongMultiValues> database = new FastSelect<>(1, LongMultiValues.class);
         database.addAll(asList(
                 new LongMultiValues(new long[]{1, 2}),
                 new LongMultiValues(new long[]{11, 12})));
 
-        List<LongMultiValues> r = database.select(new MultiRequest[]{new MultiRequest("a", new int[]{12})});
+        List<LongMultiValues> r = database.select(new Request[]{new Request("a", new int[]{12})});
 
         Assert.assertEquals(r, Collections.singletonList(new LongMultiValues(new long[]{11, 12})));
     }
 
     @Test
     public void supportsLongMultiValuesColumnsManyResult() {
-        FastSelect<LongMultiValues> database = new FastSelect<>(1, LongMultiValues.class,
-                Collections.singletonList(new FastSelect.Column("a", long[].class)));
+        FastSelect<LongMultiValues> database = new FastSelect<>(1, LongMultiValues.class);
         database.addAll(asList(
                 new LongMultiValues(new long[]{1, 2}),
                 new LongMultiValues(new long[]{11, 12}),
@@ -192,15 +172,14 @@ public class FastSelectTest {
                 new LongMultiValues(new long[]{1, 0})
         ));
 
-        List<LongMultiValues> r = database.select(new MultiRequest[]{new MultiRequest("a", new int[]{12})});
+        List<LongMultiValues> r = database.select(new Request[]{new Request("a", new int[]{12})});
 
         Assert.assertEquals(asList(new LongMultiValues(new long[]{11, 12}), new LongMultiValues(new long[]{33, 12})), r);
     }
 
     @Test
     public void supportsLongMultiValuesColumnsManyCriteria() {
-        FastSelect<LongMultiValues> database = new FastSelect<>(1, LongMultiValues.class,
-                Collections.singletonList(new FastSelect.Column("a", long[].class)));
+        FastSelect<LongMultiValues> database = new FastSelect<>(1, LongMultiValues.class);
         database.addAll(asList(
                 new LongMultiValues(new long[]{1, 2}),
                 new LongMultiValues(new long[]{11, 12}),
@@ -208,7 +187,7 @@ public class FastSelectTest {
                 new LongMultiValues(new long[]{1, 0})
         ));
 
-        List<LongMultiValues> r = database.select(new MultiRequest[]{new MultiRequest("a", new int[]{1, 12})});
+        List<LongMultiValues> r = database.select(new Request[]{new Request("a", new int[]{1, 12})});
 
         Assert.assertEquals(
                 asList(
@@ -221,21 +200,19 @@ public class FastSelectTest {
 
     @Test
     public void supportsShortMultiValuesColumns() {
-        FastSelect<ShortMultiValues> database = new FastSelect<>(1, ShortMultiValues.class,
-                Collections.singletonList(new FastSelect.Column("a", short[].class)));
+        FastSelect<ShortMultiValues> database = new FastSelect<>(1, ShortMultiValues.class);
         database.addAll(asList(
                 new ShortMultiValues(new short[]{1, 2}),
                 new ShortMultiValues(new short[]{11, 12})));
 
-        List<ShortMultiValues> r = database.select(new MultiRequest[]{new MultiRequest("a", new int[]{12})});
+        List<ShortMultiValues> r = database.select(new Request[]{new Request("a", new int[]{12})});
 
         Assert.assertEquals(r, Collections.singletonList(new ShortMultiValues(new short[]{11, 12})));
     }
 
     @Test
     public void supportsShortMultiValuesColumnsManyResult() {
-        FastSelect<ShortMultiValues> database = new FastSelect<>(1, ShortMultiValues.class,
-                Collections.singletonList(new FastSelect.Column("a", short[].class)));
+        FastSelect<ShortMultiValues> database = new FastSelect<>(1, ShortMultiValues.class);
         database.addAll(asList(
                 new ShortMultiValues(new short[]{1, 2}),
                 new ShortMultiValues(new short[]{11, 12}),
@@ -243,15 +220,14 @@ public class FastSelectTest {
                 new ShortMultiValues(new short[]{1, 0})
         ));
 
-        List<ShortMultiValues> r = database.select(new MultiRequest[]{new MultiRequest("a", new int[]{12})});
+        List<ShortMultiValues> r = database.select(new Request[]{new Request("a", new int[]{12})});
 
         Assert.assertEquals(asList(new ShortMultiValues(new short[]{11, 12}), new ShortMultiValues(new short[]{33, 12})), r);
     }
 
     @Test
     public void supportsShortMultiValuesColumnsManyCriteria() {
-        FastSelect<ShortMultiValues> database = new FastSelect<>(1, ShortMultiValues.class,
-                Collections.singletonList(new FastSelect.Column("a", short[].class)));
+        FastSelect<ShortMultiValues> database = new FastSelect<>(1, ShortMultiValues.class);
         database.addAll(asList(
                 new ShortMultiValues(new short[]{1, 2}),
                 new ShortMultiValues(new short[]{11, 12}),
@@ -259,7 +235,7 @@ public class FastSelectTest {
                 new ShortMultiValues(new short[]{1, 0})
         ));
 
-        List<ShortMultiValues> r = database.select(new MultiRequest[]{new MultiRequest("a", new int[]{1, 12})});
+        List<ShortMultiValues> r = database.select(new Request[]{new Request("a", new int[]{1, 12})});
 
         Assert.assertEquals(
                 asList(
@@ -272,21 +248,19 @@ public class FastSelectTest {
 
     @Test
     public void supportsByteMultiValuesColumns() {
-        FastSelect<ByteMultiValues> database = new FastSelect<>(1, ByteMultiValues.class,
-                Collections.singletonList(new FastSelect.Column("a", byte[].class)));
+        FastSelect<ByteMultiValues> database = new FastSelect<>(1, ByteMultiValues.class);
         database.addAll(asList(
                 new ByteMultiValues(new byte[]{1, 2}),
                 new ByteMultiValues(new byte[]{11, 12})));
 
-        List<ByteMultiValues> r = database.select(new MultiRequest[]{new MultiRequest("a", new int[]{12})});
+        List<ByteMultiValues> r = database.select(new Request[]{new Request("a", new int[]{12})});
 
         Assert.assertEquals(r, Collections.singletonList(new ByteMultiValues(new byte[]{11, 12})));
     }
 
     @Test
     public void supportsByteMultiValuesColumnsManyResult() {
-        FastSelect<ByteMultiValues> database = new FastSelect<>(1, ByteMultiValues.class,
-                Collections.singletonList(new FastSelect.Column("a", byte[].class)));
+        FastSelect<ByteMultiValues> database = new FastSelect<>(1, ByteMultiValues.class);
         database.addAll(asList(
                 new ByteMultiValues(new byte[]{1, 2}),
                 new ByteMultiValues(new byte[]{11, 12}),
@@ -294,15 +268,14 @@ public class FastSelectTest {
                 new ByteMultiValues(new byte[]{1, 0})
         ));
 
-        List<ByteMultiValues> r = database.select(new MultiRequest[]{new MultiRequest("a", new int[]{12})});
+        List<ByteMultiValues> r = database.select(new Request[]{new Request("a", new int[]{12})});
 
         Assert.assertEquals(asList(new ByteMultiValues(new byte[]{11, 12}), new ByteMultiValues(new byte[]{33, 12})), r);
     }
 
     @Test
     public void supportsByteMultiValuesColumnsManyCriteria() {
-        FastSelect<ByteMultiValues> database = new FastSelect<>(1, ByteMultiValues.class,
-                Collections.singletonList(new FastSelect.Column("a", byte[].class)));
+        FastSelect<ByteMultiValues> database = new FastSelect<>(1, ByteMultiValues.class);
         database.addAll(asList(
                 new ByteMultiValues(new byte[]{1, 2}),
                 new ByteMultiValues(new byte[]{11, 12}),
@@ -310,7 +283,7 @@ public class FastSelectTest {
                 new ByteMultiValues(new byte[]{1, 0})
         ));
 
-        List<ByteMultiValues> r = database.select(new MultiRequest[]{new MultiRequest("a", new int[]{1, 12})});
+        List<ByteMultiValues> r = database.select(new Request[]{new Request("a", new int[]{1, 12})});
 
         Assert.assertEquals(
                 asList(
@@ -319,6 +292,65 @@ public class FastSelectTest {
                         new ByteMultiValues(new byte[]{33, 12}),
                         new ByteMultiValues(new byte[]{1, 0})),
                 r);
+    }
+
+    @Test
+    public void shouldCorrectlyRestoreByteField() {
+        FastSelect<TestIntByte> database = new FastSelect<>(10, TestIntByte.class);
+        database.addAll(asList(
+                new TestIntByte(12, (byte) 0),
+                new TestIntByte(12, (byte) -1),
+                new TestIntByte(12, (byte) 1),
+                new TestIntByte(12, Byte.MAX_VALUE),
+                new TestIntByte(12, Byte.MIN_VALUE)));
+
+        List result = database.select(new Request[]{new Request("value1", new int[]{12})});
+
+        Assert.assertEquals(asList(
+                new TestIntByte(12, (byte) 0),
+                new TestIntByte(12, (byte) -1),
+                new TestIntByte(12, (byte) 1),
+                new TestIntByte(12, Byte.MAX_VALUE),
+                new TestIntByte(12, Byte.MIN_VALUE)),
+                result);
+    }
+
+    @Test
+    public void shouldCorrectlyRestoreIntField() {
+        FastSelect<TestIntByte> database = new FastSelect<>(10, TestIntByte.class);
+        database.addAll(asList(
+                new TestIntByte(0, (byte) 1),
+                new TestIntByte(-1, (byte) 1),
+                new TestIntByte(1, (byte) 1),
+                new TestIntByte(Integer.MAX_VALUE, (byte) 1),
+                new TestIntByte(Integer.MIN_VALUE, (byte) 1)));
+
+        List result = database.select(new Request[]{new Request("value2", new int[]{1})});
+
+        Assert.assertEquals(asList(
+                new TestIntByte(0, (byte) 1),
+                new TestIntByte(-1, (byte) 1),
+                new TestIntByte(1, (byte) 1),
+                new TestIntByte(Integer.MAX_VALUE, (byte) 1),
+                new TestIntByte(Integer.MIN_VALUE, (byte) 1)),
+                result);
+    }
+
+    @Test
+    public void shouldCorrectlyRestoreLongField() {
+        List<TestLongShort> data = asList(
+                new TestLongShort(0, (short) 1),
+                new TestLongShort(-1, (short) 1),
+                new TestLongShort(1, (short) 1),
+                new TestLongShort(Long.MAX_VALUE, (short) 1),
+                new TestLongShort(Long.MIN_VALUE, (short) 1));
+
+        FastSelect<TestLongShort> database = new FastSelect<>(10, TestLongShort.class);
+        database.addAll(data);
+
+        List result = database.select(new Request[]{new Request("short1", new int[]{1})});
+
+        Assert.assertEquals(data, result);
     }
 
     public static class TestIntByte {
@@ -333,6 +365,14 @@ public class FastSelectTest {
         TestIntByte(int value, byte value2) {
             this.value1 = value;
             this.value2 = value2;
+        }
+
+        @Override
+        public String toString() {
+            return "TestIntByte{" +
+                    "value1=" + value1 +
+                    ", value2=" + value2 +
+                    '}';
         }
 
         @Override

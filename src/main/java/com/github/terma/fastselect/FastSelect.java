@@ -24,6 +24,7 @@ import com.github.terma.fastselect.data.*;
 import com.github.terma.fastselect.utils.MethodHandlerRepository;
 
 import javax.annotation.concurrent.ThreadSafe;
+import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -38,7 +39,7 @@ import java.util.*;
  * Which means you for one object with one int field. You need to allocate 16 bytes on header and 8 bytes
  * on field on x64 machine with SunJVM. <a href="http://shipilev.net/blog/2014/heapdump-is-a-lie/">Details about JVM object mem layout</a>
  * When you add new object class internally extract required fields from that object and add this to
- * particular column data.
+ * particular column data. <a href="http://the-paper-trail.org/blog/columnar-storage/">Columnar Storage</a>
  * <p>
  * As result you don't need to spend mem on millions of object headers and alignment.
  * The downside of that each time when you need to get data back as object some time need to be spend on
@@ -57,6 +58,9 @@ import java.util.*;
 public final class FastSelect<T> {
 
     private final static int DEFAULT_BLOCK_SIZE = 1000;
+
+    private final static long MAX_COLUMN_BIT = 10000;
+    private final static long MIN_COLUMN_BIT = 0;
 
     private final int blockSize;
     private final Class<T> dataClass;
@@ -84,8 +88,25 @@ public final class FastSelect<T> {
         this.blocks = new ArrayList<>();
     }
 
+    public FastSelect(final int blockSize, final Class<T> dataClass) {
+        this.blockSize = blockSize;
+        this.dataClass = dataClass;
+        this.columns = getColumnsFromDataClass(dataClass);
+        this.columnsByNames = initColumnsByName(columns);
+        this.mhRepo = new MethodHandlerRepository(dataClass, getColumnsAsMap(columns));
+        this.blocks = new ArrayList<>();
+    }
+
     public FastSelect(final Class<T> dataClass, final List<Column> columns) {
         this(DEFAULT_BLOCK_SIZE, dataClass, columns);
+    }
+
+    private static List<Column> getColumnsFromDataClass(Class dataClass) {
+        final List<Column> columns = new ArrayList<>();
+        for (Field field : dataClass.getDeclaredFields()) {
+            columns.add(new Column(field.getName(), field.getType()));
+        }
+        return columns;
     }
 
     private static Map<String, Column> initColumnsByName(List<Column> columns) {
@@ -169,7 +190,7 @@ public final class FastSelect<T> {
         return block;
     }
 
-    public List<T> select(final MultiRequest[] where) {
+    public List<T> select(final Request[] where) {
         ListCallback<T> result = new ListCallback<>();
         select(where, result);
         return result.getResult();
@@ -183,10 +204,22 @@ public final class FastSelect<T> {
      *                 {@link FastSelect} creation.
      * @param callback callback. Will be called for each item accepted by where.
      */
-    public void select(final MultiRequest[] where, final ArrayLayoutCallback callback) {
-        for (final MultiRequest condition : where) {
+    public void select(final Request[] where, final ArrayLayoutCallback callback) {
+        for (final Request condition : where) {
             condition.column = columnsByNames.get(condition.name);
-            Arrays.sort(condition.values);
+
+            if (condition.column == null) throw new IllegalArgumentException(
+                    "Can't find requested column: " + condition.name + " in " + columns);
+
+            int max = condition.values[0];
+            for (int i = 1; i < condition.values.length; i++)
+                if (condition.values[i] > max) max = condition.values[i];
+
+            byte[] plainValues = new byte[max + 1];
+            for (int value : condition.values) plainValues[value] = 1;
+            condition.plainValues = plainValues;
+
+            // todo implement search by array if direct index can't be used Arrays.sort(condition.values);
         }
         try {
             for (final Block block : blocks) {
@@ -196,8 +229,12 @@ public final class FastSelect<T> {
                 final int end = block.start + block.size;
                 opa:
                 for (int i = block.start; i < end; i++) {
-                    for (final MultiRequest request : where) {
-                        if (!request.column.data.check(i, request.values)) continue opa;
+                    for (final Request request : where) {
+                        if (request.plainValues != null) {
+                            if (!request.column.data.plainCheck(i, request.plainValues)) continue opa;
+                        } else {
+                            if (!request.column.data.check(i, request.values)) continue opa;
+                        }
                     }
 
                     callback.data(i);
@@ -208,12 +245,12 @@ public final class FastSelect<T> {
         }
     }
 
-    public void select(final MultiRequest[] where, final Callback<T> callback) {
+    public void select(final Request[] where, final Callback<T> callback) {
         select(where, new ArrayToObjectCallback<>(dataClass, columns, mhRepo, callback));
     }
 
-    private boolean inBlock(MultiRequest[] requests, Block block) {
-        for (MultiRequest request : requests) {
+    private boolean inBlock(Request[] requests, Block block) {
+        for (Request request : requests) {
             final BitSet columnBitSet = block.columnBitSets.get(request.name);
 
             boolean p = false;
@@ -296,7 +333,11 @@ public final class FastSelect<T> {
         public int size;
 
         public void setColumnBitSet(Column column, int bit) {
-            columnBitSets.get(column.name).set(bit);
+            if (bit >= MIN_COLUMN_BIT && bit <= MAX_COLUMN_BIT) {
+                columnBitSets.get(column.name).set(bit);
+            } else {
+                // todo implement indexing for negative values, currently just use direct scan
+            }
         }
 
     }

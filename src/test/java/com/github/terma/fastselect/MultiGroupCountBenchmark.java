@@ -56,7 +56,7 @@ public class MultiGroupCountBenchmark {
 
     @Setup
     public void init() throws Exception {
-        fastSelect = GroupCountBenchmark.initDatabase(blockSize, volume);
+        fastSelect = SingleGroupCountBenchmark.initDatabase(blockSize, volume);
 
         System.out.println(">>>> TRY TEST:");
         System.out.println(test());

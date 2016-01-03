@@ -20,6 +20,8 @@ public interface Data {
 
     boolean check(int position, int[] values);
 
+    boolean plainCheck(int position, byte[] values);
+
     Object get(int position);
 
     int size();

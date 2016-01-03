@@ -16,6 +16,7 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
+import com.github.terma.fastselect.callbacks.CounterCallback;
 import com.github.terma.fastselect.callbacks.GroupCountCallback;
 import com.github.terma.fastselect.demo.DemoData;
 import com.github.terma.fastselect.demo.DemoUtils;
@@ -27,18 +28,18 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.util.concurrent.TimeUnit;
 
-@Fork(value = 1, jvmArgs = "-Xmx6g")
+@Fork(value = 1, jvmArgs = "-Xmx7g")
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
 @Warmup(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
 @Measurement(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
-public class GroupCountBenchmark {
+public class SingleGroupCountBenchmark {
 
     @Param({"1000"}) // "100000"
     private int blockSize;
 
-    @Param({"1000000"}) // "10000000"
+    @Param({"10000000"}) // "10000000"
     private int volume;
 
     @Param({"FastSelect"})
@@ -47,7 +48,7 @@ public class GroupCountBenchmark {
     private FastSelect<DemoData> fastSelect;
 
     public static void main(String[] args) throws RunnerException {
-        Options opt = new OptionsBuilder().include("." + GroupCountBenchmark.class.getSimpleName() + ".*").build();
+        Options opt = new OptionsBuilder().include("." + SingleGroupCountBenchmark.class.getSimpleName() + ".*").build();
         new Runner(opt).run();
     }
 
@@ -58,14 +59,26 @@ public class GroupCountBenchmark {
     @Setup
     public void init() throws InterruptedException {
         fastSelect = initDatabase(blockSize, volume);
+
+        // test run
+        CounterCallback counter = new CounterCallback();
+        fastSelect.select(DemoUtils.createWhere(), counter);
+        System.out.println(counter.toString());
     }
 
+//    @Benchmark
+//    public Object groupAndCountFiltered10G5R4C20S40D() throws Exception {
+//        GroupCountCallback counter = new GroupCountCallback(
+//                fastSelect.getColumnsByNames().get("r"));
+//        fastSelect.select(DemoUtils.createWhere(), counter);
+//        return counter.getCounters();
+//    }
+
     @Benchmark
-    public Object groupAndCountFiltered10G5R4C20S40D() throws Exception {
-        GroupCountCallback counter = new GroupCountCallback(
-                fastSelect.getColumnsByNames().get("r"));
+    public Object countFiltered10G5R4C20S40D() throws Exception {
+        CounterCallback counter = new CounterCallback();
         fastSelect.select(DemoUtils.createWhere(), counter);
-        return counter.getCounters();
+        return counter.getCount();
     }
 
 }

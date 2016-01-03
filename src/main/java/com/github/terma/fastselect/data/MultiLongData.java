@@ -47,6 +47,18 @@ public class MultiLongData implements Data {
     }
 
     @Override
+    public boolean plainCheck(int position, byte[] values) {
+        int dataStartPosition = getDataStart(position);
+        int dataEndPosition = getDataEnd(position);
+        for (int i = dataStartPosition; i < dataEndPosition; i++) {
+            // todo will work when data in int range need to fix that
+            int value = (int) data.data[i];
+            if (value < values.length && values[value] > 0) return true;
+        }
+        return false;
+    }
+
+    @Override
     public Object get(int position) {
         int start = getDataStart(position);
         int end = getDataEnd(position);

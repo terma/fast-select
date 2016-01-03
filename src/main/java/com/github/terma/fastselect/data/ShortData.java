@@ -25,7 +25,7 @@ public class ShortData implements Data {
 
     public void add(short v) {
         if (size == data.length) {
-            data = Arrays.copyOf(data, size + 100000);
+            data = Arrays.copyOf(data, size << 2);
         }
         data[size] = v;
         size++;
@@ -34,6 +34,12 @@ public class ShortData implements Data {
     @Override
     public boolean check(int position, int[] values) {
         return Arrays.binarySearch(values, data[position]) >= 0;
+    }
+
+    @Override
+    public boolean plainCheck(int position, byte[] values) {
+        short value = data[position];
+        return value < values.length && values[value] > 0;
     }
 
     @Override

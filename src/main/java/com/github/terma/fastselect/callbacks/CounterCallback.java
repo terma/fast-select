@@ -26,6 +26,11 @@ public class CounterCallback implements ArrayLayoutCallback {
     private int count;
 
     @Override
+    public String toString() {
+        return "CounterCallback {count: " + count + '}';
+    }
+
+    @Override
     public void data(int position) {
         count++;
     }

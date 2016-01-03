@@ -37,6 +37,12 @@ public class IntData implements Data {
     }
 
     @Override
+    public boolean plainCheck(int position, byte[] values) {
+        int value = data[position];
+        return value < values.length && values[value] > 0;
+    }
+
+    @Override
     public Object get(int position) {
         return data[position];
     }

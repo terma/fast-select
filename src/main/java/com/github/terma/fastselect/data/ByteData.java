@@ -25,7 +25,7 @@ public class ByteData implements Data {
 
     public void add(byte v) {
         if (size == data.length) {
-            data = Arrays.copyOf(data, size + 100000);
+            data = Arrays.copyOf(data, size << 2);
         }
         data[size] = v;
         size++;
@@ -34,6 +34,12 @@ public class ByteData implements Data {
     @Override
     public boolean check(int position, int[] values) {
         return Arrays.binarySearch(values, data[position]) >= 0;
+    }
+
+    @Override
+    public boolean plainCheck(int position, byte[] values) {
+        byte value = data[position];
+        return value < values.length && values[value] > 0;
     }
 
     @Override

@@ -88,3 +88,19 @@ MultiGroupCountBenchmark.test         1000  FastSelect  100000000  avgt       17
 
 ### prediction 300m
 434 msec
+
+### single byte array
+1m - 20ms
+
+###
+Benchmark                                                     (blockSize)      (impl)  (volume)  Mode  Cnt   Score   Error  Units
+SingleGroupCountBenchmark.countFiltered10G5R4C20S40D                 1000  FastSelect   1000000  avgt    2  13.830          ms/op
+SingleGroupCountBenchmark.groupAndCountFiltered10G5R4C20S40D         1000  FastSelect   1000000  avgt    2  15.168          ms/op
+
+### plain search
+Benchmark                                             (blockSize)      (impl)  (volume)  Mode  Cnt  Score   Error  Units
+SingleGroupCountBenchmark.countFiltered10G5R4C20S40D         1000  FastSelect   1000000  avgt       5.920          ms/op
+
+### a lot of data
+Benchmark                                             (blockSize)      (impl)   (volume)  Mode  Cnt    Score   Error  Units
+SingleGroupCountBenchmark.countFiltered10G5R4C20S40D        10000  FastSelect  300000000  avgt       239.217          ms/op
