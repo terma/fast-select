@@ -52,7 +52,7 @@ public class CountBenchmark {
     }
 
     public static FastSelect<DemoData> initDatabase(int blockSize, int volume) {
-        return DemoUtils.createFastSelect(blockSize, volume);
+        return DemoUtils.createFastSelect(new int[]{blockSize}, volume);
     }
 
     @Setup

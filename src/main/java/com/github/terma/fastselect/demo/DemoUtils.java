@@ -33,13 +33,13 @@ public abstract class DemoUtils {
     public static final int S_MAX = 100;
     public static final int D_MAX = 100;
 
-    public static FastSelect<DemoData> createFastSelect(int blockSize, int itemsToCreate) {
+    public static FastSelect<DemoData> createFastSelect(int[] blockSizes, int itemsToCreate) {
         System.out.println("Filler started");
 
         final MemMeter memMeter = new MemMeter();
         final long start = System.currentTimeMillis();
 
-        FastSelect<DemoData> database = new FastSelect<>(blockSize, DemoData.class, Arrays.asList(
+        FastSelect<DemoData> database = new FastSelect<>(blockSizes, DemoData.class, Arrays.asList(
                 new FastSelect.Column("r", byte.class),
                 new FastSelect.Column("g", byte.class),
                 new FastSelect.Column("s", byte.class),

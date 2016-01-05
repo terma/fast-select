@@ -25,7 +25,7 @@ public class ByteData implements Data {
 
     public void add(byte v) {
         if (size == data.length) {
-            data = Arrays.copyOf(data, size << 2);
+            data = Arrays.copyOf(data, size + 1000000);
         }
         data[size] = v;
         size++;

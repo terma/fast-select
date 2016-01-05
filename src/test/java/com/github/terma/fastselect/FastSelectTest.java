@@ -60,8 +60,21 @@ public class FastSelectTest {
     }
 
     @Test
-    public void shouldSelectIfTwoBlocks() {
+    public void shouldSelectIfManyBlocksOneLevel() {
         FastSelect<TestIntByte> database = new FastSelect<>(1, TestIntByte.class);
+        database.addAll(asList(
+                new TestIntByte(12, (byte) 0),
+                new TestIntByte(9, (byte) 0),
+                new TestIntByte(1000, (byte) 0)));
+
+        List result = database.select(new Request[]{new Request("value1", new int[]{12})});
+
+        Assert.assertEquals(Collections.singletonList(new TestIntByte(12, (byte) 0)), result);
+    }
+
+    @Test
+    public void shouldSelectIfManyBlocksAndLevels() {
+        FastSelect<TestIntByte> database = new FastSelect<>(new int[]{1, 1}, TestIntByte.class);
         database.addAll(asList(
                 new TestIntByte(12, (byte) 0),
                 new TestIntByte(9, (byte) 0),
@@ -516,10 +529,7 @@ public class FastSelectTest {
 
         @Override
         public String toString() {
-            return "TestLongShort{" +
-                    "long1=" + long1 +
-                    ", short1=" + short1 +
-                    '}';
+            return "TestLongShort {long1: " + long1 + ", short1: " + short1 + '}';
         }
 
         @Override

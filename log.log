@@ -104,3 +104,11 @@ SingleGroupCountBenchmark.countFiltered10G5R4C20S40D         1000  FastSelect   
 ### a lot of data
 Benchmark                                             (blockSize)      (impl)   (volume)  Mode  Cnt    Score   Error  Units
 SingleGroupCountBenchmark.countFiltered10G5R4C20S40D        10000  FastSelect  300000000  avgt       239.217          ms/op
+
+### blocks tree (21% for 100x10k blocks)
+Benchmark                                             (blockSize1)  (blockSize2)      (impl)  (volume)  Mode  Cnt  Score   Error  Units
+SingleGroupCountBenchmark.countFiltered10G5R4C20S40D          1000          1000  FastSelect   1000000  avgt       5.550          ms/op
+SingleGroupCountBenchmark.countFiltered10G5R4C20S40D          1000          1000  FastSelect  10000000  avgt      11.070          ms/op
+SingleGroupCountBenchmark.countFiltered10G5R4C20S40D           100         10000  FastSelect 300000000  avgt     188.690          ms/op
+SingleGroupCountBenchmark.countFiltered10G5R4C20S40D          1000          1000  FastSelect 300000000  avgt     307.108          ms/op
+SingleGroupCountBenchmark.countFiltered10G5R4C20S40D           100         10000  FastSelect 300000000  avgt     215.943          ms/op

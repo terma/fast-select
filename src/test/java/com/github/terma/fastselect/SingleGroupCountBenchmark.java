@@ -17,7 +17,6 @@ limitations under the License.
 package com.github.terma.fastselect;
 
 import com.github.terma.fastselect.callbacks.CounterCallback;
-import com.github.terma.fastselect.callbacks.GroupCountCallback;
 import com.github.terma.fastselect.demo.DemoData;
 import com.github.terma.fastselect.demo.DemoUtils;
 import org.openjdk.jmh.annotations.*;
@@ -32,14 +31,17 @@ import java.util.concurrent.TimeUnit;
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
-@Warmup(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
-@Measurement(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
+@Warmup(timeUnit = TimeUnit.SECONDS, time = 90, iterations = 1)
+@Measurement(timeUnit = TimeUnit.SECONDS, time = 90, iterations = 1)
 public class SingleGroupCountBenchmark {
 
-    @Param({"1000"}) // "100000"
-    private int blockSize;
+    @Param({"100"})
+    private int blockSize1;
 
-    @Param({"10000000"}) // "10000000"
+    @Param({"10000"})
+    private int blockSize2;
+
+    @Param({"300000000"}) // "10000000"
     private int volume;
 
     @Param({"FastSelect"})
@@ -52,13 +54,17 @@ public class SingleGroupCountBenchmark {
         new Runner(opt).run();
     }
 
-    public static FastSelect<DemoData> initDatabase(int blockSize, int volume) {
-        return DemoUtils.createFastSelect(blockSize, volume);
+    static FastSelect<DemoData> initDatabase(int blockSize, int volume) {
+        return initDatabase(new int[]{blockSize}, volume);
+    }
+
+    static FastSelect<DemoData> initDatabase(int[] blockSizes, int volume) {
+        return DemoUtils.createFastSelect(blockSizes, volume);
     }
 
     @Setup
     public void init() throws InterruptedException {
-        fastSelect = initDatabase(blockSize, volume);
+        fastSelect = initDatabase(new int[]{blockSize1, blockSize2}, volume);
 
         // test run
         CounterCallback counter = new CounterCallback();

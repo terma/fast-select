@@ -22,8 +22,8 @@ public class Request {
 
     public final String name;
     public final int[] values;
-    public FastSelect.Column column;
 
+    public FastSelect.Column column;
     public byte[] plainValues;
 
     public Request(String name, int[] values) {
@@ -33,7 +33,7 @@ public class Request {
 
     @Override
     public String toString() {
-        return "{ " + "name: " + name + ", values: " + Arrays.toString(values) + '}';
+        return "{name: " + name + ", values: " + Arrays.toString(values) + '}';
     }
 
 }

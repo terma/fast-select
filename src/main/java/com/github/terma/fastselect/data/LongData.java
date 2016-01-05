@@ -25,7 +25,7 @@ public class LongData implements Data {
 
     public void add(long v) {
         if (size == data.length) {
-            data = Arrays.copyOf(data, size + 100000);
+            data = Arrays.copyOf(data, size + 1000000);
         }
         data[size] = v;
         size++;

@@ -57,48 +57,60 @@ import java.util.*;
 @ThreadSafe
 public final class FastSelect<T> {
 
-    private final static int DEFAULT_BLOCK_SIZE = 1000;
+    private final static int[] DEFAULT_BLOCK_SIZES = new int[]{1000};
 
     private final static long MAX_COLUMN_BIT = 10000;
     private final static long MIN_COLUMN_BIT = 0;
 
-    private final int blockSize;
+    private final int[] blockSizes;
     private final Class<T> dataClass;
     private final MethodHandlerRepository mhRepo;
-    private final List<Block> blocks;
+    private final Block rootBlock;
     private final List<Column> columns;
     private final Map<String, Column> columnsByNames;
+
+    /**
+     * @param blockSizes - block sizes
+     * @param dataClass  - data class
+     * @param columns    list of {@link FastSelect.Column} data for them will be extracted from dataClass object
+     *                   and used for filtering.
+     */
+    // todo add description for block sizes parameter
+    public FastSelect(final int[] blockSizes, final Class<T> dataClass, final List<Column> columns) {
+        // todo check that block sizes not zero or negative or empty
+        this.blockSizes = Arrays.copyOf(blockSizes, blockSizes.length);
+        this.dataClass = dataClass;
+        this.columns = columns;
+        this.rootBlock = new SuperBlock(-1, Integer.MAX_VALUE);
+        for (int i = 0; i < columns.size(); i++) columns.get(i).index = i;
+        this.columnsByNames = initColumnsByName(columns);
+        this.mhRepo = new MethodHandlerRepository(dataClass, getColumnsAsMap(columns));
+    }
 
     public FastSelect(final int blockSize, final Class<T> dataClass, final Column... columns) {
         this(blockSize, dataClass, Arrays.asList(columns));
     }
 
-    /**
-     * @param blockSize
-     * @param dataClass
-     * @param columns   list of {@link FastSelect.Column} data for them will be extracted from dataClass object
-     *                  and used for filtering.
-     */
     public FastSelect(final int blockSize, final Class<T> dataClass, final List<Column> columns) {
-        this.blockSize = blockSize;
-        this.dataClass = dataClass;
-        this.columns = columns;
-        this.columnsByNames = initColumnsByName(columns);
-        this.mhRepo = new MethodHandlerRepository(dataClass, getColumnsAsMap(columns));
-        this.blocks = new ArrayList<>();
+        this(new int[]{blockSize}, dataClass, columns);
     }
 
+    public FastSelect(final int[] blockSizes, final Class<T> dataClass) {
+        this(blockSizes, dataClass, getColumnsFromDataClass(dataClass));
+    }
+
+    /**
+     * Derive list of columns from class fields (exclude any inherited)
+     *
+     * @param blockSize - block size
+     * @param dataClass - data class
+     */
     public FastSelect(final int blockSize, final Class<T> dataClass) {
-        this.blockSize = blockSize;
-        this.dataClass = dataClass;
-        this.columns = getColumnsFromDataClass(dataClass);
-        this.columnsByNames = initColumnsByName(columns);
-        this.mhRepo = new MethodHandlerRepository(dataClass, getColumnsAsMap(columns));
-        this.blocks = new ArrayList<>();
+        this(blockSize, dataClass, getColumnsFromDataClass(dataClass));
     }
 
     public FastSelect(final Class<T> dataClass, final List<Column> columns) {
-        this(DEFAULT_BLOCK_SIZE, dataClass, columns);
+        this(DEFAULT_BLOCK_SIZES, dataClass, columns);
     }
 
     private static List<Column> getColumnsFromDataClass(Class dataClass) {
@@ -123,71 +135,8 @@ public final class FastSelect<T> {
 
     public void addAll(final List<T> data) {
         for (final T row : data) {
-            if (blocks.isEmpty() || blocks.get(blocks.size() - 1).size >= blockSize)
-                blocks.add(createBlock(blocks));
-
-            Block block = blocks.get(blocks.size() - 1);
-            block.size++;
-            for (Column column : columns) {
-                try {
-                    int indexValue;
-
-                    if (column.type == long.class) {
-                        long v = (long) mhRepo.get(column.name).invoke(row);
-                        ((LongData) column.data).add(v);
-                        block.setColumnBitSet(column, (int) v);
-
-                    } else if (column.type == long[].class) {
-                        long[] v = (long[]) mhRepo.get(column.name).invoke(row);
-                        ((MultiLongData) column.data).add(v);
-                        // set all bits
-                        for (long v1 : v) block.setColumnBitSet(column, (int) v1);
-
-                    } else if (column.type == short[].class) {
-                        short[] v = (short[]) mhRepo.get(column.name).invoke(row);
-                        ((MultiShortData) column.data).add(v);
-                        // set all bits
-                        for (short v1 : v) block.setColumnBitSet(column, v1);
-
-                    } else if (column.type == byte[].class) {
-                        byte[] v = (byte[]) mhRepo.get(column.name).invoke(row);
-                        ((MultiByteData) column.data).add(v);
-                        // set all bits
-                        for (byte v1 : v) block.setColumnBitSet(column, v1);
-
-                    } else if (column.type == int.class) {
-                        int v = (int) mhRepo.get(column.name).invoke(row);
-                        ((IntData) column.data).add(v);
-                        block.setColumnBitSet(column, v);
-
-                    } else if (column.type == short.class) {
-                        short v = (short) mhRepo.get(column.name).invoke(row);
-                        ((ShortData) column.data).add(v);
-                        block.setColumnBitSet(column, v);
-
-                    } else if (column.type == byte.class) {
-                        byte v = (byte) mhRepo.get(column.name).invoke(row);
-                        ((ByteData) column.data).add(v);
-                        block.setColumnBitSet(column, v);
-
-                    } else {
-                        throw new IllegalArgumentException("!");
-                    }
-                } catch (Throwable throwable) {
-                    throw new RuntimeException(throwable);
-                }
-            }
+            rootBlock.add(row);
         }
-    }
-
-    private Block createBlock(List<Block> blocks) {
-        final Block block = new Block();
-        block.start = blocks.isEmpty() ? 0 : blocks.get(blocks.size() - 1).start + blocks.get(blocks.size() - 1).size;
-        block.size = 0;
-        for (Column column : columns) {
-            block.columnBitSets.put(column.name, new BitSet());
-        }
-        return block;
     }
 
     public List<T> select(final Request[] where) {
@@ -221,45 +170,12 @@ public final class FastSelect<T> {
 
             // todo implement search by array if direct index can't be used Arrays.sort(condition.values);
         }
-        try {
-            for (final Block block : blocks) {
-                if (!inBlock(where, block)) continue;
 
-                // block good for direct search
-                final int end = block.start + block.size;
-                opa:
-                for (int i = block.start; i < end; i++) {
-                    for (final Request request : where) {
-                        if (request.plainValues != null) {
-                            if (!request.column.data.plainCheck(i, request.plainValues)) continue opa;
-                        } else {
-                            if (!request.column.data.check(i, request.values)) continue opa;
-                        }
-                    }
-
-                    callback.data(i);
-                }
-            }
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
+        rootBlock.select(where, callback);
     }
 
     public void select(final Request[] where, final Callback<T> callback) {
         select(where, new ArrayToObjectCallback<>(dataClass, columns, mhRepo, callback));
-    }
-
-    private boolean inBlock(Request[] requests, Block block) {
-        for (Request request : requests) {
-            final BitSet columnBitSet = block.columnBitSets.get(request.name);
-
-            boolean p = false;
-            for (final int value : request.values) {
-                p = p | columnBitSet.get(value);
-            }
-            if (!p) return false;
-        }
-        return true;
     }
 
     public int size() {
@@ -272,15 +188,17 @@ public final class FastSelect<T> {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " {blockSize: " + blockSize + ", data: " + size()
+        return getClass().getSimpleName() + " {blockSizes: " + Arrays.toString(blockSizes) + ", data: " + size()
                 + ", indexes: " + columns + ", class: " + dataClass + "}";
     }
 
     public static class Column {
 
         public final String name;
-        public final Class type;
+        final Class type;
         public final Data data;
+
+        int index;
 
         public Column(final String name, final Class type) {
             this.name = name;
@@ -327,17 +245,190 @@ public final class FastSelect<T> {
 
     }
 
-    private static class Block {
-        public final Map<String, BitSet> columnBitSets = new HashMap<>();
-        public int start;
-        public int size;
+    private abstract class Block {
 
-        public void setColumnBitSet(Column column, int bit) {
+        final List<BitSet> columnBitSets = new ArrayList<>();
+
+        abstract boolean isFull();
+
+        void setColumnBitSet(Column column, int bit) {
             if (bit >= MIN_COLUMN_BIT && bit <= MAX_COLUMN_BIT) {
-                columnBitSets.get(column.name).set(bit);
+                columnBitSets.get(column.index).set(bit);
             } else {
                 // todo implement indexing for negative values, currently just use direct scan
             }
+        }
+
+        abstract void add(T row);
+
+        abstract void select(Request[] where, ArrayLayoutCallback callback);
+
+    }
+
+    private final class SuperBlock extends Block {
+
+        final int level;
+        final int maxSize;
+        final List<Block> blocks = new ArrayList<>();
+
+        SuperBlock(int level, int maxSize) {
+            this.level = level;
+            this.maxSize = maxSize;
+
+            for (Column ignored : columns) {
+                columnBitSets.add(new BitSet());
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "SuperBlock {level: " + level + ", maxSize: " + maxSize + ", blocks: " + blocks.size() + "}";
+        }
+
+        @Override
+        boolean isFull() {
+            return !blocks.isEmpty() && blocks.get(blocks.size() - 1).isFull();
+        }
+
+        private boolean inBlock(Request[] requests, Block block) {
+            for (Request request : requests) {
+                final BitSet columnBitSet = block.columnBitSets.get(request.column.index);
+
+                boolean p = false;
+                for (final int value : request.values) {
+                    p = p | columnBitSet.get(value);
+                }
+                if (!p) return false;
+            }
+            return true;
+        }
+
+        @Override
+        void select(Request[] where, ArrayLayoutCallback callback) {
+            for (final Block block : blocks) {
+                if (!inBlock(where, block)) continue;
+                block.select(where, callback);
+            }
+        }
+
+        private Block createBlock() {
+            Block block;
+
+            if (level == blockSizes.length - 1) block = new DataBlock();
+            else block = new SuperBlock(level + 1, blockSizes[level + 1]);
+
+            return block;
+        }
+
+        @Override
+        void add(T row) {
+            if (blocks.isEmpty() || blocks.get(blocks.size() - 1).isFull()) blocks.add(createBlock());
+            final Block block = blocks.get(blocks.size() - 1);
+            block.add(row);
+
+            for (Column column : columns) {
+                BitSet bitSet = columnBitSets.get(column.index);
+                bitSet.or(block.columnBitSets.get(column.index));
+            }
+        }
+
+    }
+
+    private final class DataBlock extends Block {
+
+        final int start;
+        private int size;
+
+        private DataBlock() {
+            this.start = columns.get(0).data.size();
+
+            for (Column ignored : columns) {
+                columnBitSets.add(new BitSet());
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "DataBlock {maxSize: " + getMaxSize() + ", start: " + start + ", size: " + size + "}";
+        }
+
+        @Override
+        void add(T row) {
+            size++;
+
+            for (Column column : columns) {
+                try {
+                    if (column.type == long.class) {
+                        long v = (long) mhRepo.get(column.name).invoke(row);
+                        ((LongData) column.data).add(v);
+                        setColumnBitSet(column, (int) v);
+
+                    } else if (column.type == long[].class) {
+                        long[] v = (long[]) mhRepo.get(column.name).invoke(row);
+                        ((MultiLongData) column.data).add(v);
+                        // set all bits
+                        for (long v1 : v) setColumnBitSet(column, (int) v1);
+
+                    } else if (column.type == short[].class) {
+                        short[] v = (short[]) mhRepo.get(column.name).invoke(row);
+                        ((MultiShortData) column.data).add(v);
+                        // set all bits
+                        for (short v1 : v) setColumnBitSet(column, v1);
+
+                    } else if (column.type == byte[].class) {
+                        byte[] v = (byte[]) mhRepo.get(column.name).invoke(row);
+                        ((MultiByteData) column.data).add(v);
+                        // set all bits
+                        for (byte v1 : v) setColumnBitSet(column, v1);
+
+                    } else if (column.type == int.class) {
+                        int v = (int) mhRepo.get(column.name).invoke(row);
+                        ((IntData) column.data).add(v);
+                        setColumnBitSet(column, v);
+
+                    } else if (column.type == short.class) {
+                        short v = (short) mhRepo.get(column.name).invoke(row);
+                        ((ShortData) column.data).add(v);
+                        setColumnBitSet(column, v);
+
+                    } else if (column.type == byte.class) {
+                        byte v = (byte) mhRepo.get(column.name).invoke(row);
+                        ((ByteData) column.data).add(v);
+                        setColumnBitSet(column, v);
+
+                    } else {
+                        throw new IllegalArgumentException("!");
+                    }
+                } catch (Throwable throwable) {
+                    throw new RuntimeException(throwable);
+                }
+            }
+        }
+
+        @Override
+        void select(Request[] where, ArrayLayoutCallback callback) {
+            final int end = start + size;
+            opa:
+            for (int i = start; i < end; i++) {
+                for (final Request request : where) {
+                    if (request.plainValues != null) {
+                        if (!request.column.data.plainCheck(i, request.plainValues)) continue opa;
+                    } else {
+                        if (!request.column.data.check(i, request.values)) continue opa;
+                    }
+                }
+
+                callback.data(i);
+            }
+        }
+
+        @Override
+        boolean isFull() {
+            return size == getMaxSize();
+        }
+
+        private int getMaxSize() {
+            return blockSizes[blockSizes.length - 1];
         }
 
     }

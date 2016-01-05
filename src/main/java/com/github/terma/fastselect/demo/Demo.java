@@ -38,7 +38,7 @@ public class Demo {
         final int volume = Integer.parseInt(args[0]);
         final int duration = Integer.parseInt(args[1]);
 
-        final FastSelect<DemoData> fastSelect = DemoUtils.createFastSelect(1000, volume);
+        final FastSelect<DemoData> fastSelect = DemoUtils.createFastSelect(new int[]{1000, 1000}, volume);
         System.out.println();
 
         System.out.println("FastSelect: " + fastSelect);

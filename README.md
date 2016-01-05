@@ -24,18 +24,14 @@ public class Data {
 ### Init fast select
 
 ```java
-FastSelect<Data> database = new FastSelect<>(
-    Data.class, 
-    new FastSelect.Column("a", byte.class), 
-    new FastSelect.Column("b", byte.class)
-);
+FastSelect<Data> database = new FastSelect<>(Data.class);
 
 // add your data
 database.addAll(new ArrayList<Data>(...)); 
 ```
 ### Create filter criteria 
 ```java
-MultiRequest[] where = new MultiRequest[] {new MultiRequest("a", new int[]{12, 3})};
+Request[] where = new Request[] {new Request("a", new int[]{12, 3})};
 ```
 
 ### Get count with grouping
@@ -46,3 +42,9 @@ callback.getCounters(); // your result here grouped by field 'a'
 ```
 
 More use cases you can find in javadoc ```callbacks``` package
+
+## In next version probably =)
+
+* String field type
+* Indexes by String field
+* filter by < or >

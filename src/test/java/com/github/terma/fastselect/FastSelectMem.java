@@ -27,7 +27,7 @@ public class FastSelectMem {
         int volume = 10 * 10 * 1000 * 1000;
 
         final MemMeter memMeter = new MemMeter();
-        FastSelect<DemoData> fastSelect = DemoUtils.createFastSelect(10000, volume);
+        FastSelect<DemoData> fastSelect = DemoUtils.createFastSelect(new int[]{10000}, volume);
 
         System.out.println("Used mem: " + memMeter.getUsedMb() + " mb, volume: " + volume);
         System.out.println(fastSelect.size());
