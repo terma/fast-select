@@ -54,6 +54,7 @@ import java.util.*;
  * @see com.github.terma.fastselect.callbacks.GroupCountCallback
  * @see com.github.terma.fastselect.callbacks.MultiGroupCountCallback
  */
+// todo add support filter by string data
 @ThreadSafe
 public final class FastSelect<T> {
 
@@ -195,9 +196,8 @@ public final class FastSelect<T> {
     public static class Column {
 
         public final String name;
-        final Class type;
         public final Data data;
-
+        final Class type;
         int index;
 
         public Column(final String name, final Class type) {
@@ -218,9 +218,11 @@ public final class FastSelect<T> {
                 data = new ShortData();
             } else if (type == byte.class) {
                 data = new ByteData();
+            } else if (type == String.class) {
+                data = new StringData();
             } else {
                 throw new IllegalArgumentException("Unsupportable column type: " + type
-                        + ". Support byte,short,int,long!");
+                        + ". Support byte,short,int,long,byte[],short[],int[],long[]!");
             }
         }
 
@@ -395,6 +397,10 @@ public final class FastSelect<T> {
                         byte v = (byte) mhRepo.get(column.name).invoke(row);
                         ((ByteData) column.data).add(v);
                         setColumnBitSet(column, v);
+
+                    } else if (column.type == String.class) {
+                        String v = (String) mhRepo.get(column.name).invoke(row);
+                        ((StringData) column.data).add(v);
 
                     } else {
                         throw new IllegalArgumentException("!");

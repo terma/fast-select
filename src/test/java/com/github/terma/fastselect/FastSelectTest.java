@@ -16,6 +16,7 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
+import com.github.terma.fastselect.data.IntStringData;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -46,6 +47,55 @@ public class FastSelectTest {
         List result = database.select(new Request[]{new Request("value1", new int[]{12})});
 
         Assert.assertEquals(Collections.singletonList(new TestIntByte(12, (byte) 0)), result);
+    }
+
+    @Test
+    public void supportStringField() {
+        FastSelect<IntStringData> database = new FastSelect<>(10, IntStringData.class);
+        database.addAll(asList(
+                new IntStringData(1, ""),
+                new IntStringData(1, "1"),
+                new IntStringData(1, "abra")));
+
+        List result = database.select(new Request[]{new Request("value1", new int[]{1})});
+
+        Assert.assertEquals(asList(
+                new IntStringData(1, ""),
+                new IntStringData(1, "1"),
+                new IntStringData(1, "abra")
+        ), result);
+    }
+
+    // todo implement
+//    @Test
+//    public void selectByStringField() {
+//        FastSelect<IntStringData> database = new FastSelect<>(10, IntStringData.class);
+//        database.addAll(asList(
+//                new IntStringData(1, ""),
+//                new IntStringData(1, "1"),
+//                new IntStringData(1, "abra")));
+//
+//        List result = database.select(new Request[]{new Request("value2", new int[]{"1"})});
+//
+//        Assert.assertEquals(Collections.singletonList(new IntStringData(1, "1")), result);
+//    }
+
+    @Test
+    // todo return null if incoming string was null instead of empty
+    public void supportNullableStringFieldAsEmpty() {
+        FastSelect<IntStringData> database = new FastSelect<>(10, IntStringData.class);
+        database.addAll(asList(
+                new IntStringData(1, null),
+                new IntStringData(1, "1"),
+                new IntStringData(1, "abra")));
+
+        List result = database.select(new Request[]{new Request("value1", new int[]{1})});
+
+        Assert.assertEquals(asList(
+                new IntStringData(1, ""),
+                new IntStringData(1, "1"),
+                new IntStringData(1, "abra")
+        ), result);
     }
 
     @Test(expected = IllegalArgumentException.class)
