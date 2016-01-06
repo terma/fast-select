@@ -67,18 +67,18 @@ public class FastSelectTest {
     }
 
     // todo implement
-//    @Test
-//    public void selectByStringField() {
-//        FastSelect<IntStringData> database = new FastSelect<>(10, IntStringData.class);
-//        database.addAll(asList(
-//                new IntStringData(1, ""),
-//                new IntStringData(1, "1"),
-//                new IntStringData(1, "abra")));
-//
-//        List result = database.select(new Request[]{new Request("value2", new int[]{"1"})});
-//
-//        Assert.assertEquals(Collections.singletonList(new IntStringData(1, "1")), result);
-//    }
+    @Test
+    public void selectByStringField() {
+        FastSelect<IntStringData> database = new FastSelect<>(10, IntStringData.class);
+        database.addAll(asList(
+                new IntStringData(1, ""),
+                new IntStringData(1, "1"),
+                new IntStringData(1, "abra")));
+
+        List result = database.select(new Request[]{new Request("value2", new int[]{"1"})});
+
+        Assert.assertEquals(Collections.singletonList(new IntStringData(1, "1")), result);
+    }
 
     @Test
     // todo return null if incoming string was null instead of empty

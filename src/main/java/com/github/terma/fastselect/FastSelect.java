@@ -165,8 +165,8 @@ public final class FastSelect<T> {
             for (int i = 1; i < condition.values.length; i++)
                 if (condition.values[i] > max) max = condition.values[i];
 
-            byte[] plainValues = new byte[max + 1];
-            for (int value : condition.values) plainValues[value] = 1;
+            final byte[] plainValues = new byte[max + 1];
+            for (final int value : condition.values) plainValues[value] = 1;
             condition.plainValues = plainValues;
 
             // todo implement search by array if direct index can't be used Arrays.sort(condition.values);

@@ -24,7 +24,7 @@ public class Request {
     public final int[] values;
 
     public FastSelect.Column column;
-    public byte[] plainValues;
+    byte[] plainValues;
 
     public Request(String name, int[] values) {
         this.name = name;
