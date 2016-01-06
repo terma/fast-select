@@ -18,20 +18,22 @@ package com.github.terma.fastselect;
 
 import java.util.Arrays;
 
-public class MultiRequest {
+public class Request {
 
     public final String name;
     public final int[] values;
-    public FastSelect.Column column;
 
-    public MultiRequest(String name, int[] values) {
+    public FastSelect.Column column;
+    public byte[] plainValues;
+
+    public Request(String name, int[] values) {
         this.name = name;
         this.values = values;
     }
 
     @Override
     public String toString() {
-        return "{ " + "name: " + name + ", values: " + Arrays.toString(values) + '}';
+        return "{name: " + name + ", values: " + Arrays.toString(values) + '}';
     }
 
 }

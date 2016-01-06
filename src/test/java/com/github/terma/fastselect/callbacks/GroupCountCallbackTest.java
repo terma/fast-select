@@ -1,6 +1,7 @@
 package com.github.terma.fastselect.callbacks;
 
 import com.github.terma.fastselect.FastSelect;
+import com.github.terma.fastselect.data.IntData;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -18,7 +19,7 @@ public class GroupCountCallbackTest {
     @Test
     public void nonEmpty() {
         FastSelect.Column column1 = new FastSelect.Column("1", int.class);
-        ((FastSelect.FastIntList) column1.data).add(1);
+        ((IntData) column1.data).add(1);
 
         GroupCountCallback multiGroupCountCallback = new GroupCountCallback(column1);
         multiGroupCountCallback.data(0);
@@ -30,8 +31,8 @@ public class GroupCountCallbackTest {
     @Test
     public void nonEmptyMulti() {
         FastSelect.Column column1 = new FastSelect.Column("1", int.class);
-        ((FastSelect.FastIntList) column1.data).add(1);
-        ((FastSelect.FastIntList) column1.data).add(5);
+        ((IntData) column1.data).add(1);
+        ((IntData) column1.data).add(5);
 
         GroupCountCallback multiGroupCountCallback = new GroupCountCallback(column1);
         multiGroupCountCallback.data(0);

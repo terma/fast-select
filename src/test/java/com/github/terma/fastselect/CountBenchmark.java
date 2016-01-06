@@ -17,7 +17,6 @@ limitations under the License.
 package com.github.terma.fastselect;
 
 import com.github.terma.fastselect.callbacks.CounterCallback;
-import com.github.terma.fastselect.callbacks.GroupCountCallback;
 import com.github.terma.fastselect.demo.DemoData;
 import com.github.terma.fastselect.demo.DemoUtils;
 import org.openjdk.jmh.annotations.*;
@@ -48,16 +47,12 @@ public class CountBenchmark {
     private FastSelect<DemoData> fastSelect;
 
     public static void main(String[] args) throws RunnerException {
-        Options opt = new OptionsBuilder()
-                .include(".*" + CountBenchmark.class.getSimpleName() + ".*")
-//                .addProfiler(HotspotMemoryProfiler.class)
-//                .addProfiler(GCProfiler.class)
-                .build();
+        Options opt = new OptionsBuilder().include(".*" + CountBenchmark.class.getSimpleName() + ".*").build();
         new Runner(opt).run();
     }
 
     public static FastSelect<DemoData> initDatabase(int blockSize, int volume) {
-        return DemoUtils.createFastSelect(blockSize, volume);
+        return DemoUtils.createFastSelect(new int[]{blockSize}, volume);
     }
 
     @Setup
@@ -65,19 +60,11 @@ public class CountBenchmark {
         fastSelect = initDatabase(blockSize, volume);
     }
 
-    //    @org.openjdk.jmh.annotations.CountBenchmark
+    @Benchmark
     public int countByFiltered10G5R4C20S40D() throws Exception {
         CounterCallback counterCallback = new CounterCallback();
         fastSelect.select(DemoUtils.createWhere(), counterCallback);
         return counterCallback.getCount();
-    }
-
-    @Benchmark
-    public Object groupAndCountFiltered10G5R4C20S40D() throws Exception {
-        GroupCountCallback counter = new GroupCountCallback(
-                fastSelect.getColumnsByNames().get("r"));
-        fastSelect.select(DemoUtils.createWhere(), counter);
-        return counter.getCounters();
     }
 
 }

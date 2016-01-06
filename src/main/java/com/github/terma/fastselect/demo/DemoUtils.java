@@ -17,7 +17,7 @@ limitations under the License.
 package com.github.terma.fastselect.demo;
 
 import com.github.terma.fastselect.FastSelect;
-import com.github.terma.fastselect.MultiRequest;
+import com.github.terma.fastselect.Request;
 import com.github.terma.fastselect.utils.MemMeter;
 
 import java.util.ArrayList;
@@ -27,28 +27,28 @@ import java.util.List;
 public abstract class DemoUtils {
 
     public static final int G_MAX = 100;
-    public static final int R_MAX = 5;
-    public static final int C_MAX = 6;
-    public static final int O_MAX = 2;
+    public static final int R_MAX = 7;
+    public static final int C_MAX = 7;
+    public static final int O_MAX = 3;
     public static final int S_MAX = 100;
     public static final int D_MAX = 100;
 
-    public static FastSelect<DemoData> createFastSelect(int blockSize, int itemsToCreate) {
+    public static FastSelect<DemoData> createFastSelect(int[] blockSizes, int itemsToCreate) {
         System.out.println("Filler started");
 
         final MemMeter memMeter = new MemMeter();
         final long start = System.currentTimeMillis();
 
-        FastSelect<DemoData> database = new FastSelect<>(blockSize, DemoData.class, Arrays.asList(
+        FastSelect<DemoData> database = new FastSelect<>(blockSizes, DemoData.class, Arrays.asList(
                 new FastSelect.Column("r", byte.class),
                 new FastSelect.Column("g", byte.class),
                 new FastSelect.Column("s", byte.class),
                 new FastSelect.Column("o", byte.class),
                 new FastSelect.Column("c", byte.class),
                 new FastSelect.Column("m", byte.class),
-                new FastSelect.Column("d", short.class),
-                new FastSelect.Column("uid1", long.class),
-                new FastSelect.Column("uid2", long.class)
+                new FastSelect.Column("d", short.class)
+//                new FastSelect.Column("uid1", long.class),
+//                new FastSelect.Column("uid2", long.class)
         ));
 
         final List<DemoData> data = new ArrayList<>();
@@ -56,12 +56,12 @@ public abstract class DemoUtils {
 
         opa:
         while (true) {
-            for (int r = 0; r < R_MAX; r++) {
-                for (int g = 0; g < G_MAX; g++) {
-                    for (int s = 0; s < S_MAX; s++) {
-                        for (int o = 0; o < O_MAX; o++) {
-                            for (int c = 0; c < C_MAX; c++) {
-                                for (int d = 0; d < D_MAX; d++) {
+            for (int r = 1; r < R_MAX; r++) {
+                for (int g = 1; g < G_MAX; g++) {
+                    for (int s = 1; s < S_MAX; s++) {
+                        for (int o = 1; o < O_MAX; o++) {
+                            for (int c = 1; c < C_MAX; c++) {
+                                for (int d = 1; d < D_MAX; d++) {
                                     if (count >= itemsToCreate) break opa;
 
                                     DemoData item = new DemoData();
@@ -75,7 +75,7 @@ public abstract class DemoUtils {
                                     data.add(item);
                                     count++;
 
-                                    if (count % 10000 == 0) {
+                                    if (count % 1000 == 0) {
                                         database.addAll(data);
                                         data.clear();
                                         System.out.print(".");
@@ -102,13 +102,13 @@ public abstract class DemoUtils {
         return database;
     }
 
-    public static MultiRequest[] createWhere() {
-        return new MultiRequest[]{
-                new MultiRequest("g", new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}),
-                new MultiRequest("r", new int[]{0, 1, 2, 3, 4}),
-                new MultiRequest("c", new int[]{0, 2, 3, 4}),
-                new MultiRequest("s", new int[]{0, 19, 18, 17, 16, 15, 14, 13, 12, 11, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}),
-                new MultiRequest("d", new int[]{0, 90, 99, 5, 34, 22, 26, 8, 5, 6, 7, 5, 6, 34, 35, 36, 37, 38, 39, 21, 70, 71, 74, 76, 78, 79, 10, 11, 22, 33, 44, 55, 66})
+    public static Request[] createWhere() {
+        return new Request[]{
+                new Request("g", new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}),
+                new Request("r", new int[]{1, 2, 3, 4, 5, 6}),
+                new Request("c", new int[]{1, 2, 3, 4}),
+                new Request("s", new int[]{1, 19, 18, 17, 16, 15, 14, 13, 12, 11, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}),
+                new Request("d", new int[]{1, 90, 99, 5, 34, 22, 26, 8, 5, 6, 7, 5, 6, 34, 35, 36, 37, 38, 39, 21, 70, 71, 74, 76, 78, 79, 10, 11, 22, 33, 44, 55, 66})
         };
     }
 }

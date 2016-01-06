@@ -39,7 +39,7 @@ public class MultiGroupCountBenchmark {
     @Param({"1000"})
     private int blockSize;
 
-    @Param({"100000000"})
+    @Param({"1000000"})
     private int volume;
 
     @Param({"FastSelect"})
@@ -49,14 +49,14 @@ public class MultiGroupCountBenchmark {
 
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
-                .include(".*" + MultiGroupCountBenchmark.class.getSimpleName() + ".*")
+                .include("." + MultiGroupCountBenchmark.class.getSimpleName() + ".*")
                 .build();
         new Runner(opt).run();
     }
 
     @Setup
     public void init() throws Exception {
-        fastSelect = CountBenchmark.initDatabase(blockSize, volume);
+        fastSelect = SingleGroupCountBenchmark.initDatabase(blockSize, volume);
 
         System.out.println(">>>> TRY TEST:");
         System.out.println(test());

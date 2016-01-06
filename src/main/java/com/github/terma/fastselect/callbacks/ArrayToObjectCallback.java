@@ -46,16 +46,7 @@ public class ArrayToObjectCallback<T> implements ArrayLayoutCallback {
 
             for (final FastSelect.Column column : columns) {
                 MethodHandle methodHandle = mhRepo.set(column.name);
-
-                if (column.type == long.class) {
-                    methodHandle.invoke(o, ((FastSelect.FastLongList) column.data).data[position]);
-                } else if (column.type == int.class) {
-                    methodHandle.invoke(o, ((FastSelect.FastIntList) column.data).data[position]);
-                } else if (column.type == short.class) {
-                    methodHandle.invoke(o, ((FastSelect.FastShortList) column.data).data[position]);
-                } else if (column.type == byte.class) {
-                    methodHandle.invoke(o, ((FastSelect.FastByteList) column.data).data[position]);
-                }
+                methodHandle.invoke(o, column.data.get(position));
             }
 
             callback.data(o);

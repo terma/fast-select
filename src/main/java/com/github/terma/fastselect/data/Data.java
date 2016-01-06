@@ -14,28 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.github.terma.fastselect.callbacks;
+package com.github.terma.fastselect.data;
 
-/**
- * Count of selected record
- *
- * @author Artem Stasiuk
- */
-public class CounterCallback implements ArrayLayoutCallback {
+public interface Data {
 
-    private int count;
+    boolean check(int position, int[] values);
 
-    @Override
-    public String toString() {
-        return "CounterCallback {count: " + count + '}';
-    }
+    boolean plainCheck(int position, byte[] values);
 
-    @Override
-    public void data(int position) {
-        count++;
-    }
+    Object get(int position);
 
-    public int getCount() {
-        return count;
-    }
+    int size();
+
 }
