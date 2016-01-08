@@ -1,5 +1,5 @@
 /*
-Copyright 2015 Artem Stasiuk
+Copyright 2015-2016 Artem Stasiuk
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -66,7 +66,6 @@ public class FastSelectTest {
         ), result);
     }
 
-    // todo implement
     @Test
     public void selectByStringField() {
         FastSelect<IntStringData> database = new FastSelect<>(10, IntStringData.class);
@@ -75,7 +74,7 @@ public class FastSelectTest {
                 new IntStringData(1, "1"),
                 new IntStringData(1, "abra")));
 
-        List result = database.select(new Request[]{new Request("value2", new int[]{"1"})});
+        List result = database.select(new AbstractRequest[]{new StringRequest("value2", "1")});
 
         Assert.assertEquals(Collections.singletonList(new IntStringData(1, "1")), result);
     }

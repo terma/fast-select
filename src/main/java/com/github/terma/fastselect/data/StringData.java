@@ -1,5 +1,5 @@
 /*
-Copyright 2015 Artem Stasiuk
+Copyright 2015-2016 Artem Stasiuk
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -37,8 +37,12 @@ public class StringData implements Data {
 
     @Override
     public Object get(int position) {
-        final byte[] bytes = (byte[]) data.get(position);
+        final byte[] bytes = getRaw(position);
         return new String(bytes);
+    }
+
+    public byte[] getRaw(int position) {
+        return (byte[]) data.get(position);
     }
 
     @Override
