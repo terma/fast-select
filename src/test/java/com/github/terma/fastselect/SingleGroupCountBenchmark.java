@@ -1,5 +1,5 @@
 /*
-Copyright 2015 Artem Stasiuk
+Copyright 2015-2016 Artem Stasiuk
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -31,17 +31,17 @@ import java.util.concurrent.TimeUnit;
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
-@Warmup(timeUnit = TimeUnit.SECONDS, time = 90, iterations = 1)
-@Measurement(timeUnit = TimeUnit.SECONDS, time = 90, iterations = 1)
+@Warmup(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
+@Measurement(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
 public class SingleGroupCountBenchmark {
 
     @Param({"100"})
     private int blockSize1;
 
-    @Param({"10000"})
+    @Param({"1000"})
     private int blockSize2;
 
-    @Param({"300000000"}) // "10000000"
+    @Param({"1000000"}) // "10000000"
     private int volume;
 
     @Param({"FastSelect"})
@@ -64,7 +64,7 @@ public class SingleGroupCountBenchmark {
 
     @Setup
     public void init() throws InterruptedException {
-        fastSelect = initDatabase(new int[]{blockSize1, blockSize2}, volume);
+        fastSelect = initDatabase(new int[]{blockSize2}, volume);
 
         // test run
         CounterCallback counter = new CounterCallback();

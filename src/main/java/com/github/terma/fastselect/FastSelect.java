@@ -1,5 +1,5 @@
 /*
-Copyright 2015 Artem Stasiuk
+Copyright 2015-2016 Artem Stasiuk
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -109,6 +109,10 @@ public final class FastSelect<T> {
         this(blockSize, dataClass, getColumnsFromDataClass(dataClass));
     }
 
+    public FastSelect(final Class<T> dataClass) {
+        this(DEFAULT_BLOCK_SIZES, dataClass, getColumnsFromDataClass(dataClass));
+    }
+
     public FastSelect(final Class<T> dataClass, final List<Column> columns) {
         this(DEFAULT_BLOCK_SIZES, dataClass, columns);
     }
@@ -139,7 +143,7 @@ public final class FastSelect<T> {
         }
     }
 
-    public List<T> select(final Request[] where) {
+    public List<T> select(final AbstractRequest[] where) {
         ListCallback<T> result = new ListCallback<>();
         select(where, result);
         return result.getResult();
@@ -153,28 +157,20 @@ public final class FastSelect<T> {
      *                 {@link FastSelect} creation.
      * @param callback callback. Will be called for each item accepted by where.
      */
-    public void select(final Request[] where, final ArrayLayoutCallback callback) {
-        for (final Request condition : where) {
+    public void select(final AbstractRequest[] where, final ArrayLayoutCallback callback) {
+        for (final AbstractRequest condition : where) {
             condition.column = columnsByNames.get(condition.name);
 
             if (condition.column == null) throw new IllegalArgumentException(
                     "Can't find requested column: " + condition.name + " in " + columns);
 
-            int max = condition.values[0];
-            for (int i = 1; i < condition.values.length; i++)
-                if (condition.values[i] > max) max = condition.values[i];
-
-            byte[] plainValues = new byte[max + 1];
-            for (int value : condition.values) plainValues[value] = 1;
-            condition.plainValues = plainValues;
-
-            // todo implement search by array if direct index can't be used Arrays.sort(condition.values);
+            condition.prepare();
         }
 
         rootBlock.select(where, callback);
     }
 
-    public void select(final Request[] where, final Callback<T> callback) {
+    public void select(final AbstractRequest[] where, final Callback<T> callback) {
         select(where, new ArrayToObjectCallback<>(dataClass, columns, mhRepo, callback));
     }
 
@@ -217,9 +213,11 @@ public final class FastSelect<T> {
                 data = new ShortData();
             } else if (type == byte.class) {
                 data = new ByteData();
+            } else if (type == String.class) {
+                data = new StringData();
             } else {
                 throw new IllegalArgumentException("Unsupportable column type: " + type
-                        + ". Support byte,short,int,long!");
+                        + ". Support byte,short,int,long,byte[],short[],int[],long[]!");
             }
         }
 
@@ -260,7 +258,7 @@ public final class FastSelect<T> {
 
         abstract void add(T row);
 
-        abstract void select(Request[] where, ArrayLayoutCallback callback);
+        abstract void select(AbstractRequest[] where, ArrayLayoutCallback callback);
 
     }
 
@@ -289,21 +287,16 @@ public final class FastSelect<T> {
             return !blocks.isEmpty() && blocks.get(blocks.size() - 1).isFull();
         }
 
-        private boolean inBlock(Request[] requests, Block block) {
-            for (Request request : requests) {
+        private boolean inBlock(AbstractRequest[] requests, Block block) {
+            for (AbstractRequest request : requests) {
                 final BitSet columnBitSet = block.columnBitSets.get(request.column.index);
-
-                boolean p = false;
-                for (final int value : request.values) {
-                    p = p | columnBitSet.get(value);
-                }
-                if (!p) return false;
+                if (!request.inBlock(columnBitSet)) return false;
             }
             return true;
         }
 
         @Override
-        void select(Request[] where, ArrayLayoutCallback callback) {
+        void select(AbstractRequest[] where, ArrayLayoutCallback callback) {
             for (final Block block : blocks) {
                 if (!inBlock(where, block)) continue;
                 block.select(where, callback);
@@ -395,6 +388,10 @@ public final class FastSelect<T> {
                         ((ByteData) column.data).add(v);
                         setColumnBitSet(column, v);
 
+                    } else if (column.type == String.class) {
+                        String v = (String) mhRepo.get(column.name).invoke(row);
+                        ((StringData) column.data).add(v);
+
                     } else {
                         throw new IllegalArgumentException("!");
                     }
@@ -405,16 +402,12 @@ public final class FastSelect<T> {
         }
 
         @Override
-        void select(Request[] where, ArrayLayoutCallback callback) {
+        void select(AbstractRequest[] where, ArrayLayoutCallback callback) {
             final int end = start + size;
             opa:
             for (int i = start; i < end; i++) {
-                for (final Request request : where) {
-                    if (request.plainValues != null) {
-                        if (!request.column.data.plainCheck(i, request.plainValues)) continue opa;
-                    } else {
-                        if (!request.column.data.check(i, request.values)) continue opa;
-                    }
+                for (final AbstractRequest request : where) {
+                    if (!request.checkValue(i)) continue opa;
                 }
 
                 callback.data(i);

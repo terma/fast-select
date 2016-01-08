@@ -112,3 +112,7 @@ SingleGroupCountBenchmark.countFiltered10G5R4C20S40D          1000          1000
 SingleGroupCountBenchmark.countFiltered10G5R4C20S40D           100         10000  FastSelect 300000000  avgt     188.690          ms/op
 SingleGroupCountBenchmark.countFiltered10G5R4C20S40D          1000          1000  FastSelect 300000000  avgt     307.108          ms/op
 SingleGroupCountBenchmark.countFiltered10G5R4C20S40D           100         10000  FastSelect 300000000  avgt     215.943          ms/op
+
+### first result for select by string
+Benchmark                                       (volume)  Mode  Cnt   Score   Error  Units
+SelectByStringBenchmark.countFilterOneByString   1000000  avgt       53.029          ms/op

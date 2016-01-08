@@ -1,5 +1,5 @@
 /*
-Copyright 2015 Artem Stasiuk
+Copyright 2015-2016 Artem Stasiuk
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -17,18 +17,46 @@ limitations under the License.
 package com.github.terma.fastselect;
 
 import java.util.Arrays;
+import java.util.BitSet;
 
-public class Request {
+public class Request extends AbstractRequest {
 
-    public final String name;
-    public final int[] values;
+    private final int[] values;
 
-    public FastSelect.Column column;
-    public byte[] plainValues;
+    private byte[] plainValues;
 
     public Request(String name, int[] values) {
-        this.name = name;
+        super(name);
         this.values = values;
+    }
+
+    @Override
+    boolean inBlock(BitSet bitSet) {
+        boolean p = false;
+        for (final int value : values) {
+            p = p | bitSet.get(value);
+        }
+        return p;
+    }
+
+    @Override
+    boolean checkValue(int position) {
+        if (plainValues != null) {
+            return column.data.plainCheck(position, plainValues);
+        } else {
+            return column.data.check(position, values);
+        }
+    }
+
+    @Override
+        // todo implement search by array if direct index can't be used Arrays.sort(condition.values);
+    void prepare() {
+        int max = values[0];
+        for (int i = 1; i < values.length; i++)
+            if (values[i] > max) max = values[i];
+
+        plainValues = new byte[max + 1];
+        for (int value : values) plainValues[value] = 1;
     }
 
     @Override

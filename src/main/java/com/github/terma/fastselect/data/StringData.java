@@ -16,40 +16,38 @@ limitations under the License.
 
 package com.github.terma.fastselect.data;
 
-import java.util.Arrays;
+public class StringData implements Data {
 
-public class IntData implements Data {
+    private final MultiByteData data = new MultiByteData();
 
-    public int[] data = new int[16];
-    public int size = 0;
-
-    public void add(int v) {
-        if (size == data.length) {
-            data = Arrays.copyOf(data, size + 100000);
-        }
-        data[size] = v;
-        size++;
+    public void add(String v) {
+        final byte[] bytes = v == null ? new byte[0] : v.getBytes();
+        data.add(bytes);
     }
 
     @Override
     public boolean check(int position, int[] values) {
-        return Arrays.binarySearch(values, data[position]) >= 0;
+        throw new UnsupportedOperationException("String field doesn't support filter!");
     }
 
     @Override
     public boolean plainCheck(int position, byte[] values) {
-        int value = data[position];
-        return value < values.length && values[value] > 0;
+        throw new UnsupportedOperationException("String field doesn't support filter!");
     }
 
     @Override
     public Object get(int position) {
-        return data[position];
+        final byte[] bytes = getRaw(position);
+        return new String(bytes);
+    }
+
+    public byte[] getRaw(int position) {
+        return (byte[]) data.get(position);
     }
 
     @Override
     public int size() {
-        return size;
+        return data.size();
     }
 
 }
