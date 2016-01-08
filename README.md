@@ -2,9 +2,19 @@
 [![Coverage Status](https://coveralls.io/repos/terma/fast-select/badge.svg?branch=master&service=github)](https://coveralls.io/github/terma/fast-select?branch=master) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.terma/fast-select/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.terma/fast-select/)
 
 ## Fast-Select 
-In-memory column oriented compact storage with extremely fast search by multiple criterias. Free open source under Apache 2.0 license.
+In-memory column oriented *compact* storage with *fast select* by multiple criterias and aggregation aka [HOLAP](https://en.wikipedia.org/wiki/HOLAP). Free open source under Apache 2.0 license.
 
-## Test on your hardware
+## What we can
+
+Dataset 7 columns: 5 bytes and 2 shorts
+
+| Dataset       | Heap | Operation           | Result  |
+| -------------:|---:|-------------:| -----:|
+| 1m records| 5Mb | filter by 5 columns (4-20 options) (result set 44k) and group by column | 5 msec |
+| 10m records | 76Mb | same filter as previous      |   11 msec |
+| 300m records | 2.2Gb | same filter as previous      |    150 msec |
+
+## Try on your hardware
 
 - Download jar file http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22fast-select%22
 - ```bash

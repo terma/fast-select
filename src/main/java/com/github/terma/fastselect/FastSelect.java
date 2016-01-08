@@ -120,7 +120,7 @@ public final class FastSelect<T> {
     private static List<Column> getColumnsFromDataClass(Class dataClass) {
         final List<Column> columns = new ArrayList<>();
         for (Field field : dataClass.getDeclaredFields()) {
-            columns.add(new Column(field.getName(), field.getType()));
+            if (!field.isSynthetic()) columns.add(new Column(field.getName(), field.getType()));
         }
         return columns;
     }
