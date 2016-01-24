@@ -16,8 +16,10 @@ limitations under the License.
 
 package com.github.terma.fastselect.demo;
 
+import com.github.terma.fastselect.AbstractRequest;
+import com.github.terma.fastselect.ByteRequest;
 import com.github.terma.fastselect.FastSelect;
-import com.github.terma.fastselect.Request;
+import com.github.terma.fastselect.ShortRequest;
 import com.github.terma.fastselect.utils.MemMeter;
 
 import java.util.ArrayList;
@@ -26,12 +28,12 @@ import java.util.List;
 
 public abstract class DemoUtils {
 
-    public static final int G_MAX = 100;
-    public static final int R_MAX = 7;
-    public static final int C_MAX = 7;
-    public static final int O_MAX = 3;
-    public static final int S_MAX = 100;
-    public static final int D_MAX = 100;
+    private static final int G_MAX = 100;
+    private static final int R_MAX = 7;
+    private static final int C_MAX = 7;
+    private static final int O_MAX = 3;
+    private static final int S_MAX = 100;
+    private static final int D_MAX = 100;
 
     public static FastSelect<DemoData> createFastSelect(int[] blockSizes, int itemsToCreate) {
         System.out.println("Filler started");
@@ -102,13 +104,24 @@ public abstract class DemoUtils {
         return database;
     }
 
-    public static Request[] createWhere() {
-        return new Request[]{
-                new Request("g", new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}),
-                new Request("r", new int[]{1, 2, 3, 4, 5, 6}),
-                new Request("c", new int[]{1, 2, 3, 4}),
-                new Request("s", new int[]{1, 19, 18, 17, 16, 15, 14, 13, 12, 11, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}),
-                new Request("d", new int[]{1, 90, 99, 5, 34, 22, 26, 8, 5, 6, 7, 5, 6, 34, 35, 36, 37, 38, 39, 21, 70, 71, 74, 76, 78, 79, 10, 11, 22, 33, 44, 55, 66})
+    public static AbstractRequest[] create1Where() {
+        return new AbstractRequest[]{
+                new ByteRequest("g", new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}),
+                new ByteRequest("r", new int[]{1, 2, 3, 4, 5, 6}),
+                new ByteRequest("c", new int[]{1, 2, 3, 4}),
+                new ByteRequest("s", new int[]{1, 19, 18, 17, 16, 15, 14, 13, 12, 11, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}),
+                new ShortRequest("d", new int[]{1, 90, 99, 5, 34, 22, 26, 8, 5, 6, 7, 5, 6, 34, 35, 36, 37, 38, 39, 21, 70, 71, 74, 76, 78, 79, 10, 11, 22, 33, 44, 55, 66})
         };
     }
+
+    public static AbstractRequest[] createMaxCardinalityWhere() {
+        return new AbstractRequest[]{
+                new ByteRequest("g", new int[]{Byte.MAX_VALUE}),
+                new ByteRequest("r", new int[]{Byte.MAX_VALUE}),
+                new ByteRequest("c", new int[]{Byte.MAX_VALUE}),
+                new ByteRequest("s", new int[]{Byte.MAX_VALUE}),
+                new ShortRequest("d", new int[]{Short.MAX_VALUE})
+        };
+    }
+
 }
