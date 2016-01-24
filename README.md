@@ -55,6 +55,8 @@ More use cases you can find in javadoc ```callbacks``` package
 
 ## In next version probably =)
 
-* String field type
 * Indexes by String field
 * filter by < or >
+* Sorting
+* Serialization/Deserialization
+* On fly modification

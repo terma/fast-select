@@ -14,8 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.github.terma.fastselect;
+package com.github.terma.fastselect.benchmark;
 
+import com.github.terma.fastselect.FastSelect;
 import com.github.terma.fastselect.callbacks.MultiGroupCountCallback;
 import com.github.terma.fastselect.demo.DemoData;
 import com.github.terma.fastselect.demo.DemoUtils;
@@ -70,7 +71,7 @@ public class MultiGroupCountBenchmark {
                 columnsByNames.get("g"),
                 columnsByNames.get("r")
         );
-        fastSelect.select(DemoUtils.createWhere(), counter);
+        fastSelect.select(DemoUtils.create1Where(), counter);
         return counter.getCounters();
     }
 

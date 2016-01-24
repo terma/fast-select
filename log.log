@@ -116,3 +116,21 @@ SingleGroupCountBenchmark.countFiltered10G5R4C20S40D           100         10000
 ### first result for select by string
 Benchmark                                       (volume)  Mode  Cnt   Score   Error  Units
 SelectByStringBenchmark.countFilterOneByString   1000000  avgt       53.029          ms/op
+
+### vectorization on -XX:+UseSuperWord (by default)
+SingleGroupCountBenchmark.countFiltered10G5R4C20S40D           100          1000  FastSelect   1000000  avgt       5.333          ms/op
+
+### speed up for byte and short requests
+Benchmark                                             (blockSize1)  (blockSize2)      (impl)  (volume)  Mode  Cnt  Score   Error  Units
+SingleGroupCountBenchmark.countFiltered10G5R4C20S40D           100          1000  FastSelect   1000000  avgt       4.742          ms/op
+SingleGroupCountBenchmark.countFiltered10G5R4C20S40D           100          1000  FastSelect  10000000  avgt       6.326          ms/op
+
+### bit set for row checking in short
+Benchmark                                             (blockSize1)  (blockSize2)      (impl)  (volume)  Mode  Cnt  Score   Error  Units
+SingleGroupCountBenchmark.countFiltered10G5R4C20S40D           100          1000  FastSelect   1000000  avgt       3.889          ms/op
+
+### control result for count - 1m = 38304
+
+### select by one unique string
+Benchmark                                           (volume)  Mode  Cnt   Score   Error  Units
+SelectByStringBenchmark.countFilterOneItemByString   1000000  avgt       62.928          ms/op

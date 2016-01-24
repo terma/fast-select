@@ -14,8 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.github.terma.fastselect;
+package com.github.terma.fastselect.benchmark;
 
+import com.github.terma.fastselect.FastSelect;
 import com.github.terma.fastselect.callbacks.CounterCallback;
 import com.github.terma.fastselect.demo.DemoData;
 import com.github.terma.fastselect.demo.DemoUtils;
@@ -27,7 +28,25 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.util.concurrent.TimeUnit;
 
-@Fork(value = 1, jvmArgs = "-Xmx7g")
+@Fork(value = 1, jvmArgs = {"-Xmx7g", "-XX:CompileThreshold=1"})
+//@Fork(value = 1, jvmArgs = {
+//        "-Xmx7g",
+//        "-XX:CompileThreshold=1",
+//        "-XX:+UnlockDiagnosticVMOptions",
+//        "-XX:+LogCompilation",
+//        "-XX:LogFile=/Users/terma/Projects/processing-prototype/perf-asm.log",
+//        "-XX:+PrintAssembly",
+//        "-XX:+PrintInterpreter",
+//        "-XX:+PrintNMethods",
+//        "-XX:+PrintNativeNMethods",
+//        "-XX:+PrintSignatureHandlers",
+//        "-XX:+PrintAdapterHandlers",
+//        "-XX:+PrintStubCode",
+//        "-XX:+PrintCompilation",
+//        "-XX:+PrintInlining",
+//        "-XX:+TraceClassLoading",
+//        "-XX:PrintAssemblyOptions=syntax"
+//})
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
@@ -68,7 +87,7 @@ public class SingleGroupCountBenchmark {
 
         // test run
         CounterCallback counter = new CounterCallback();
-        fastSelect.select(DemoUtils.createWhere(), counter);
+        fastSelect.select(DemoUtils.create1Where(), counter);
         System.out.println(counter.toString());
     }
 
@@ -76,14 +95,14 @@ public class SingleGroupCountBenchmark {
 //    public Object groupAndCountFiltered10G5R4C20S40D() throws Exception {
 //        GroupCountCallback counter = new GroupCountCallback(
 //                fastSelect.getColumnsByNames().get("r"));
-//        fastSelect.select(DemoUtils.createWhere(), counter);
+//        fastSelect.select(DemoUtils.create1Where(), counter);
 //        return counter.getCounters();
 //    }
 
     @Benchmark
     public Object countFiltered10G5R4C20S40D() throws Exception {
         CounterCallback counter = new CounterCallback();
-        fastSelect.select(DemoUtils.createWhere(), counter);
+        fastSelect.select(DemoUtils.create1Where(), counter);
         return counter.getCount();
     }
 

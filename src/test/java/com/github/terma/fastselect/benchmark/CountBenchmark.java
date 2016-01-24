@@ -14,8 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.github.terma.fastselect;
+package com.github.terma.fastselect.benchmark;
 
+import com.github.terma.fastselect.FastSelect;
 import com.github.terma.fastselect.callbacks.CounterCallback;
 import com.github.terma.fastselect.demo.DemoData;
 import com.github.terma.fastselect.demo.DemoUtils;
@@ -63,7 +64,7 @@ public class CountBenchmark {
     @Benchmark
     public int countByFiltered10G5R4C20S40D() throws Exception {
         CounterCallback counterCallback = new CounterCallback();
-        fastSelect.select(DemoUtils.createWhere(), counterCallback);
+        fastSelect.select(DemoUtils.create1Where(), counterCallback);
         return counterCallback.getCount();
     }
 

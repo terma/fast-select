@@ -14,8 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.github.terma.fastselect;
+package com.github.terma.fastselect.benchmark;
 
+import com.github.terma.fastselect.AbstractRequest;
+import com.github.terma.fastselect.FastSelect;
+import com.github.terma.fastselect.StringRequest;
 import com.github.terma.fastselect.callbacks.CounterCallback;
 import com.github.terma.fastselect.data.IntStringData;
 import org.openjdk.jmh.annotations.*;
