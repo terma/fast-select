@@ -18,38 +18,35 @@ package com.github.terma.fastselect.data;
 
 import java.util.Objects;
 
-public class LongShortData {
+public class IntTestData {
 
-    public long longValue;
-    public short shortValue;
+    public int value;
 
     // empty constructor for database to be able restore object
-    public LongShortData() {
-        this(0, (byte) 0);
+    public IntTestData() {
+        this(0);
     }
 
-    public LongShortData(long longValue, short shortValue) {
-        this.longValue = longValue;
-        this.shortValue = shortValue;
+    public IntTestData(int value) {
+        this.value = value;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        LongShortData that = (LongShortData) o;
-        return longValue == that.longValue &&
-                shortValue == that.shortValue;
+        IntTestData that = (IntTestData) o;
+        return value == that.value;
     }
 
     @Override
     public String toString() {
-        return "TestLongShort {longValue: " + longValue + ", shortValue: " + shortValue + '}';
+        return "TestLongShort {value: " + value + '}';
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(longValue, shortValue);
+        return Objects.hash(value);
     }
 
 }

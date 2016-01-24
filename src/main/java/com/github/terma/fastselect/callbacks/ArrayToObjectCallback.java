@@ -17,6 +17,7 @@ limitations under the License.
 package com.github.terma.fastselect.callbacks;
 
 import com.github.terma.fastselect.FastSelect;
+import com.github.terma.fastselect.XColumn;
 import com.github.terma.fastselect.utils.MethodHandlerRepository;
 
 import javax.annotation.concurrent.NotThreadSafe;
@@ -40,13 +41,13 @@ public class ArrayToObjectCallback<T> implements ArrayLayoutCallback {
     }
 
     @Override
-    public void data(final int position) {
+    public void data(final int position, List<XColumn> columns) {
         try {
             final T o = dataClass.newInstance();
 
-            for (final FastSelect.Column column : columns) {
-                MethodHandle methodHandle = mhRepo.set(column.name);
-                methodHandle.invoke(o, column.data.get(position));
+            for (final XColumn column : columns) {
+                MethodHandle methodHandle = mhRepo.set(column.name());
+                methodHandle.invoke(o, column.get(position));
             }
 
             callback.data(o);

@@ -18,35 +18,37 @@ package com.github.terma.fastselect;
 
 import java.util.Arrays;
 
-public class StringRequest extends AbstractRequest {
+public class LongRequest extends AbstractRequest {
 
-    private final byte[] bytes;
+    private final long[] values;
+    private long[] cachedData;
 
-    public StringRequest(String name, String value) {
+    public LongRequest(String name, long[] values) {
         super(name);
-        bytes = value.getBytes();
+        this.values = values;
     }
 
     @Override
-    boolean inBlock(final XColumn column) {
-        // todo try to use block info for string filter, now just always goto full scan
-        return true;
+    boolean inBlock(XColumn column) {
+        LongColumn c = (LongColumn) column;
+        cachedData = c.data;
+
+        return c.max >= values[0] && c.min <= values[values.length - 1];
     }
 
     @Override
     boolean checkValue(int position) {
-        StringColumn stringColumn = (StringColumn) xColumn;
-        byte[] value = stringColumn.getRaw(position);
-        return Arrays.equals(bytes, value);
+        return Arrays.binarySearch(values, cachedData[position]) > -1;
     }
 
     @Override
     void prepare() {
+        Arrays.sort(values);
     }
 
     @Override
     public String toString() {
-        return "StringRequest {name: " + name + ", value: " + new String(bytes) + '}';
+        return "{name: " + name + ", values: " + Arrays.toString(values) + '}';
     }
 
 }

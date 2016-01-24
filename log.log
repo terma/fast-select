@@ -134,3 +134,20 @@ SingleGroupCountBenchmark.countFiltered10G5R4C20S40D           100          1000
 ### select by one unique string
 Benchmark                                           (volume)  Mode  Cnt   Score   Error  Units
 SelectByStringBenchmark.countFilterOneItemByString   1000000  avgt       62.928          ms/op
+
+### paging model
+
+Benchmark                                           (volume)  Mode  Cnt   Score   Error  Units
+SelectByStringBenchmark.countFilterOneItemByString   1000000  avgt       58.709          ms/op
+
+### slow down in 8 times
+Benchmark                                             (blockSize1)  (blockSize2)      (impl)  (volume)  Mode  Cnt   Score   Error  Units
+SingleGroupCountBenchmark.countFiltered10G5R4C20S40D           100          1000  FastSelect   1000000  avgt       32.676          ms/op
+### fix block check
+SingleGroupCountBenchmark.countFiltered10G5R4C20S40D           100          1000  FastSelect   1000000  avgt       10.329          ms/op
+### cache data structure for byte
+SingleGroupCountBenchmark.countFiltered10G5R4C20S40D           100          1000  FastSelect   1000000  avgt       7.890           ms/op
+### cache data structure for short
+SingleGroupCountBenchmark.countFiltered10G5R4C20S40D           100          1000  FastSelect   1000000  avgt       7.653           ms/op
+###
+SingleGroupCountBenchmark.countFiltered10G5R4C20S40D           100          1000  FastSelect   1000000  avgt       5.867           ms/op

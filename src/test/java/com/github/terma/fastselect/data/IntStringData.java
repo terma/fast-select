@@ -2,22 +2,22 @@ package com.github.terma.fastselect.data;
 
 public class IntStringData {
 
-    public int value1;
-    public String value2;
+    public int intValue;
+    public String stringValue;
 
     // empty constructor for database to be able restore object
     public IntStringData() {
         this(0, "");
     }
 
-    public IntStringData(int value1, String value2) {
-        this.value1 = value1;
-        this.value2 = value2;
+    public IntStringData(int intValue, String stringValue) {
+        this.intValue = intValue;
+        this.stringValue = stringValue;
     }
 
     @Override
     public String toString() {
-        return "IntStringData {value1: " + value1 + ", value2: '" + value2 + "'}";
+        return "IntStringData {intValue: " + intValue + ", stringValue: '" + stringValue + "'}";
     }
 
     @Override
@@ -26,13 +26,13 @@ public class IntStringData {
         if (o == null || getClass() != o.getClass()) return false;
 
         IntStringData that = (IntStringData) o;
-        return value1 == that.value1 && (value2 != null ? value2.equals(that.value2) : that.value2 == null);
+        return intValue == that.intValue && (stringValue != null ? stringValue.equals(that.stringValue) : that.stringValue == null);
     }
 
     @Override
     public int hashCode() {
-        int result = value1;
-        result = 31 * result + (value2 != null ? value2.hashCode() : 0);
+        int result = intValue;
+        result = 31 * result + (stringValue != null ? stringValue.hashCode() : 0);
         return result;
     }
 

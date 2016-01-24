@@ -17,9 +17,11 @@ limitations under the License.
 package com.github.terma.fastselect.callbacks;
 
 import com.github.terma.fastselect.FastSelect;
+import com.github.terma.fastselect.XColumn;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,7 +40,7 @@ public class GroupCountCallback implements ArrayLayoutCallback {
     }
 
     @Override
-    public void data(final int position) {
+    public void data(final int position, List<XColumn> columns) {
         final int value = groupBy.valueAsInt(position);
         final Integer c = counter.get(value);
         if (c == null) counter.put(value, 1);

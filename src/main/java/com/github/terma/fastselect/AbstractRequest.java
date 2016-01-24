@@ -16,8 +16,6 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
-import java.util.BitSet;
-
 public abstract class AbstractRequest {
 
     public final String name;
@@ -27,17 +25,13 @@ public abstract class AbstractRequest {
      */
     public FastSelect.Column column;
 
+    public XColumn xColumn;
+
     public AbstractRequest(String name) {
         this.name = name;
     }
 
-    /**
-     * Method for internal usage.
-     *
-     * @param bitSet - block bitmap (we use it only for numeric types)
-     * @return - true if block could contains data good for request
-     */
-    abstract boolean inBlock(BitSet bitSet);
+    abstract boolean inBlock(XColumn column);
 
     /**
      * Method for internal usage.

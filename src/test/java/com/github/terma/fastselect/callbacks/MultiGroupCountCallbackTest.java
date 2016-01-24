@@ -36,7 +36,7 @@ public class MultiGroupCountCallbackTest {
         ((IntData) column2.data).add(2);
 
         MultiGroupCountCallback multiGroupCountCallback = new MultiGroupCountCallback(column1, column2);
-        multiGroupCountCallback.data(0);
+        multiGroupCountCallback.data(0, null);
         Assert.assertEquals(new HashMap<Integer, Object>() {{
             put(1, new HashMap<Integer, Object>() {{
                 put(2, 1);
@@ -55,8 +55,8 @@ public class MultiGroupCountCallbackTest {
         ((IntData) column2.data).add(10);
 
         MultiGroupCountCallback multiGroupCountCallback = new MultiGroupCountCallback(column1, column2);
-        multiGroupCountCallback.data(0);
-        multiGroupCountCallback.data(1);
+        multiGroupCountCallback.data(0, null);
+        multiGroupCountCallback.data(1, null);
         Assert.assertEquals(new HashMap<Integer, Object>() {{
             put(1, new HashMap<Integer, Object>() {{
                 put(2, 1);
@@ -73,7 +73,7 @@ public class MultiGroupCountCallbackTest {
         FastSelect.Column column2 = new FastSelect.Column("2", int.class);
 
         MultiGroupCountCallback multiGroupCountCallback = new MultiGroupCountCallback(column1, column2);
-        multiGroupCountCallback.data(66);
+        multiGroupCountCallback.data(66, null);
     }
 
 }

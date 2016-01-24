@@ -22,7 +22,7 @@ public class GroupCountCallbackTest {
         ((IntData) column1.data).add(1);
 
         GroupCountCallback multiGroupCountCallback = new GroupCountCallback(column1);
-        multiGroupCountCallback.data(0);
+        multiGroupCountCallback.data(0, null);
         Assert.assertEquals(new HashMap<Integer, Integer>() {{
             put(1, 1);
         }}, multiGroupCountCallback.getCounters());
@@ -35,10 +35,10 @@ public class GroupCountCallbackTest {
         ((IntData) column1.data).add(5);
 
         GroupCountCallback multiGroupCountCallback = new GroupCountCallback(column1);
-        multiGroupCountCallback.data(0);
-        multiGroupCountCallback.data(1);
-        multiGroupCountCallback.data(1);
-        multiGroupCountCallback.data(1);
+        multiGroupCountCallback.data(0, null);
+        multiGroupCountCallback.data(1, null);
+        multiGroupCountCallback.data(1, null);
+        multiGroupCountCallback.data(1, null);
         Assert.assertEquals(new HashMap<Integer, Integer>() {{
             put(1, 1);
             put(5, 3);
@@ -50,7 +50,7 @@ public class GroupCountCallbackTest {
         FastSelect.Column column1 = new FastSelect.Column("1", int.class);
 
         GroupCountCallback groupCountCallback = new GroupCountCallback(column1);
-        groupCountCallback.data(66);
+        groupCountCallback.data(66, null);
     }
 
 }

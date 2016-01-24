@@ -16,8 +16,6 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
-import com.github.terma.fastselect.data.ShortData;
-
 import java.util.Arrays;
 import java.util.BitSet;
 
@@ -26,7 +24,7 @@ public class ShortRequest extends AbstractRequest {
     private final int[] values;
 
     private BitSet plainSet;
-    private short[] data;
+    private short[] cachedData;
 
     public ShortRequest(String name, int[] values) {
         super(name);
@@ -34,7 +32,11 @@ public class ShortRequest extends AbstractRequest {
     }
 
     @Override
-    boolean inBlock(BitSet bitSet) {
+    boolean inBlock(XColumn column) {
+        ShortColumn shortColumn = (ShortColumn) column;
+        BitSet bitSet = shortColumn.bitSet;
+        cachedData = shortColumn.data;
+
         boolean p = false;
         for (final int value : values) {
             p = p | bitSet.get(value);
@@ -44,17 +46,14 @@ public class ShortRequest extends AbstractRequest {
 
     @Override
     boolean checkValue(int position) {
-        return plainSet.get(data[position]);
+        return plainSet.get(cachedData[position]);
     }
 
     @Override
     void prepare() {
-        // cache
-        data = ((ShortData) column.data).data;
-
         // plain
         plainSet = new BitSet();
-        for (int i = 0; i < values.length; i++) plainSet.set(values[i]);
+        for (int value : values) plainSet.set(value);
     }
 
     @Override

@@ -16,8 +16,12 @@ limitations under the License.
 
 package com.github.terma.fastselect.callbacks;
 
+import com.github.terma.fastselect.XColumn;
+
+import java.util.List;
+
 public interface ArrayLayoutCallback {
 
-    void data(int position);
+    void data(int position, List<XColumn> columns);
 
 }

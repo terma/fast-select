@@ -20,25 +20,22 @@ import java.util.Objects;
 
 public class TestIntByteData {
 
-    public int value1;
-    public byte value2;
+    public int intValue;
+    public byte byteValue;
 
     // empty constructor for database to be able restore object
     public TestIntByteData() {
         this(0, (byte) 0);
     }
 
-    public TestIntByteData(int value, byte value2) {
-        this.value1 = value;
-        this.value2 = value2;
+    public TestIntByteData(int value, byte byteValue) {
+        this.intValue = value;
+        this.byteValue = byteValue;
     }
 
     @Override
     public String toString() {
-        return "TestIntByte{" +
-                "value1=" + value1 +
-                ", value2=" + value2 +
-                '}';
+        return "TestIntByte {intValue: " + intValue + ", byteValue: " + byteValue + '}';
     }
 
     @Override
@@ -46,12 +43,12 @@ public class TestIntByteData {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TestIntByteData that = (TestIntByteData) o;
-        return value1 == that.value1 &&
-                value2 == that.value2;
+        return intValue == that.intValue &&
+                byteValue == that.byteValue;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value1, value2);
+        return Objects.hash(intValue, byteValue);
     }
 }

@@ -17,46 +17,30 @@ limitations under the License.
 package com.github.terma.fastselect;
 
 import java.util.Arrays;
-import java.util.BitSet;
 
-public class Request extends AbstractRequest {
+public class IntRequest extends AbstractRequest {
 
     private final int[] values;
 
-    private byte[] plainValues;
-
-    public Request(String name, int[] values) {
+    public IntRequest(String name, int[] values) {
         super(name);
         this.values = values;
     }
 
     @Override
-    boolean inBlock(BitSet bitSet) {
-        boolean p = false;
-        for (final int value : values) {
-            p = p | bitSet.get(value);
-        }
-        return p;
+    boolean inBlock(XColumn column) {
+        IntColumn c = (IntColumn) column;
+        return c.max >= values[0] && c.min <= values[values.length - 1];
     }
 
     @Override
     boolean checkValue(int position) {
-        if (plainValues != null) {
-            return column.data.plainCheck(position, plainValues);
-        } else {
-            return column.data.check(position, values);
-        }
+        return Arrays.binarySearch(values, ((IntColumn) xColumn).data[position]) > -1;
     }
 
     @Override
-        // todo implement search by array if direct index can't be used Arrays.sort(condition.values);
     void prepare() {
-        int max = values[0];
-        for (int i = 1; i < values.length; i++)
-            if (values[i] > max) max = values[i];
-
-        plainValues = new byte[max + 1];
-        for (int value : values) plainValues[value] = 1;
+        Arrays.sort(values);
     }
 
     @Override

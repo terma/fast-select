@@ -18,9 +18,9 @@ package com.github.terma.fastselect.benchmark;
 
 import com.github.terma.fastselect.AbstractRequest;
 import com.github.terma.fastselect.FastSelect;
-import com.github.terma.fastselect.StringRequest;
+import com.github.terma.fastselect.LongRequest;
 import com.github.terma.fastselect.callbacks.CounterCallback;
-import com.github.terma.fastselect.data.IntStringData;
+import com.github.terma.fastselect.data.TestLongData;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -30,33 +30,35 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-@Fork(value = 1, jvmArgs = "-Xmx7g")
+@Fork(value = 0, jvmArgs = {"-Xmx7g", "-XX:CompileThreshold=1"})
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
 @Warmup(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
 @Measurement(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
-public class SelectByStringBenchmark {
+public class SelectByLongBenchmark {
 
-    @Param({"1000000"}) // "10000000"
+    @Param({"10000000"})
     private int volume;
 
-    private FastSelect<IntStringData> fastSelect;
+    private FastSelect<TestLongData> fastSelect;
 
     public static void main(String[] args) throws RunnerException {
-        Options opt = new OptionsBuilder().include("." + SelectByStringBenchmark.class.getSimpleName() + ".*").build();
+        Options opt = new OptionsBuilder().include("." + SelectByLongBenchmark.class.getSimpleName() + ".*").build();
         new Runner(opt).run();
     }
 
     @Setup
     public void init() throws InterruptedException {
-        fastSelect = new FastSelect<>(IntStringData.class);
+        fastSelect = new FastSelect<>(TestLongData.class);
 
-        List<IntStringData> example = new ArrayList<>();
+        Random random = new Random();
+        List<TestLongData> example = new ArrayList<>();
         for (int i = 0; i < volume; i++) {
-            example.add(new IntStringData(1, "UNIQUE string " + i));
+            example.add(new TestLongData(random.nextLong()));
         }
         fastSelect.addAll(example);
 
@@ -68,11 +70,11 @@ public class SelectByStringBenchmark {
     }
 
     private AbstractRequest[] createWhere() {
-        return new AbstractRequest[]{new StringRequest("stringValue", "UNIQUE string " + volume / 2)};
+        return new AbstractRequest[]{new LongRequest("longValue", new long[]{10})};
     }
 
     @Benchmark
-    public Object countFilterOneItemByString() throws Exception {
+    public Object countFilterByLong() throws Exception {
         CounterCallback counter = new CounterCallback();
         fastSelect.select(createWhere(), counter);
         return counter.getCount();

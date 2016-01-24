@@ -59,12 +59,9 @@ public final class FastSelect<T> {
 
     private final static int[] DEFAULT_BLOCK_SIZES = new int[]{1000};
 
-    private final static long MAX_COLUMN_BIT = 10000;
-    private final static long MIN_COLUMN_BIT = 0;
-
+    public final MethodHandlerRepository mhRepo;
     private final int[] blockSizes;
     private final Class<T> dataClass;
-    private final MethodHandlerRepository mhRepo;
     private final Block rootBlock;
     private final List<Column> columns;
     private final Map<String, Column> columnsByNames;
@@ -150,7 +147,7 @@ public final class FastSelect<T> {
     }
 
     /**
-     * Main search method. Find data good for your where (filter) condition and call {@link ArrayLayoutCallback#data(int)}
+     * Main search method. Find data good for your where (filter) condition and call {@link ArrayLayoutCallback#data(int, List)}
      * for each of item in result.
      *
      * @param where    filter criteria. Could be any combination of fields which you provide as columns during
@@ -175,7 +172,7 @@ public final class FastSelect<T> {
     }
 
     public int size() {
-        return columns.iterator().next().data.size();
+        return rootBlock.getSize();
     }
 
     public Map<String, Column> getColumnsByNames() {
@@ -227,46 +224,27 @@ public final class FastSelect<T> {
         }
 
         public int valueAsInt(final int position) {
-            if (type == byte.class) {
-                return ((ByteData) data).data[position];
-            } else if (type == short.class) {
-                return ((ShortData) data).data[position];
-            } else if (type == int.class) {
-                return ((IntData) data).data[position];
-            } else if (type == long.class) {
-                return (int) ((LongData) data).data[position];
-            } else {
-                throw new IllegalArgumentException("Unknown column type: " + type);
-            }
+//            if (type == byte.class) {
+//                return ((ByteData) data).data[position];
+//            } else if (type == short.class) {
+//                return ((ShortData) data).data[position];
+//            } else if (type == int.class) {
+//                return ((IntData) data).data[position];
+//            } else if (type == long.class) {
+//                return (int) ((LongData) data).data[position];
+//            } else {
+//                throw new IllegalArgumentException("Unknown column type: " + type);
+//            }
+            return 0;
         }
 
     }
 
-    private abstract class Block {
-
-        final List<BitSet> columnBitSets = new ArrayList<>();
-
-        abstract boolean isFull();
-
-        void setColumnBitSet(Column column, int bit) {
-            if (bit >= MIN_COLUMN_BIT && bit <= MAX_COLUMN_BIT) {
-                columnBitSets.get(column.index).set(bit);
-            } else {
-                // todo implement indexing for negative values, currently just use direct scan
-            }
-        }
-
-        abstract void add(T row);
-
-        abstract void select(AbstractRequest[] where, ArrayLayoutCallback callback);
-
-    }
-
-    private final class SuperBlock extends Block {
+    private final class SuperBlock<T> extends Block<T> {
 
         final int level;
         final int maxSize;
-        final List<Block> blocks = new ArrayList<>();
+        final List<Block<T>> blocks = new ArrayList<>();
 
         SuperBlock(int level, int maxSize) {
             this.level = level;
@@ -287,10 +265,20 @@ public final class FastSelect<T> {
             return !blocks.isEmpty() && blocks.get(blocks.size() - 1).isFull();
         }
 
+        @Override
+        int getSize() {
+            int size = 0;
+            for (Block block : blocks) size += block.getSize();
+            return size;
+        }
+
         private boolean inBlock(AbstractRequest[] requests, Block block) {
-            for (AbstractRequest request : requests) {
-                final BitSet columnBitSet = block.columnBitSets.get(request.column.index);
-                if (!request.inBlock(columnBitSet)) return false;
+            if (block instanceof DataBlock) {
+                List<XColumn> columns = ((DataBlock) block).columns;
+                for (AbstractRequest request : requests) {
+                    XColumn column = columns.get(request.column.index);
+                    if (!request.inBlock(column)) return false;
+                }
             }
             return true;
         }
@@ -303,11 +291,11 @@ public final class FastSelect<T> {
             }
         }
 
-        private Block createBlock() {
-            Block block;
+        private Block<T> createBlock() {
+            Block<T> block;
 
-            if (level == blockSizes.length - 1) block = new DataBlock();
-            else block = new SuperBlock(level + 1, blockSizes[level + 1]);
+            if (level == blockSizes.length - 1) block = new DataBlock(FastSelect.this, columns);
+            else block = new SuperBlock<>(level + 1, blockSizes[level + 1]);
 
             return block;
         }
@@ -315,112 +303,8 @@ public final class FastSelect<T> {
         @Override
         void add(T row) {
             if (blocks.isEmpty() || blocks.get(blocks.size() - 1).isFull()) blocks.add(createBlock());
-            final Block block = blocks.get(blocks.size() - 1);
+            final Block<T> block = blocks.get(blocks.size() - 1);
             block.add(row);
-
-            for (Column column : columns) {
-                BitSet bitSet = columnBitSets.get(column.index);
-                bitSet.or(block.columnBitSets.get(column.index));
-            }
-        }
-
-    }
-
-    private final class DataBlock extends Block {
-
-        final int start;
-        private int size;
-
-        private DataBlock() {
-            this.start = columns.get(0).data.size();
-
-            for (Column ignored : columns) {
-                columnBitSets.add(new BitSet());
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "DataBlock {maxSize: " + getMaxSize() + ", start: " + start + ", size: " + size + "}";
-        }
-
-        @Override
-        void add(T row) {
-            size++;
-
-            for (Column column : columns) {
-                try {
-                    if (column.type == long.class) {
-                        long v = (long) mhRepo.get(column.name).invoke(row);
-                        ((LongData) column.data).add(v);
-                        setColumnBitSet(column, (int) v);
-
-                    } else if (column.type == long[].class) {
-                        long[] v = (long[]) mhRepo.get(column.name).invoke(row);
-                        ((MultiLongData) column.data).add(v);
-                        // set all bits
-                        for (long v1 : v) setColumnBitSet(column, (int) v1);
-
-                    } else if (column.type == short[].class) {
-                        short[] v = (short[]) mhRepo.get(column.name).invoke(row);
-                        ((MultiShortData) column.data).add(v);
-                        // set all bits
-                        for (short v1 : v) setColumnBitSet(column, v1);
-
-                    } else if (column.type == byte[].class) {
-                        byte[] v = (byte[]) mhRepo.get(column.name).invoke(row);
-                        ((MultiByteData) column.data).add(v);
-                        // set all bits
-                        for (byte v1 : v) setColumnBitSet(column, v1);
-
-                    } else if (column.type == int.class) {
-                        int v = (int) mhRepo.get(column.name).invoke(row);
-                        ((IntData) column.data).add(v);
-                        setColumnBitSet(column, v);
-
-                    } else if (column.type == short.class) {
-                        short v = (short) mhRepo.get(column.name).invoke(row);
-                        ((ShortData) column.data).add(v);
-                        setColumnBitSet(column, v);
-
-                    } else if (column.type == byte.class) {
-                        byte v = (byte) mhRepo.get(column.name).invoke(row);
-                        ((ByteData) column.data).add(v);
-                        setColumnBitSet(column, v);
-
-                    } else if (column.type == String.class) {
-                        String v = (String) mhRepo.get(column.name).invoke(row);
-                        ((StringData) column.data).add(v);
-
-                    } else {
-                        throw new IllegalArgumentException("!");
-                    }
-                } catch (Throwable throwable) {
-                    throw new RuntimeException(throwable);
-                }
-            }
-        }
-
-        @Override
-        void select(AbstractRequest[] where, ArrayLayoutCallback callback) {
-            final int end = start + size;
-            opa:
-            for (int i = start; i < end; i++) {
-                for (final AbstractRequest request : where) {
-                    if (!request.checkValue(i)) continue opa;
-                }
-
-                callback.data(i);
-            }
-        }
-
-        @Override
-        boolean isFull() {
-            return size == getMaxSize();
-        }
-
-        private int getMaxSize() {
-            return blockSizes[blockSizes.length - 1];
         }
 
     }

@@ -16,6 +16,10 @@ limitations under the License.
 
 package com.github.terma.fastselect.callbacks;
 
+import com.github.terma.fastselect.XColumn;
+
+import java.util.List;
+
 /**
  * Count of selected record
  *
@@ -31,7 +35,7 @@ public class CounterCallback implements ArrayLayoutCallback {
     }
 
     @Override
-    public void data(int position) {
+    public void data(int position, List<XColumn> columns) {
         count++;
     }
 

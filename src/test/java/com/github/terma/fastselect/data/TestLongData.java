@@ -18,9 +18,9 @@ package com.github.terma.fastselect.data;
 
 public class TestLongData {
 
-    public long value1;
+    public long longValue;
 
     public TestLongData(long value) {
-        this.value1 = value;
+        this.longValue = value;
     }
 }
