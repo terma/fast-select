@@ -25,6 +25,7 @@ import com.github.terma.fastselect.utils.MethodHandlerRepository;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
@@ -120,7 +121,8 @@ public final class FastSelect<T> {
     private static List<Column> getColumnsFromDataClass(Class dataClass) {
         final List<Column> columns = new ArrayList<>();
         for (Field field : dataClass.getDeclaredFields()) {
-            if (!field.isSynthetic()) columns.add(new Column(field.getName(), field.getType()));
+            if (!field.isSynthetic() && !Modifier.isStatic(field.getModifiers()))
+                columns.add(new Column(field.getName(), field.getType()));
         }
         return columns;
     }

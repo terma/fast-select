@@ -134,3 +134,14 @@ SingleGroupCountBenchmark.countFiltered10G5R4C20S40D           100          1000
 ### select by one unique string
 Benchmark                                           (volume)  Mode  Cnt   Score   Error  Units
 SelectByStringBenchmark.countFilterOneItemByString   1000000  avgt       62.928          ms/op
+
+### more realistic testing
+
+Benchmark                   (blockSize)  (volume)  Mode  Cnt   Score   Error  Units
+DemoBenchmark.groupByGAndR         1000   1000000  avgt       14.091          ms/op
+
+Benchmark                      (blockSize)  (volume)  Mode  Cnt   Score   Error  Units
+DemoBenchmark.groupByBsIdAndR         1000   1000000  avgt       68.541          ms/op
+DemoBenchmark.groupByBsIdAndR         1000  10000000  avgt      741.230          ms/op
+
+FastSelect prepared, volume: 10000000, mem used: 693Mb, preparation time 320256 msec

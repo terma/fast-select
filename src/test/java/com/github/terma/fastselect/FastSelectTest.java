@@ -179,6 +179,19 @@ public class FastSelectTest {
     }
 
     @Test
+    public void shouldSelectByMaxIntField() {
+        FastSelect<TestIntByte> database = new FastSelect<>(1, TestIntByte.class);
+        database.addAll(asList(
+                new TestIntByte(12, (byte) 0),
+                new TestIntByte(9, (byte) 0),
+                new TestIntByte(Integer.MAX_VALUE, (byte) 0)));
+
+        List result = database.select(new AbstractRequest[]{new IntRequest("value1", new int[]{Integer.MAX_VALUE})});
+
+        Assert.assertEquals(Collections.singletonList(new TestIntByte(Integer.MAX_VALUE, (byte) 0)), result);
+    }
+
+    @Test
     public void shouldSelectByShortField() {
         FastSelect<TestLongShort> database = new FastSelect<>(1, TestLongShort.class);
         database.addAll(asList(

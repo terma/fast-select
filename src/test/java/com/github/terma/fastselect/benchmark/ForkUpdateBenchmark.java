@@ -28,44 +28,55 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.util.concurrent.TimeUnit;
 
-@Fork(value = 1, jvmArgs = "-Xmx6g")
+@Fork(value = 1, jvmArgs = {"-Xmx7g", "-XX:CompileThreshold=1"})
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
 @Warmup(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
 @Measurement(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
-public class CountBenchmark {
-
-    @Param({"1000"}) // "100000"
-    private int blockSize;
+public class ForkUpdateBenchmark {
 
     @Param({"1000000"}) // "10000000"
     private int volume;
 
-    @Param({"FastSelect"})
-    private String impl;
-
     private FastSelect<DemoData> fastSelect;
 
     public static void main(String[] args) throws RunnerException {
-        Options opt = new OptionsBuilder().include(".*" + CountBenchmark.class.getSimpleName() + ".*").build();
+        Options opt = new OptionsBuilder().include("." + ForkUpdateBenchmark.class.getSimpleName() + ".*").build();
         new Runner(opt).run();
     }
 
-    public static FastSelect<DemoData> initDatabase(int blockSize, int volume) {
-        return DemoUtils.createFastSelect(new int[]{blockSize}, volume);
+    static FastSelect<DemoData> initDatabase(int blockSize, int volume) {
+        return initDatabase(new int[]{blockSize}, volume);
+    }
+
+    static FastSelect<DemoData> initDatabase(int[] blockSizes, int volume) {
+        return DemoUtils.createFastSelect(blockSizes, volume);
     }
 
     @Setup
     public void init() throws InterruptedException {
-        fastSelect = initDatabase(blockSize, volume);
+        fastSelect = initDatabase(1000, volume);
+
+        // test run
+        CounterCallback counter = new CounterCallback();
+        fastSelect.select(DemoUtils.whereGAndR(), counter);
+        System.out.println(counter.toString());
     }
 
+//    @Benchmark
+//    public Object groupAndCountFiltered10G5R4C20S40D() throws Exception {
+//        GroupCountCallback counter = new GroupCountCallback(
+//                fastSelect.getColumnsByNames().get("r"));
+//        fastSelect.select(DemoUtils.whereGAndR(), counter);
+//        return counter.getCounters();
+//    }
+
     @Benchmark
-    public int countByFiltered10G5R4C20S40D() throws Exception {
-        CounterCallback counterCallback = new CounterCallback();
-        fastSelect.select(DemoUtils.whereGAndR(), counterCallback);
-        return counterCallback.getCount();
+    public Object countFiltered10G5R4C20S40D() throws Exception {
+        CounterCallback counter = new CounterCallback();
+        fastSelect.select(DemoUtils.whereGAndR(), counter);
+        return counter.getCount();
     }
 
 }

@@ -42,7 +42,7 @@ public class Demo {
         System.out.println();
 
         System.out.println("FastSelect: " + fastSelect);
-        System.out.println("Scenario: GroupCountCallback, where: " + Arrays.asList(DemoUtils.create1Where()));
+        System.out.println("Scenario: GroupCountCallback, where: " + Arrays.asList(DemoUtils.whereGAndR()));
 
         System.out.println();
         System.out.print("Heating... just: " + duration + " sec, ");
@@ -63,7 +63,7 @@ public class Demo {
         while (true) {
             // test call
             final GroupCountCallback callback = new GroupCountCallback(fastSelect.getColumnsByNames().get("r"));
-            fastSelect.select(DemoUtils.create1Where(), callback);
+            fastSelect.select(DemoUtils.whereGAndR(), callback);
             entropy += callback.getCounters().size();
             // end test call
 
