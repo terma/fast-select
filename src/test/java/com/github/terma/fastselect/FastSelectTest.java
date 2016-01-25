@@ -32,7 +32,7 @@ public class FastSelectTest {
     @Test
     public void shouldSelectEmptyResultIfNoData() {
         List result = new FastSelect<>(10, TestIntByte.class)
-                .select(new Request[]{new Request("value1", new int[]{34})});
+                .select(new AbstractRequest[]{new IntRequest("value1", new int[]{34})});
         Assert.assertEquals(0, result.size());
     }
 
@@ -44,9 +44,81 @@ public class FastSelectTest {
                 new TestIntByte(9, (byte) 0),
                 new TestIntByte(1000, (byte) 0)));
 
-        List result = database.select(new Request[]{new Request("value1", new int[]{12})});
+        List result = database.select(new AbstractRequest[]{new Request("value1", new int[]{12})});
 
         Assert.assertEquals(Collections.singletonList(new TestIntByte(12, (byte) 0)), result);
+    }
+
+    @Test
+    public void shouldSelectAndSortByIntColumn() {
+        FastSelect<TestIntByte> database = new FastSelect<>(TestIntByte.class);
+        database.addAll(asList(
+                new TestIntByte(12, (byte) 0),
+                new TestIntByte(9, (byte) 0),
+                new TestIntByte(1000, (byte) 0)));
+
+        List result = database.selectAndSort(
+                new AbstractRequest[]{new ByteRequest("value2", new int[]{0})}, "value1");
+
+        Assert.assertEquals(asList(
+                new TestIntByte(9, (byte) 0),
+                new TestIntByte(12, (byte) 0),
+                new TestIntByte(1000, (byte) 0)),
+                result);
+    }
+
+    @Test
+    public void shouldSelectAndSortByByteColumn() {
+        FastSelect<TestIntByte> database = new FastSelect<>(TestIntByte.class);
+        database.addAll(asList(
+                new TestIntByte(1, (byte) 11),
+                new TestIntByte(1, (byte) 4),
+                new TestIntByte(1, (byte) 98)));
+
+        List result = database.selectAndSort(
+                new AbstractRequest[]{new IntRequest("value1", new int[]{1})}, "value2");
+
+        Assert.assertEquals(asList(
+                new TestIntByte(1, (byte) 4),
+                new TestIntByte(1, (byte) 11),
+                new TestIntByte(1, (byte) 98)),
+                result);
+    }
+
+    @Test
+    public void shouldSelectAndSortByShortColumn() {
+        FastSelect<TestLongShort> database = new FastSelect<>(TestLongShort.class);
+        database.addAll(asList(
+                new TestLongShort(1, (short) 11),
+                new TestLongShort(1, (short) 4),
+                new TestLongShort(1, (short) 98)));
+
+        List result = database.selectAndSort(
+                new AbstractRequest[]{new Request("long1", new int[]{1})}, "short1");
+
+        Assert.assertEquals(asList(
+                new TestLongShort(1, (short) 4),
+                new TestLongShort(1, (short) 11),
+                new TestLongShort(1, (short) 98)),
+                result);
+    }
+
+    @Test
+    public void shouldSelectAndSortByLongColumn() {
+        FastSelect<TestLongShort> database = new FastSelect<>(TestLongShort.class);
+        database.addAll(asList(
+                new TestLongShort(Long.MAX_VALUE, (short) 1),
+                new TestLongShort(9, (short) 1),
+                new TestLongShort(1231312, (short) 1)));
+
+        List result = database.selectAndSort(
+                new AbstractRequest[]{new ShortRequest("short1", new int[]{1})}, "long1");
+
+        Assert.assertEquals(asList(
+                new TestLongShort(9, (short) 1),
+                new TestLongShort(1231312, (short) 1),
+                new TestLongShort(Long.MAX_VALUE, (short) 1)),
+                result);
     }
 
     @Test
@@ -57,7 +129,7 @@ public class FastSelectTest {
                 new IntStringData(1, "1"),
                 new IntStringData(1, "abra")));
 
-        List result = database.select(new Request[]{new Request("value1", new int[]{1})});
+        List result = database.select(new AbstractRequest[]{new Request("value1", new int[]{1})});
 
         Assert.assertEquals(asList(
                 new IntStringData(1, ""),

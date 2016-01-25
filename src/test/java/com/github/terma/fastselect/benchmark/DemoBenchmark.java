@@ -17,6 +17,7 @@ limitations under the License.
 package com.github.terma.fastselect.benchmark;
 
 import com.github.terma.fastselect.FastSelect;
+import com.github.terma.fastselect.callbacks.ListLimitCallback;
 import com.github.terma.fastselect.callbacks.MultiGroupCountCallback;
 import com.github.terma.fastselect.demo.DemoData;
 import com.github.terma.fastselect.demo.DemoUtils;
@@ -39,7 +40,7 @@ public class DemoBenchmark {
     @Param({"1000"})
     private int blockSize;
 
-    @Param({"10000000"}) // "10000000"
+    @Param({"1000000"}) // "10000000"
     private int volume;
 
     private FastSelect<DemoData> fastSelect;
@@ -64,6 +65,7 @@ public class DemoBenchmark {
         // test run
         System.out.println(internalGroupByGAndR());
         System.out.println(internalGroupByBsIdAndR());
+        System.out.println(internalDetailsByGAndRAndSorting());
     }
 
 //    @Benchmark
@@ -71,9 +73,14 @@ public class DemoBenchmark {
 //        return internalGroupByGAndR();
 //    }
 
+//    @Benchmark
+//    public Object groupByBsIdAndR() throws Exception {
+//        return internalGroupByBsIdAndR();
+//    }
+
     @Benchmark
-    public Object groupByBsIdAndR() throws Exception {
-        return internalGroupByBsIdAndR();
+    public Object detailsByGAndRAndSorting() throws Exception {
+        return internalDetailsByGAndRAndSorting();
     }
 
     private Object internalGroupByGAndR() {
@@ -92,6 +99,12 @@ public class DemoBenchmark {
         );
         fastSelect.select(DemoUtils.whereBsIdAndR(), callback);
         return callback.getCounters();
+    }
+
+    private int internalDetailsByGAndRAndSorting() {
+        ListLimitCallback<DemoData> callback = new ListLimitCallback<>(25);
+        fastSelect.selectAndSort(DemoUtils.whereGAndR(), callback, "prr");
+        return callback.getResult().size();
     }
 
 }

@@ -68,6 +68,11 @@ public class MultiLongData implements Data {
     }
 
     @Override
+    public int compare(int position1, int position2) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public int size() {
         return index.size();
     }

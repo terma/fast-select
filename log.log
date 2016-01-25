@@ -145,3 +145,13 @@ DemoBenchmark.groupByBsIdAndR         1000   1000000  avgt       68.541         
 DemoBenchmark.groupByBsIdAndR         1000  10000000  avgt      741.230          ms/op
 
 FastSelect prepared, volume: 10000000, mem used: 693Mb, preparation time 320256 msec
+
+### limit 100
+Benchmark                     (blockSize)  (volume)  Mode  Cnt  Score   Error  Units
+DemoBenchmark.detailsByGAndR         1000   1000000  avgt       3.573          ms/op
+
+### limit 25
+Benchmark                               (blockSize)  (volume)  Mode  Cnt   Score   Error  Units
+DemoBenchmark.detailsByGAndRAndSorting         1000   1000000  avgt       44.923          ms/op
+Benchmark                               (blockSize)  (volume)  Mode  Cnt   Score   Error  Units
+DemoBenchmark.detailsByGAndRAndSorting         1000   1000000  avgt       34.080          ms/op
