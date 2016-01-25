@@ -183,7 +183,6 @@ public final class FastSelect<T> {
         rootBlock.select(where, callback);
     }
 
-
     public void selectAndSort(final AbstractRequest[] where, final LimitCallback<T> callback, final String... sortBy) {
         final List<Integer> positions = new ArrayList<>();
         ArrayLayoutCallback myCallback = new ArrayLayoutCallback() {
@@ -308,14 +307,15 @@ public final class FastSelect<T> {
     private abstract class Block {
 
         final List<BitSet> columnBitSets = new ArrayList<>();
+        final List<IntRange> intRanges = new ArrayList<>();
 
         abstract boolean isFull();
 
         void setColumnBitSet(Column column, int bit) {
-            if (bit >= MIN_COLUMN_BIT && bit <= MAX_COLUMN_BIT) {
+            if (bit >= MIN_COLUMN_BIT) {
                 columnBitSets.get(column.index).set(bit);
             } else {
-                // todo implement indexing for negative values, currently just use direct scan
+//                 todo implement indexing for negative values, currently just use direct scan
             }
         }
 
@@ -354,8 +354,12 @@ public final class FastSelect<T> {
 
         private boolean inBlock(AbstractRequest[] requests, Block block) {
             for (AbstractRequest request : requests) {
-                final BitSet columnBitSet = block.columnBitSets.get(request.column.index);
-                if (!request.inBlock(columnBitSet)) return false;
+                if (request.column.type == byte.class || request.column.type == short.class) {
+                    final BitSet columnBitSet = block.columnBitSets.get(request.column.index);
+                    if (!request.inBlock(columnBitSet)) return false;
+                } else if (block.getClass() == DataBlock.class && request.column.type == int.class) {
+                    if (!request.inBlock(block.intRanges.get(request.column.index))) return false;
+                }
             }
             return true;
         }
@@ -411,6 +415,7 @@ public final class FastSelect<T> {
 
             for (Column ignored : columns) {
                 columnBitSets.add(new BitSet());
+                intRanges.add(new IntRange());
             }
         }
 
@@ -428,13 +433,10 @@ public final class FastSelect<T> {
                     if (column.type == long.class) {
                         long v = (long) mhRepo.get(column.name).invoke(row);
                         ((LongData) column.data).add(v);
-                        setColumnBitSet(column, (int) v);
 
                     } else if (column.type == long[].class) {
                         long[] v = (long[]) mhRepo.get(column.name).invoke(row);
                         ((MultiLongData) column.data).add(v);
-                        // set all bits
-                        for (long v1 : v) setColumnBitSet(column, (int) v1);
 
                     } else if (column.type == short[].class) {
                         short[] v = (short[]) mhRepo.get(column.name).invoke(row);
@@ -451,7 +453,11 @@ public final class FastSelect<T> {
                     } else if (column.type == int.class) {
                         int v = (int) mhRepo.get(column.name).invoke(row);
                         ((IntData) column.data).add(v);
-                        setColumnBitSet(column, v);
+
+                        IntRange intRange = intRanges.get(column.index);
+                        intRange.max = Math.max(intRange.max, v);
+                        intRange.min = Math.min(intRange.min, v);
+
 
                     } else if (column.type == short.class) {
                         short v = (short) mhRepo.get(column.name).invoke(row);

@@ -73,15 +73,15 @@ public class DemoBenchmark {
 //        return internalGroupByGAndR();
 //    }
 
-//    @Benchmark
-//    public Object groupByBsIdAndR() throws Exception {
-//        return internalGroupByBsIdAndR();
-//    }
-
     @Benchmark
-    public Object detailsByGAndRAndSorting() throws Exception {
-        return internalDetailsByGAndRAndSorting();
+    public Object groupByBsIdAndR() throws Exception {
+        return internalGroupByBsIdAndR();
     }
+
+//    @Benchmark
+//    public Object detailsByGAndRAndSorting() throws Exception {
+//        return internalDetailsByGAndRAndSorting();
+//    }
 
     private Object internalGroupByGAndR() {
         MultiGroupCountCallback callback = new MultiGroupCountCallback(

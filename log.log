@@ -155,3 +155,7 @@ Benchmark                               (blockSize)  (volume)  Mode  Cnt   Score
 DemoBenchmark.detailsByGAndRAndSorting         1000   1000000  avgt       44.923          ms/op
 Benchmark                               (blockSize)  (volume)  Mode  Cnt   Score   Error  Units
 DemoBenchmark.detailsByGAndRAndSorting         1000   1000000  avgt       34.080          ms/op
+
+### for int use range check before bin search
+Benchmark                      (blockSize)  (volume)  Mode  Cnt   Score   Error  Units
+DemoBenchmark.groupByBsIdAndR         1000   1000000  avgt       41.671          ms/op
