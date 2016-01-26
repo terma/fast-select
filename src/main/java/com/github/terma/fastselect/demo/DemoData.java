@@ -21,10 +21,15 @@ package com.github.terma.fastselect.demo;
  */
 public class DemoData {
 
-    public static final int G_MAX = 100;
+    public static final int G_ID_MAX = 100;
+    public static final int G_ID_PORTION_DEVIATION = 5;
+    public static final int G_ID_PORTION = 2000;
+
     public static final int R_MAX = 6;
 
     public static final int BS_ID_MAX = 150000;
+    public static final int BS_ID_PORTION_DEVIATION = 500;
+    public static final int BS_ID_PORTION = 2000;
 
     public byte prg;
     public byte csg;

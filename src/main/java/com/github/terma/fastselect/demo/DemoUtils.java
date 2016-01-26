@@ -21,6 +21,7 @@ import com.github.terma.fastselect.ByteRequest;
 import com.github.terma.fastselect.FastSelect;
 import com.github.terma.fastselect.IntRequest;
 import com.github.terma.fastselect.utils.MemMeter;
+import com.github.terma.fastselect.utils.SpecialRandom;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,15 +40,28 @@ public abstract class DemoUtils {
         final List<DemoData> data = new ArrayList<>();
         final Random random = new Random();
 
+        final SpecialRandom bsIdRandom = new SpecialRandom(
+                DemoData.BS_ID_PORTION_DEVIATION, DemoData.BS_ID_PORTION, DemoData.BS_ID_MAX);
+
+        final SpecialRandom prgIdRandom = new SpecialRandom(
+                DemoData.G_ID_PORTION_DEVIATION, DemoData.G_ID_PORTION, DemoData.G_ID_MAX);
+        final SpecialRandom csgIdRandom = new SpecialRandom(
+                DemoData.G_ID_PORTION_DEVIATION, DemoData.G_ID_PORTION, DemoData.G_ID_MAX);
+
         for (int i = 0; i < itemsToCreate; i++) {
             DemoData item = new DemoData();
-            item.prg = (byte) (random.nextInt(DemoData.G_MAX) + 1);
-            item.csg = (byte) (random.nextInt(DemoData.G_MAX) + 1);
+            item.prg = (byte) prgIdRandom.next();
+            item.csg = (byte) csgIdRandom.next();
 
             item.prr = (byte) (random.nextInt(DemoData.R_MAX) + 1);
             item.csr = (byte) (random.nextInt(DemoData.R_MAX) + 1);
 
-            item.bsid = random.nextInt(DemoData.BS_ID_MAX) + 1;
+            /*
+            make distribution more realistic.
+            Instead of normal use small deviation in near blocks than make hure shift for next
+            portion.
+             */
+            item.bsid = bsIdRandom.next();
 
             data.add(item);
 

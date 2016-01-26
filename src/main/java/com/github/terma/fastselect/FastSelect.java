@@ -484,6 +484,8 @@ public final class FastSelect<T> {
 
         @Override
         void select(AbstractRequest[] where, ArrayLayoutCallback callback) {
+//            System.out.println("B");
+
             final int end = start + size;
             opa:
             for (int i = start; i < end; i++) {

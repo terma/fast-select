@@ -159,3 +159,16 @@ DemoBenchmark.detailsByGAndRAndSorting         1000   1000000  avgt       34.080
 ### for int use range check before bin search
 Benchmark                      (blockSize)  (volume)  Mode  Cnt   Score   Error  Units
 DemoBenchmark.groupByBsIdAndR         1000   1000000  avgt       41.671          ms/op
+DemoBenchmark.groupByBsIdAndR         1000  10000000  avgt      446.186          ms/op
+
+### real distribution for bsid by portions
+Benchmark                              (blockSize)  (volume)  Mode  Cnt    Score   Error  Units
+DemoBenchmark.groupByGAndR                    1000  10000000  avgt       153.353          ms/op
+DemoBenchmark.groupByBsIdAndR                 1000  10000000  avgt       156.995          ms/op
+DemoBenchmark.detailsByGAndRAndSorting        1000  10000000  avgt       323.712          ms/op
+
+### byte request use array instead of bitset
+Benchmark                   (blockSize)  (volume)  Mode  Cnt   Score   Error  Units
+DemoBenchmark.groupByGAndR         1000   1000000  avgt       14.988          ms/op
+### more realistic distribution of prg csg
+DemoBenchmark.groupByGAndR         1000   1000000  avgt       12.405          ms/op
