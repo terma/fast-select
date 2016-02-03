@@ -87,7 +87,7 @@ public class SingleGroupCountBenchmark {
 
         // test run
         CounterCallback counter = new CounterCallback();
-        fastSelect.select(DemoUtils.create1Where(), counter);
+        fastSelect.select(DemoUtils.whereGAndR(), counter);
         System.out.println(counter.toString());
     }
 
@@ -95,14 +95,14 @@ public class SingleGroupCountBenchmark {
 //    public Object groupAndCountFiltered10G5R4C20S40D() throws Exception {
 //        GroupCountCallback counter = new GroupCountCallback(
 //                fastSelect.getColumnsByNames().get("r"));
-//        fastSelect.select(DemoUtils.create1Where(), counter);
+//        fastSelect.select(DemoUtils.whereGAndR(), counter);
 //        return counter.getCounters();
 //    }
 
     @Benchmark
     public Object countFiltered10G5R4C20S40D() throws Exception {
         CounterCallback counter = new CounterCallback();
-        fastSelect.select(DemoUtils.create1Where(), counter);
+        fastSelect.select(DemoUtils.whereGAndR(), counter);
         return counter.getCount();
     }
 

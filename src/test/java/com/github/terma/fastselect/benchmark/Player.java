@@ -14,18 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.github.terma.fastselect.data;
+package com.github.terma.fastselect.benchmark;
 
-public interface Data {
+interface Player {
 
-    boolean check(int position, int[] values);
+    Object playGroupByGAndR() throws Exception;
 
-    boolean plainCheck(int position, byte[] values);
+    Object playGroupByBsIdAndR() throws Exception;
 
-    Object get(int position);
-
-    int compare(int position1, int position2);
-
-    int size();
-
+    Object playDetailsByGAndRAndSorting() throws Exception;
 }

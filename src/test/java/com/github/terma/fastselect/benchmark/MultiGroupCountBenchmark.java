@@ -71,7 +71,7 @@ public class MultiGroupCountBenchmark {
                 columnsByNames.get("g"),
                 columnsByNames.get("r")
         );
-        fastSelect.select(DemoUtils.create1Where(), counter);
+        fastSelect.select(DemoUtils.whereGAndR(), counter);
         return counter.getCounters();
     }
 

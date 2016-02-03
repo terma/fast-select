@@ -49,6 +49,11 @@ public class LongData implements Data {
     }
 
     @Override
+    public int compare(int position1, int position2) {
+        return Long.compare(data[position1], data[position2]);
+    }
+
+    @Override
     public int size() {
         return size;
     }

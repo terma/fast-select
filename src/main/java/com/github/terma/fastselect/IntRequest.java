@@ -16,48 +16,44 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
+import com.github.terma.fastselect.data.IntData;
+
 import java.util.Arrays;
 import java.util.BitSet;
 
-@Deprecated
-public class Request extends AbstractRequest {
+public class IntRequest extends AbstractRequest {
 
     private final int[] values;
+    private int[] data;
 
-    private byte[] plainValues;
-
-    public Request(String name, int[] values) {
+    public IntRequest(String name, int[] values) {
         super(name);
         this.values = values;
     }
 
     @Override
     boolean inBlock(BitSet bitSet) {
-        boolean p = false;
-        for (final int value : values) {
-            p = p | bitSet.get(value);
-        }
-        return p;
+        return true;
+    }
+
+    @Override
+    boolean inBlock(IntRange intRange) {
+        return values[0] <= intRange.max && values[values.length - 1] >= intRange.min;
     }
 
     @Override
     boolean checkValue(int position) {
-        if (plainValues != null) {
-            return column.data.plainCheck(position, plainValues);
-        } else {
-            return column.data.check(position, values);
-        }
+        int value = data[position];
+        return values[0] <= value && values[values.length - 1] >= value && Arrays.binarySearch(values, value) > -1;
     }
 
     @Override
-        // todo implement search by array if direct index can't be used Arrays.sort(condition.values);
     void prepare() {
-        int max = values[0];
-        for (int i = 1; i < values.length; i++)
-            if (values[i] > max) max = values[i];
+        // caching
+        data = ((IntData) column.data).data;
 
-        plainValues = new byte[max + 1];
-        for (int value : values) plainValues[value] = 1;
+        // prepare
+        Arrays.sort(values);
     }
 
     @Override

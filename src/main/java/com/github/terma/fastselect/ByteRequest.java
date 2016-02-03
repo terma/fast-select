@@ -25,7 +25,7 @@ public class ByteRequest extends AbstractRequest {
 
     private final int[] values;
 
-    private BitSet plainSet;
+    private byte[] plainSet;
     private byte[] data;
 
     public ByteRequest(String name, int[] values) {
@@ -44,7 +44,8 @@ public class ByteRequest extends AbstractRequest {
 
     @Override
     boolean checkValue(int position) {
-        return plainSet.get(data[position]);
+        byte v = data[position];
+        return v < plainSet.length && plainSet[v] > 0;
     }
 
     @Override
@@ -53,8 +54,11 @@ public class ByteRequest extends AbstractRequest {
         data = ((ByteData) column.data).data;
 
         // plain
-        plainSet = new BitSet();
-        for (int value : values) plainSet.set(value);
+        int max = 0;
+        for (int b : values) max = Math.max(max, b);
+
+        plainSet = new byte[max + 1];
+        for (int b : values) plainSet[b] = 1;
     }
 
     @Override

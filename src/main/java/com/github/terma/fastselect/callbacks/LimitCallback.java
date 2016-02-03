@@ -14,18 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.github.terma.fastselect.data;
+package com.github.terma.fastselect.callbacks;
 
-public interface Data {
+public interface LimitCallback<T> {
 
-    boolean check(int position, int[] values);
+    void data(T data);
 
-    boolean plainCheck(int position, byte[] values);
-
-    Object get(int position);
-
-    int compare(int position1, int position2);
-
-    int size();
+    boolean needToStop();
 
 }
