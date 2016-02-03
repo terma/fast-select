@@ -41,6 +41,11 @@ public class StringData implements Data {
         return new String(bytes);
     }
 
+    @Override
+    public int compare(int position1, int position2) {
+        throw new UnsupportedOperationException();
+    }
+
     public byte[] getRaw(int position) {
         return (byte[]) data.get(position);
     }

@@ -48,6 +48,11 @@ public class ShortData implements Data {
     }
 
     @Override
+    public int compare(int position1, int position2) {
+        return data[position1] - data[position2];
+    }
+
+    @Override
     public int size() {
         return size;
     }

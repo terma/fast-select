@@ -14,18 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.github.terma.fastselect.data;
+package com.github.terma.fastselect.benchmark;
 
-public interface Data {
+import java.util.List;
 
-    boolean check(int position, int[] values);
+interface PlayerFactory<T> {
 
-    boolean plainCheck(int position, byte[] values);
+    void addData(List<T> data) throws Exception;
 
-    Object get(int position);
-
-    int compare(int position1, int position2);
-
-    int size();
+    Player createPlayer() throws Exception;
 
 }

@@ -25,7 +25,7 @@ public class IntData implements Data {
 
     public void add(int v) {
         if (size == data.length) {
-            data = Arrays.copyOf(data, size + 100000);
+            data = Arrays.copyOf(data, size + 1000000);
         }
         data[size] = v;
         size++;
@@ -45,6 +45,11 @@ public class IntData implements Data {
     @Override
     public Object get(int position) {
         return data[position];
+    }
+
+    @Override
+    public int compare(int position1, int position2) {
+        return data[position1] - data[position2];
     }
 
     @Override

@@ -67,6 +67,11 @@ public class MultiByteData implements Data {
         return values;
     }
 
+    @Override
+    public int compare(int position1, int position2) {
+        throw new UnsupportedOperationException();
+    }
+
 
     @Override
     public int size() {

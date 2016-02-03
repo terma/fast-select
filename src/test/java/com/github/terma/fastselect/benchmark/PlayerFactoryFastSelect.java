@@ -14,18 +14,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.github.terma.fastselect.data;
+package com.github.terma.fastselect.benchmark;
 
-public interface Data {
+import com.github.terma.fastselect.FastSelect;
+import com.github.terma.fastselect.demo.DemoData;
 
-    boolean check(int position, int[] values);
+import java.util.List;
 
-    boolean plainCheck(int position, byte[] values);
+class PlayerFactoryFastSelect implements PlayerFactory<DemoData> {
 
-    Object get(int position);
+    private FastSelect<DemoData> fastSelect = new FastSelect<>(DemoData.class);
 
-    int compare(int position1, int position2);
+    @Override
+    public void addData(List<DemoData> data) throws Exception {
+        fastSelect.addAll(data);
+    }
 
-    int size();
-
+    @Override
+    public Player createPlayer() throws Exception {
+        return new PlayerFastSelect(fastSelect);
+    }
 }
