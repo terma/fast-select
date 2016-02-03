@@ -87,6 +87,5 @@ More use cases you can find in javadoc ```callbacks``` package
 
 * Indexes by String field
 * filter by < or >
-* Sorting
 * Serialization/Deserialization
 * On fly modification
