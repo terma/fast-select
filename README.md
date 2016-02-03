@@ -2,7 +2,17 @@
 [![Coverage Status](https://coveralls.io/repos/terma/fast-select/badge.svg?branch=master&service=github)](https://coveralls.io/github/terma/fast-select?branch=master) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.terma/fast-select/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.terma/fast-select/)
 
 ## Fast-Select 
-In-memory column oriented *compact* storage with *fast select* by multiple criterias and aggregation aka [HOLAP](https://en.wikipedia.org/wiki/HOLAP). Free open source under Apache 2.0 license.
+
+In-memory storage with low latency access for online analytic with huge volume of concurrent users and rare updates.
+
+* In-memory (embedded) column orineted storage aka [HOLAP](https://en.wikipedia.org/wiki/HOLAP)
+* Almost read only (you able to add data. Updating and delete subject of future releases)
+* Zero Java Object overhead (only data what you want to store)
+* Low latency ```~15 msec per 1m```
+* Non blocking, lock free
+* API to support fast filtering, grouping, sorting, selecting
+* Small lib ```~53 kb```
+* Free open source under Apache 2.0 license.
 
 ## Memory Usage
 
