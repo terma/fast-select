@@ -172,3 +172,12 @@ Benchmark                   (blockSize)  (volume)  Mode  Cnt   Score   Error  Un
 DemoBenchmark.groupByGAndR         1000   1000000  avgt       14.988          ms/op
 ### more realistic distribution of prg csg
 DemoBenchmark.groupByGAndR         1000   1000000  avgt       12.405          ms/op
+
+### compare with H2 inmemory mode
+Benchmark                               (blockSize)    (engine)  (volume)  Mode  Cnt     Score   Error  Units
+DemoBenchmark.detailsByGAndRAndSorting         1000          H2   1000000  avgt       1422.091          ms/op
+DemoBenchmark.detailsByGAndRAndSorting         1000  FastSelect   1000000  avgt         35.328          ms/op
+DemoBenchmark.groupByBsIdAndR                  1000          H2   1000000  avgt       1767.386          ms/op
+DemoBenchmark.groupByBsIdAndR                  1000  FastSelect   1000000  avgt         22.685          ms/op
+DemoBenchmark.groupByGAndR                     1000          H2   1000000  avgt        281.696          ms/op
+DemoBenchmark.groupByGAndR                     1000  FastSelect   1000000  avgt         11.773          ms/op

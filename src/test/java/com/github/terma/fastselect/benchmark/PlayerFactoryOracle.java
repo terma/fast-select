@@ -24,20 +24,22 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-class PlayerFactoryH2 implements PlayerFactory<DemoData> {
+class PlayerFactoryOracle implements PlayerFactory<DemoData> {
 
     private final Connection connection;
 
-    public PlayerFactoryH2() {
+    public PlayerFactoryOracle() {
         try {
-            connection = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;LOG=0;CACHE_SIZE=65536;LOCK_MODE=0;UNDO_LOG=0");
-            connection.createStatement().execute("create table tb (" +
-                    "prg tinyint, csg tinyint, prr tinyint, csr tinyint, bsid int" +
-                    ");");
-            connection.createStatement().execute("create index on tb (prg);");
-            connection.createStatement().execute("create index on tb (csg);");
-            connection.createStatement().execute("create index on tb (prr);");
-            connection.createStatement().execute("create index on tb (csr);");
+            connection = DriverManager.getConnection(
+                    "jdbc:oracle:thin:@192.168.56.101:1521:cdb1", "sys as sysdba", "oracle");
+            try {
+                connection.createStatement().execute("drop table test1");
+            } catch (Exception e) {
+            }
+            connection.createStatement().execute("create table test1 (prg int, csg int, prr int, csr int, bsid int)");
+            connection.createStatement().execute("create bitmap index prg_i on test1 (prg)");
+            connection.createStatement().execute("create bitmap index prr_i on test1 (prr)");
+            connection.createStatement().execute("alter table test1 inmemory");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -45,11 +47,10 @@ class PlayerFactoryH2 implements PlayerFactory<DemoData> {
 
     @Override
     public void addData(List<DemoData> data) throws Exception {
-        // todo add data
         PreparedStatement preparedStatement = connection.prepareStatement(
                 "insert into " +
-                        "tb (prg, csg, prr, csr, bsid) " +
-                        "values (?, ?, ?, ?, ?);");
+                        "test1 (prg, csg, prr, csr, bsid) " +
+                        "values (?, ?, ?, ?, ?)");
         for (DemoData demoData : data) {
             preparedStatement.setByte(1, demoData.prg);
             preparedStatement.setByte(2, demoData.csg);
@@ -64,6 +65,6 @@ class PlayerFactoryH2 implements PlayerFactory<DemoData> {
     @Override
     public Player createPlayer() throws Exception {
         connection.close();
-        return new PlayerH2();
+        return new PlayerOracle();
     }
 }

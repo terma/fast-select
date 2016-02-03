@@ -94,13 +94,16 @@ public abstract class DemoUtils {
     }
 
     public static AbstractRequest[] whereBsIdAndR() {
-        int[] bsIds = new int[10000];
-        for (int i = 0; i < bsIds.length; i++) bsIds[i] = i + 40000;
-
         return new AbstractRequest[]{
                 new ByteRequest("prr", new int[]{1, 2, 3, 4, 5, 6}),
-                new IntRequest("bsid", bsIds)
+                new IntRequest("bsid", getBsIds())
         };
+    }
+
+    public static int[] getBsIds() {
+        int[] bsIds = new int[10000];
+        for (int i = 0; i < bsIds.length; i++) bsIds[i] = i + 40000;
+        return bsIds;
     }
 
 }

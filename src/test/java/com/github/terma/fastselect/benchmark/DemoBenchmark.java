@@ -33,23 +33,24 @@ import java.util.concurrent.TimeUnit;
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
-@Warmup(timeUnit = TimeUnit.SECONDS, time = 5, iterations = 1)
-@Measurement(timeUnit = TimeUnit.SECONDS, time = 5, iterations = 1)
+@Warmup(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
+@Measurement(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
 public class DemoBenchmark {
 
     private static final Map<String, Class<? extends PlayerFactory<DemoData>>> ENGINE_FACTORIES =
             new HashMap<String, Class<? extends PlayerFactory<DemoData>>>() {{
-        put("H2", PlayerFactoryH2.class);
-        put("FastSelect", PlayerFactoryFastSelect.class);
-    }};
+                put("H2", PlayerFactoryH2.class);
+                put("FastSelect", PlayerFactoryFastSelect.class);
+                put("Oracle", PlayerFactoryOracle.class);
+            }};
 
     @Param({"1000"})
     private int blockSize;
 
-    @Param({"10000"}) // "10000000"
+    @Param({"1000000"}) // "10000000"
     private int volume;
 
-    @Param({"FastSelect", "H2"}) // "FastSelect"
+    @Param({"H2", "FastSelect"}) // "Oracle", "FastSelect", "H2"
     private String engine;
 
     private Player player;
@@ -60,7 +61,7 @@ public class DemoBenchmark {
     }
 
     private static void fill(int itemsToCreate, PlayerFactory<DemoData> playerFactory) throws Exception {
-        System.out.println("Filler started");
+        System.out.println(playerFactory + " started");
 
         final MemMeter memMeter = new MemMeter();
         final long start = System.currentTimeMillis();
@@ -107,14 +108,14 @@ public class DemoBenchmark {
 
         final long time = System.currentTimeMillis() - start;
 
-        System.out.println("FastSelect prepared, volume: " + itemsToCreate + ", mem used: "
+        System.out.println(playerFactory + " prepared, volume: " + itemsToCreate + ", mem used: "
                 + memMeter.getUsedMb() + "Mb, preparation time " + time + " msec");
         System.out.println("Filler finished");
     }
 
     @Setup
     public void init() throws Exception {
-        PlayerFactory<DemoData> playerFactory = ENGINE_FACTORIES.get(engine).newInstance();
+        final PlayerFactory<DemoData> playerFactory = ENGINE_FACTORIES.get(engine).newInstance();
 
         fill(volume, playerFactory);
 
@@ -122,8 +123,8 @@ public class DemoBenchmark {
 
         // test run
         System.out.println(player.playGroupByGAndR());
-//        System.out.println(internalGroupByBsIdAndR());
-//        System.out.println(internalDetailsByGAndRAndSorting());
+        System.out.println(player.playGroupByBsIdAndR());
+        System.out.println(player.playDetailsByGAndRAndSorting());
     }
 
     @Benchmark
@@ -131,39 +132,14 @@ public class DemoBenchmark {
         return player.playGroupByGAndR();
     }
 
-//    @Benchmark
-//    public Object groupByBsIdAndR() throws Exception {
-//        return internalGroupByBsIdAndR();
-//    }
+    @Benchmark
+    public Object groupByBsIdAndR() throws Exception {
+        return player.playGroupByBsIdAndR();
+    }
 
-//    @Benchmark
-//    public Object detailsByGAndRAndSorting() throws Exception {
-//        return internalDetailsByGAndRAndSorting();
-//    }
-
-//    private Object internalGroupByGAndR() {
-////        MultiGroupCountCallback callback = new MultiGroupCountCallback(
-////                fastSelect.getColumnsByNames().get("prg"),
-////                fastSelect.getColumnsByNames().get("prr")
-////        );
-//        CounterCallback callback = new CounterCallback();
-//        fastSelect.select(DemoUtils.whereGAndR(), callback);
-//        return callback;
-//    }
-
-//    private Object internalGroupByBsIdAndR() {
-//        MultiGroupCountCallback callback = new MultiGroupCountCallback(
-//                fastSelect.getColumnsByNames().get("bsid"),
-//                fastSelect.getColumnsByNames().get("prr")
-//        );
-//        fastSelect.select(DemoUtils.whereBsIdAndR(), callback);
-//        return callback.getCounters();
-//    }
-
-//    private int internalDetailsByGAndRAndSorting() {
-//        ListLimitCallback<DemoData> callback = new ListLimitCallback<>(25);
-//        fastSelect.selectAndSort(DemoUtils.whereGAndR(), callback, "prr");
-//        return callback.getResult().size();
-//    }
+    @Benchmark
+    public Object detailsByGAndRAndSorting() throws Exception {
+        return player.playDetailsByGAndRAndSorting();
+    }
 
 }
