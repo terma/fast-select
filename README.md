@@ -54,7 +54,7 @@ public class Data {
 }
 ```
 
-### Init fast select
+### Build storage
 
 ```java
 FastSelect<Data> database = new FastSelect<>(Data.class);
@@ -69,9 +69,16 @@ AbstractRequest[] where = new AbstractRequest[] {new IntRequest("a", new int[]{1
 
 ### Get count with grouping
 ```java
-GroupCountCallback callback = new GroupCountCallback(fastSelect.getColumnsByNames().get("a"));
+MultiGroupCountCallback callback = new MultiGroupCountCallback(fastSelect.getColumnsByNames().get("a"));
 database.select(where, callback);
 callback.getCounters(); // your result here grouped by field 'a'
+```
+
+### Select with sorting
+```java
+ListLimitCallback<DemoData> callback = new ListLimitCallback<>(25);
+fastSelect.selectAndSort(where, callback, "a");
+callback.getResult();
 ```
 
 More use cases you can find in javadoc ```callbacks``` package
