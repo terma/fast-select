@@ -58,7 +58,6 @@ public final class FastSelect<T> {
 
     private final static int[] DEFAULT_BLOCK_SIZES = new int[]{1000};
 
-    private final static long MAX_COLUMN_BIT = 10000;
     private final static long MIN_COLUMN_BIT = 0;
 
     private final int[] blockSizes;
@@ -158,32 +157,21 @@ public final class FastSelect<T> {
      * @param callback callback. Will be called for each item accepted by where.
      */
     public void select(final AbstractRequest[] where, final ArrayLayoutCallback callback) {
-        for (final AbstractRequest condition : where) {
-            condition.column = columnsByNames.get(condition.name);
-
-            if (condition.column == null) throw new IllegalArgumentException(
-                    "Can't find requested column: " + condition.name + " in " + columns);
-
-            condition.prepare();
-        }
-
+        prepareRequest(where);
         rootBlock.select(where, callback);
     }
 
     public int blockTouch(final AbstractRequest[] where) {
-        for (final AbstractRequest condition : where) {
-            condition.column = columnsByNames.get(condition.name);
-
-            if (condition.column == null) throw new IllegalArgumentException(
-                    "Can't find requested column: " + condition.name + " in " + columns);
-
-            condition.prepare();
-        }
-
+        prepareRequest(where);
         return rootBlock.blockTouch(where);
     }
 
     public void select(final AbstractRequest[] where, final ArrayLayoutLimitCallback callback) {
+        prepareRequest(where);
+        rootBlock.select(where, callback);
+    }
+
+    private void prepareRequest(final AbstractRequest[] where) {
         for (final AbstractRequest condition : where) {
             condition.column = columnsByNames.get(condition.name);
 
@@ -192,8 +180,6 @@ public final class FastSelect<T> {
 
             condition.prepare();
         }
-
-        rootBlock.select(where, callback);
     }
 
     public void selectAndSort(final AbstractRequest[] where, final LimitCallback<T> callback, final String... sortBy) {
