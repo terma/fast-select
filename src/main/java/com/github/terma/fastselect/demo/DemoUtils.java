@@ -21,11 +21,11 @@ import com.github.terma.fastselect.ByteRequest;
 import com.github.terma.fastselect.FastSelect;
 import com.github.terma.fastselect.IntRequest;
 import com.github.terma.fastselect.utils.MemMeter;
+import com.github.terma.fastselect.utils.RoundValue;
 import com.github.terma.fastselect.utils.SpecialRandom;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public abstract class DemoUtils {
 
@@ -38,7 +38,6 @@ public abstract class DemoUtils {
         FastSelect<DemoData> database = new FastSelect<>(blockSizes, DemoData.class);
 
         final List<DemoData> data = new ArrayList<>();
-        final Random random = new Random();
 
         final SpecialRandom bsIdRandom = new SpecialRandom(
                 DemoData.BS_ID_PORTION_DEVIATION, DemoData.BS_ID_PORTION, DemoData.BS_ID_MAX);
@@ -48,13 +47,16 @@ public abstract class DemoUtils {
         final SpecialRandom csgIdRandom = new SpecialRandom(
                 DemoData.G_ID_PORTION_DEVIATION, DemoData.G_ID_PORTION, DemoData.G_ID_MAX);
 
+        final RoundValue prrValue = new RoundValue(DemoData.R_MAX);
+        final RoundValue csrValue = new RoundValue(DemoData.R_MAX);
+
         for (int i = 0; i < itemsToCreate; i++) {
             DemoData item = new DemoData();
             item.prg = (byte) prgIdRandom.next();
             item.csg = (byte) csgIdRandom.next();
 
-            item.prr = (byte) (random.nextInt(DemoData.R_MAX) + 1);
-            item.csr = (byte) (random.nextInt(DemoData.R_MAX) + 1);
+            item.prr = (byte) prrValue.next();
+            item.csr = (byte) csrValue.next();
 
             /*
             make distribution more realistic.
@@ -88,7 +90,7 @@ public abstract class DemoUtils {
 
     public static AbstractRequest[] whereGAndR() {
         return new AbstractRequest[]{
-                new ByteRequest("prg", new int[]{1, 2, 3, 22, 5, 6, 33, 8, 9, 10, 89}),
+                new ByteRequest("prg", new int[]{1, 2, 3, 4}),
                 new ByteRequest("prr", new int[]{1, 2, 3, 4, 5, 6})
         };
     }
@@ -102,7 +104,7 @@ public abstract class DemoUtils {
 
     public static int[] getBsIds() {
         int[] bsIds = new int[10000];
-        for (int i = 0; i < bsIds.length; i++) bsIds[i] = i + 40000;
+        for (int i = 0; i < bsIds.length; i++) bsIds[i] = i + 10000;
         return bsIds;
     }
 

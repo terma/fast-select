@@ -14,20 +14,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.github.terma.fastselect.data;
+package com.github.terma.fastselect.utils;
 
-public interface Data {
+public class RoundValue {
 
-    int INC = 10000000;
+    private final int max;
 
-    boolean check(int position, int[] values);
+    private int current;
 
-    boolean plainCheck(int position, byte[] values);
+    public RoundValue(int max) {
+        this.max = max;
+    }
 
-    Object get(int position);
-
-    int compare(int position1, int position2);
-
-    int size();
+    public int next() {
+        int value = current;
+        current++;
+        if (current > max) current = 0;
+        return value;
+    }
 
 }

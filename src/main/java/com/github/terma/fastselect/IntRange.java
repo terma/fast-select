@@ -1,9 +1,11 @@
 package com.github.terma.fastselect;
 
-/**
- * Created by terma on 1/24/16.
- */
 class IntRange {
-    public int min;
-    public int max;
+    public int min = Integer.MAX_VALUE;
+    public int max = Integer.MIN_VALUE;
+
+    @Override
+    public String toString() {
+        return "IntRange [" + min + ", " + max + ']';
+    }
 }

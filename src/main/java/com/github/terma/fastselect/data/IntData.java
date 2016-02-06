@@ -25,7 +25,7 @@ public class IntData implements Data {
 
     public void add(int v) {
         if (size == data.length) {
-            data = Arrays.copyOf(data, size + 1000000);
+            data = Arrays.copyOf(data, size + INC);
         }
         data[size] = v;
         size++;

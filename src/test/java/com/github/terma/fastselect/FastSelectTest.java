@@ -194,6 +194,19 @@ public class FastSelectTest {
     }
 
     @Test
+    public void provideBlockTouch() {
+        FastSelect<TestIntByte> database = new FastSelect<>(1, TestIntByte.class);
+        database.addAll(asList(
+                new TestIntByte(12, (byte) 0),
+                new TestIntByte(9, (byte) 0),
+                new TestIntByte(1000, (byte) 0)));
+
+        Assert.assertEquals(0, database.blockTouch(new AbstractRequest[]{new IntRequest("value1", new int[]{1111})}));
+        Assert.assertEquals(1, database.blockTouch(new AbstractRequest[]{new IntRequest("value1", new int[]{12})}));
+        Assert.assertEquals(3, database.blockTouch(new AbstractRequest[]{new ByteRequest("value2", new int[]{0})}));
+    }
+
+    @Test
     public void shouldSelectIfManyBlocksAndLevels() {
         FastSelect<TestIntByte> database = new FastSelect<>(new int[]{1, 1}, TestIntByte.class);
         database.addAll(asList(

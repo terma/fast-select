@@ -30,6 +30,10 @@ class PlayerFastSelect implements Player {
 
     PlayerFastSelect(final FastSelect<DemoData> fastSelect) {
         this.fastSelect = fastSelect;
+
+        System.out.println("Block touch:");
+        System.out.println("whereGAndR: " + fastSelect.blockTouch(DemoUtils.whereGAndR()) + " from " + fastSelect.dataBlockSize());
+        System.out.println("whereBsIdAndR: " + fastSelect.blockTouch(DemoUtils.whereBsIdAndR()) + " from " + fastSelect.dataBlockSize());
     }
 
     @Override

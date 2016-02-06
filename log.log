@@ -181,3 +181,40 @@ DemoBenchmark.groupByBsIdAndR                  1000          H2   1000000  avgt 
 DemoBenchmark.groupByBsIdAndR                  1000  FastSelect   1000000  avgt         22.685          ms/op
 DemoBenchmark.groupByGAndR                     1000          H2   1000000  avgt        281.696          ms/op
 DemoBenchmark.groupByGAndR                     1000  FastSelect   1000000  avgt         11.773          ms/op
+
+### mem 1m (no string data)
+H2 536m
+FastSelect 65m
+
+### multithread
+DemoBenchmark.groupByGAndR                    1000          H2   1000000  avgt         298.849          ms/op
+DemoBenchmark.groupByGAndR                    1000  FastSelect   1000000  avgt          17.384          ms/op
+DemoBenchmark.groupByGAndR_50_Threads         1000          H2   1000000  avgt       15610.221          ms/op
+DemoBenchmark.groupByGAndR_50_Threads         1000  FastSelect   1000000  avgt         253.837          ms/op
+DemoBenchmark.groupByGAndR_5_Threads          1000          H2   1000000  avgt        1542.280          ms/op
+DemoBenchmark.groupByGAndR_5_Threads          1000  FastSelect   1000000  avgt          30.589          ms/op
+
+### again
+Benchmark                               (blockSize)    (engine)  (volume)  Mode  Cnt       Score   Error  Units
+DemoBenchmark.detailsByGAndRAndSorting         1000          H2   1000000  avgt         1715.789          ms/op
+DemoBenchmark.detailsByGAndRAndSorting         1000          H2  10000000  avgt       150091.064          ms/op
+DemoBenchmark.detailsByGAndRAndSorting         1000  FastSelect   1000000  avgt           53.929          ms/op
+DemoBenchmark.detailsByGAndRAndSorting         1000  FastSelect  10000000  avgt          335.268          ms/op
+
+DemoBenchmark.groupByBsIdAndR                  1000          H2   1000000  avgt         1470.519          ms/op
+DemoBenchmark.groupByBsIdAndR                  1000          H2  10000000  avgt       114620.526          ms/op
+DemoBenchmark.groupByBsIdAndR                  1000  FastSelect   1000000  avgt           18.239          ms/op
+DemoBenchmark.groupByBsIdAndR                  1000  FastSelect  10000000  avgt          187.631          ms/op
+
+DemoBenchmark.groupByGAndR                     1000          H2   1000000  avgt          435.393          ms/op
+DemoBenchmark.groupByGAndR                     1000          H2  10000000  avgt        59926.185          ms/op
+DemoBenchmark.groupByGAndR                     1000  FastSelect   1000000  avgt           27.463          ms/op
+DemoBenchmark.groupByGAndR                     1000  FastSelect  10000000  avgt          149.121          ms/op
+DemoBenchmark.groupByGAndR_5_Threads           1000          H2   1000000  avgt         1370.655          ms/op
+DemoBenchmark.groupByGAndR_5_Threads           1000          H2  10000000  avgt        66027.333          ms/op
+DemoBenchmark.groupByGAndR_5_Threads           1000  FastSelect   1000000  avgt           43.065          ms/op
+DemoBenchmark.groupByGAndR_5_Threads           1000  FastSelect  10000000  avgt          255.408          ms/op
+DemoBenchmark.groupByGAndR_50_Threads          1000          H2   1000000  avgt        40161.392          ms/op
+DemoBenchmark.groupByGAndR_50_Threads          1000          H2  10000000  avgt       465427.022          ms/op
+DemoBenchmark.groupByGAndR_50_Threads          1000  FastSelect   1000000  avgt          387.122          ms/op
+DemoBenchmark.groupByGAndR_50_Threads          1000  FastSelect  10000000  avgt         2614.599          ms/op

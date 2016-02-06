@@ -32,7 +32,10 @@ class PlayerFactoryH2 implements PlayerFactory<DemoData> {
         try {
             connection = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;LOG=0;CACHE_SIZE=65536;LOCK_MODE=0;UNDO_LOG=0");
             connection.createStatement().execute("create table tb (" +
-                    "prg tinyint, csg tinyint, prr tinyint, csr tinyint, bsid int" +
+                    "prg tinyint, csg tinyint, prr tinyint, csr tinyint, bsid int, " +
+                    "tlg tinyint, tsg tinyint, mid int, cid int, age int, crn tinyint, vlc long, vsd long, " +
+                    "vch long, pror tinyint, csor tinyint, proc tinyint, csoc tinyint, cpid int, " +
+                    "tr varchar(1), ui varchar(1), prn varchar(1), csn varchar(1)" +
                     ");");
             connection.createStatement().execute("create index on tb (prg);");
             connection.createStatement().execute("create index on tb (csg);");

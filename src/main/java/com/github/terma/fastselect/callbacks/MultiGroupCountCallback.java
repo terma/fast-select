@@ -18,7 +18,6 @@ package com.github.terma.fastselect.callbacks;
 
 import com.github.terma.fastselect.AbstractRequest;
 import com.github.terma.fastselect.FastSelect;
-import com.github.terma.fastselect.Request;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.HashMap;

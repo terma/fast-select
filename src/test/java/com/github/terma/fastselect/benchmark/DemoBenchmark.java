@@ -17,15 +17,19 @@ limitations under the License.
 package com.github.terma.fastselect.benchmark;
 
 import com.github.terma.fastselect.demo.DemoData;
+import com.github.terma.fastselect.utils.BlockRoundValue;
 import com.github.terma.fastselect.utils.MemMeter;
-import com.github.terma.fastselect.utils.SpecialRandom;
+import com.github.terma.fastselect.utils.RoundValue;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 //@Fork(value = 1, jvmArgs = {"-Xmx7g", "-XX:CompileThreshold=1", "-XX:CompileCommand=print,*.FastSelect", "-prof perfasm:intelSyntax=true"})
@@ -33,11 +37,11 @@ import java.util.concurrent.TimeUnit;
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
-@Warmup(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
-@Measurement(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
+@Warmup(timeUnit = TimeUnit.SECONDS, time = 15, iterations = 1)
+@Measurement(timeUnit = TimeUnit.SECONDS, time = 15, iterations = 1)
 public class DemoBenchmark {
 
-    private static final Map<String, Class<? extends PlayerFactory<DemoData>>> ENGINE_FACTORIES =
+    static final Map<String, Class<? extends PlayerFactory<DemoData>>> ENGINE_FACTORIES =
             new HashMap<String, Class<? extends PlayerFactory<DemoData>>>() {{
                 put("H2", PlayerFactoryH2.class);
                 put("FastSelect", PlayerFactoryFastSelect.class);
@@ -47,10 +51,10 @@ public class DemoBenchmark {
     @Param({"1000"})
     private int blockSize;
 
-    @Param({"1000000"}) // "10000000"
+    @Param({"10000000"}) // "1000000", "10000000", "60000000"
     private int volume;
 
-    @Param({"H2", "FastSelect"}) // "Oracle", "FastSelect", "H2"
+    @Param({"FastSelect"}) // "Oracle", "FastSelect", "H2"
     private String engine;
 
     private Player player;
@@ -60,30 +64,32 @@ public class DemoBenchmark {
         new Runner(opt).run();
     }
 
-    private static void fill(int itemsToCreate, PlayerFactory<DemoData> playerFactory) throws Exception {
+    static void fill(int itemsToCreate, PlayerFactory<DemoData> playerFactory) throws Exception {
         System.out.println(playerFactory + " started");
 
         final MemMeter memMeter = new MemMeter();
         final long start = System.currentTimeMillis();
 
         final List<DemoData> data = new ArrayList<>();
-        final Random random = new Random();
 
-        final SpecialRandom bsIdRandom = new SpecialRandom(
+        final BlockRoundValue bsIdRandom = new BlockRoundValue(
                 DemoData.BS_ID_PORTION_DEVIATION, DemoData.BS_ID_PORTION, DemoData.BS_ID_MAX);
 
-        final SpecialRandom prgIdRandom = new SpecialRandom(
+        final BlockRoundValue prgIdRandom = new BlockRoundValue(
                 DemoData.G_ID_PORTION_DEVIATION, DemoData.G_ID_PORTION, DemoData.G_ID_MAX);
-        final SpecialRandom csgIdRandom = new SpecialRandom(
+        final BlockRoundValue csgIdRandom = new BlockRoundValue(
                 DemoData.G_ID_PORTION_DEVIATION, DemoData.G_ID_PORTION, DemoData.G_ID_MAX);
+
+        RoundValue prrValue = new RoundValue(DemoData.R_MAX);
+        RoundValue csrValue = new RoundValue(DemoData.R_MAX);
 
         for (int i = 0; i < itemsToCreate; i++) {
             DemoData item = new DemoData();
             item.prg = (byte) prgIdRandom.next();
             item.csg = (byte) csgIdRandom.next();
 
-            item.prr = (byte) (random.nextInt(DemoData.R_MAX) + 1);
-            item.csr = (byte) (random.nextInt(DemoData.R_MAX) + 1);
+            item.prr = (byte) prrValue.next();
+            item.csr = (byte) csrValue.next();
 
             /*
             make distribution more realistic.
@@ -121,23 +127,36 @@ public class DemoBenchmark {
 
         player = playerFactory.createPlayer();
 
-        // test run
+        System.out.println("Check play:");
         System.out.println(player.playGroupByGAndR());
         System.out.println(player.playGroupByBsIdAndR());
         System.out.println(player.playDetailsByGAndRAndSorting());
     }
 
     @Benchmark
+    @Threads(1)
     public Object groupByGAndR() throws Exception {
         return player.playGroupByGAndR();
     }
 
-    @Benchmark
+    //    @Benchmark
+    @Threads(5)
+    public Object groupByGAndR_5_Threads() throws Exception {
+        return player.playGroupByGAndR();
+    }
+
+    //    @Benchmark
+    @Threads(50)
+    public Object groupByGAndR_50_Threads() throws Exception {
+        return player.playGroupByGAndR();
+    }
+
+//    @Benchmark
     public Object groupByBsIdAndR() throws Exception {
         return player.playGroupByBsIdAndR();
     }
 
-    @Benchmark
+    //    @Benchmark
     public Object detailsByGAndRAndSorting() throws Exception {
         return player.playDetailsByGAndRAndSorting();
     }

@@ -170,6 +170,19 @@ public final class FastSelect<T> {
         rootBlock.select(where, callback);
     }
 
+    public int blockTouch(final AbstractRequest[] where) {
+        for (final AbstractRequest condition : where) {
+            condition.column = columnsByNames.get(condition.name);
+
+            if (condition.column == null) throw new IllegalArgumentException(
+                    "Can't find requested column: " + condition.name + " in " + columns);
+
+            condition.prepare();
+        }
+
+        return rootBlock.blockTouch(where);
+    }
+
     public void select(final AbstractRequest[] where, final ArrayLayoutLimitCallback callback) {
         for (final AbstractRequest condition : where) {
             condition.column = columnsByNames.get(condition.name);
@@ -250,6 +263,10 @@ public final class FastSelect<T> {
                 + ", indexes: " + columns + ", class: " + dataClass + "}";
     }
 
+    public int dataBlockSize() {
+        return blockSizes[blockSizes.length - 1];
+    }
+
     public static class Column {
 
         public final String name;
@@ -323,6 +340,8 @@ public final class FastSelect<T> {
 
         abstract void select(AbstractRequest[] where, ArrayLayoutCallback callback);
 
+        abstract int blockTouch(AbstractRequest[] where);
+
         abstract void select(AbstractRequest[] where, ArrayLayoutLimitCallback callback);
 
     }
@@ -370,6 +389,16 @@ public final class FastSelect<T> {
                 if (!inBlock(where, block)) continue;
                 block.select(where, callback);
             }
+        }
+
+        @Override
+        int blockTouch(AbstractRequest[] where) {
+            int c = 0;
+            for (final Block block : blocks) {
+                if (!inBlock(where, block)) continue;
+                c += block.blockTouch(where);
+            }
+            return c;
         }
 
         @Override
@@ -495,6 +524,11 @@ public final class FastSelect<T> {
 
                 callback.data(i);
             }
+        }
+
+        @Override
+        int blockTouch(AbstractRequest[] where) {
+            return 1;
         }
 
         @Override
