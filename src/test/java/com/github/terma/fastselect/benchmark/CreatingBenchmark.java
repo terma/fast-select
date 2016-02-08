@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import static com.github.terma.fastselect.benchmark.DemoBenchmark.ENGINE_FACTORIES;
 import static com.github.terma.fastselect.benchmark.DemoBenchmark.fill;
 
-//@Fork(value = 1, jvmArgs = {"-Xmx7g", "-XX:CompileCommand=print,*.FastSelect", "-prof perfasm.log"})
 @Fork(value = 1, jvmArgs = {"-Xmx7g", "-XX:CompileThreshold=1"})
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)

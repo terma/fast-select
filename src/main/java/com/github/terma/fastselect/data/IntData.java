@@ -23,6 +23,15 @@ public class IntData implements Data {
     public int[] data = new int[16];
     public int size = 0;
 
+    public void allocate(int additionalSize) {
+        size += additionalSize;
+        while (size > data.length) data = Arrays.copyOf(data, size + INC);
+    }
+
+    public void set(int index, int v) {
+        data[index] = v;
+    }
+
     public void add(int v) {
         if (size == data.length) {
             data = Arrays.copyOf(data, size + INC);

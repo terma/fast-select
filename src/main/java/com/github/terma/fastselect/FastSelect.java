@@ -459,7 +459,8 @@ public final class FastSelect<T> {
 
         @Override
         void add(List<T> rows, int start, int end) {
-            size += end - start;
+            final int additionalSize = end - start;
+            size += additionalSize;
 
             try {
                 for (final Column column : columns) {
@@ -500,9 +501,11 @@ public final class FastSelect<T> {
                         final IntData data = (IntData) column.data;
                         final IntRange intRange = intRanges.get(column.index);
 
+                        data.allocate(additionalSize);
+
                         for (int i = start; i < end; i++) {
                             int v = (int) methodHandle.invoke(rows.get(i));
-                            data.add(v);
+                            data.set(i, v);
 
                             intRange.max = Math.max(intRange.max, v);
                             intRange.min = Math.min(intRange.min, v);
@@ -518,9 +521,11 @@ public final class FastSelect<T> {
 
                     } else if (column.type == byte.class) {
                         final ByteData data = (ByteData) column.data;
+                        data.allocate(additionalSize);
+
                         for (int i = start; i < end; i++) {
                             byte v = (byte) methodHandle.invoke(rows.get(i));
-                            data.add(v);
+                            data.set(i, v);
                             setColumnBitSet(column, v);
                         }
 

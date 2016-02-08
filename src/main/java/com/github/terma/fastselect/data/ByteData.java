@@ -23,6 +23,17 @@ public class ByteData implements Data {
     public byte[] data = new byte[16];
     public int size = 0;
 
+    public void allocate(int additionalSize) {
+        size += additionalSize;
+        while (size > data.length) {
+            data = Arrays.copyOf(data, size + INC);
+        }
+    }
+
+    public void set(int index, byte v) {
+        data[index] = v;
+    }
+
     public void add(byte v) {
         if (size == data.length) {
             data = Arrays.copyOf(data, size + INC);

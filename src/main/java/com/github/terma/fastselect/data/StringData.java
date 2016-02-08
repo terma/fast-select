@@ -18,10 +18,11 @@ package com.github.terma.fastselect.data;
 
 public class StringData implements Data {
 
+    private static final byte[] ZERO = new byte[0];
     private final MultiByteData data = new MultiByteData();
 
     public void add(String v) {
-        final byte[] bytes = v == null ? new byte[0] : v.getBytes();
+        final byte[] bytes = v == null ? ZERO : v.getBytes();
         data.add(bytes);
     }
 
