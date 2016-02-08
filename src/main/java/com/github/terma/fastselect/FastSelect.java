@@ -58,7 +58,7 @@ import java.util.*;
  * <p>
  * We use {@link MethodHandle#invoke(Object...)} here to field values from object.
  * You could be surprised but it has same performance as normal reflect. Other alternative
- * which you think is faster {@link MethodHandle#invokeExact(Object...)} however it's not.
+ * which you can think will be faster {@link MethodHandle#invokeExact(Object...)} however it's not.
  * <p>
  * More information about that:
  * <a href="https://gist.github.com/raphw/881e1745996f9d314ab0#file-result-field-txt">
