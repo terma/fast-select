@@ -47,6 +47,22 @@ import java.util.*;
  * Search:
  * Fast Search based two step search algorithm (<a href="https://en.wikipedia.org/wiki/Bloom_filter">Bloom Filter</a>
  * + direct scan within block)
+ * <p>
+ * <h3>Implementation Points</h3>
+ * <p>
+ * <h4>Marshalling and unmarshalling.</h4>
+ * <p>
+ * Because storage uses non object layout. That's provide huge improvement for memory and performance.
+ * Downside of that we need to extract field values from object on add and build new object when
+ * return data. That's why this storage not good for selection big portion of data compare to original result set.
+ * <p>
+ * We use {@link MethodHandle#invoke(Object...)} here to field values from object.
+ * You could be surprised but it has same performance as normal reflect. Other alternative
+ * which you think is faster {@link MethodHandle#invokeExact(Object...)} however it's not.
+ * <p>
+ * More information about that:
+ * <a href="https://gist.github.com/raphw/881e1745996f9d314ab0#file-result-field-txt">
+ * https://gist.github.com/raphw/881e1745996f9d314ab0#file-result-field-txt</a>
  *
  * @author Artem Stasiuk
  * @see ArrayLayoutCallback
@@ -457,6 +473,11 @@ public final class FastSelect<T> {
             return "DataBlock {maxSize: " + getMaxSize() + ", start: " + start + ", size: " + size + "}";
         }
 
+        /**
+         * @param rows  - block of data to add
+         * @param start - start position in rows (inclusive)
+         * @param end   - end position in rows (exclusive)
+         */
         @Override
         void add(List<T> rows, int start, int end) {
             final int additionalSize = end - start;
