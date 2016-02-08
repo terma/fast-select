@@ -458,66 +458,85 @@ public final class FastSelect<T> {
         }
 
         @Override
-        void add(List<T> data, int start, int end) {
+        void add(List<T> rows, int start, int end) {
             size += end - start;
 
-            for (int i = start; i < end; i++) {
-                T row = data.get(i);
-
+            try {
                 for (final Column column : columns) {
                     final MethodHandle methodHandle = column.getter;
 
-                    try {
-                        if (column.type == long.class) {
-                            long v = (long) methodHandle.invoke(row);
-                            ((LongData) column.data).add(v);
+                    if (column.type == long.class) {
+                        final LongData data = (LongData) column.data;
+                        for (int i = start; i < end; i++) {
+                            data.add((long) methodHandle.invoke(rows.get(i)));
+                        }
 
-                        } else if (column.type == long[].class) {
-                            long[] v = (long[]) methodHandle.invoke(row);
-                            ((MultiLongData) column.data).add(v);
+                    } else if (column.type == long[].class) {
+                        MultiLongData data = (MultiLongData) column.data;
+                        for (int i = start; i < end; i++) {
+                            long[] v = (long[]) methodHandle.invoke(rows.get(i));
+                            data.add(v);
+                        }
 
-                        } else if (column.type == short[].class) {
-                            short[] v = (short[]) methodHandle.invoke(row);
-                            ((MultiShortData) column.data).add(v);
+                    } else if (column.type == short[].class) {
+                        final MultiShortData data = (MultiShortData) column.data;
+                        for (int i = start; i < end; i++) {
+                            short[] v = (short[]) methodHandle.invoke(rows.get(i));
+                            data.add(v);
                             // set all bits
                             for (short v1 : v) setColumnBitSet(column, v1);
+                        }
 
-                        } else if (column.type == byte[].class) {
-                            byte[] v = (byte[]) methodHandle.invoke(row);
-                            ((MultiByteData) column.data).add(v);
+                    } else if (column.type == byte[].class) {
+                        MultiByteData data = (MultiByteData) column.data;
+                        for (int i = start; i < end; i++) {
+                            byte[] v = (byte[]) methodHandle.invoke(rows.get(i));
+                            data.add(v);
                             // set all bits
                             for (byte v1 : v) setColumnBitSet(column, v1);
+                        }
 
-                        } else if (column.type == int.class) {
-                            int v = (int) methodHandle.invoke(row);
-                            ((IntData) column.data).add(v);
+                    } else if (column.type == int.class) {
+                        final IntData data = (IntData) column.data;
+                        final IntRange intRange = intRanges.get(column.index);
 
-                            IntRange intRange = intRanges.get(column.index);
+                        for (int i = start; i < end; i++) {
+                            int v = (int) methodHandle.invoke(rows.get(i));
+                            data.add(v);
+
                             intRange.max = Math.max(intRange.max, v);
                             intRange.min = Math.min(intRange.min, v);
-
-
-                        } else if (column.type == short.class) {
-                            short v = (short) methodHandle.invoke(row);
-                            ((ShortData) column.data).add(v);
-                            setColumnBitSet(column, v);
-
-                        } else if (column.type == byte.class) {
-                            byte v = (byte) methodHandle.invoke(row);
-                            ((ByteData) column.data).add(v);
-                            setColumnBitSet(column, v);
-
-                        } else if (column.type == String.class) {
-                            String v = (String) methodHandle.invoke(row);
-                            ((StringData) column.data).add(v);
-
-                        } else {
-                            throw new IllegalArgumentException("!");
                         }
-                    } catch (Throwable throwable) {
-                        throw new RuntimeException(throwable);
+
+                    } else if (column.type == short.class) {
+                        final ShortData data = (ShortData) column.data;
+                        for (int i = start; i < end; i++) {
+                            short v = (short) methodHandle.invoke(rows.get(i));
+                            data.add(v);
+                            setColumnBitSet(column, v);
+                        }
+
+                    } else if (column.type == byte.class) {
+                        final ByteData data = (ByteData) column.data;
+                        for (int i = start; i < end; i++) {
+                            byte v = (byte) methodHandle.invoke(rows.get(i));
+                            data.add(v);
+                            setColumnBitSet(column, v);
+                        }
+
+                    } else if (column.type == String.class) {
+                        final StringData data = (StringData) column.data;
+                        for (int i = start; i < end; i++) {
+                            String v = (String) methodHandle.invoke(rows.get(i));
+                            data.add(v);
+                        }
+
+                    } else {
+                        throw new IllegalArgumentException("!");
                     }
                 }
+            } catch (Throwable throwable) {
+                throw new RuntimeException(throwable);
             }
         }
 

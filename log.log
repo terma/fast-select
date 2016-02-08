@@ -222,6 +222,6 @@ DemoBenchmark.groupByGAndR_50_Threads          1000  FastSelect  10000000  avgt 
 ### first measure for creation
 Benchmark                 (blockSize)    (engine)  (volume)  Mode  Cnt      Score   Error  Units
 CreatingBenchmark.create         1000  FastSelect   1000000  avgt       32840.468          ms/op
-CreatingBenchmark.create         1000  FastSelect   1000000  avgt       28327.878          ms/op <<< -4s
-CreatingBenchmark.create         1000  FastSelect   1000000  avgt       27459.878          ms/op <<< -1s
-
+CreatingBenchmark.create         1000  FastSelect   1000000  avgt       28327.878          ms/op <<< 12%
+CreatingBenchmark.create         1000  FastSelect   1000000  avgt       27459.878          ms/op <<< 15%
+CreatingBenchmark.create         1000  FastSelect   1000000  avgt       23558.073          ms/op <<< 30%
