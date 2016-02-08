@@ -45,6 +45,7 @@ public final class MethodHandlerRepository {
 
                 final MethodHandle getterHandler = lookup.unreflectGetter(fieldReference);
                 final MethodHandle setterHandler = lookup.unreflectSetter(fieldReference);
+
                 tempGetters.put(field.getKey(), getterHandler);
                 tempSetters.put(field.getKey(), setterHandler);
             } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -56,18 +57,18 @@ public final class MethodHandlerRepository {
         this.setters = Collections.unmodifiableMap(tempSetters);
     }
 
-    public MethodHandle get(String indexColumn) {
-        final MethodHandle methodHandle = getters.get(indexColumn);
-        if (methodHandle == null) throw new IllegalArgumentException("Can't find method handler for " + indexColumn +
-                ". You need to add it to index!");
+    public MethodHandle get(String fieldName) {
+        final MethodHandle methodHandle = getters.get(fieldName);
+        if (methodHandle == null)
+            throw new IllegalArgumentException("Can't find method handler for " + fieldName + "!");
         return methodHandle;
     }
 
 
-    public MethodHandle set(String indexColumn) {
-        final MethodHandle methodHandle = setters.get(indexColumn);
-        if (methodHandle == null) throw new IllegalArgumentException("Can't find method handler for " + indexColumn +
-                ". You need to add it to index!");
+    public MethodHandle set(String fieldName) {
+        final MethodHandle methodHandle = setters.get(fieldName);
+        if (methodHandle == null)
+            throw new IllegalArgumentException("Can't find method handler for " + fieldName + "!");
         return methodHandle;
     }
 

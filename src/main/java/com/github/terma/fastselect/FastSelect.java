@@ -83,6 +83,10 @@ public final class FastSelect<T> {
         for (int i = 0; i < columns.size(); i++) columns.get(i).index = i;
         this.columnsByNames = initColumnsByName(columns);
         this.mhRepo = new MethodHandlerRepository(dataClass, getColumnsAsMap(columns));
+
+        for (Column column : columns) {
+            column.getter = mhRepo.get(column.name);
+        }
     }
 
     public FastSelect(final int blockSize, final Class<T> dataClass, final Column... columns) {
@@ -137,9 +141,7 @@ public final class FastSelect<T> {
     }
 
     public void addAll(final List<T> data) {
-        for (final T row : data) {
-            rootBlock.add(row);
-        }
+        rootBlock.add(data, 0, -1);
     }
 
     public List<T> select(final AbstractRequest[] where) {
@@ -258,6 +260,7 @@ public final class FastSelect<T> {
         public final String name;
         public final Data data;
         final Class type;
+        MethodHandle getter;
         int index;
 
         public Column(final String name, final Class type) {
@@ -312,7 +315,7 @@ public final class FastSelect<T> {
         final List<BitSet> columnBitSets = new ArrayList<>();
         final List<IntRange> intRanges = new ArrayList<>();
 
-        abstract boolean isFull();
+        abstract int free();
 
         void setColumnBitSet(Column column, int bit) {
             if (bit >= MIN_COLUMN_BIT) {
@@ -322,7 +325,7 @@ public final class FastSelect<T> {
             }
         }
 
-        abstract void add(T row);
+        abstract void add(List<T> row, int start, int end);
 
         abstract void select(AbstractRequest[] where, ArrayLayoutCallback callback);
 
@@ -353,8 +356,8 @@ public final class FastSelect<T> {
         }
 
         @Override
-        boolean isFull() {
-            return !blocks.isEmpty() && blocks.get(blocks.size() - 1).isFull();
+        int free() {
+            throw new UnsupportedOperationException();
         }
 
         private boolean inBlock(AbstractRequest[] requests, Block block) {
@@ -398,23 +401,38 @@ public final class FastSelect<T> {
         }
 
         private Block createBlock() {
-            Block block;
-
-            if (level == blockSizes.length - 1) block = new DataBlock();
-            else block = new SuperBlock(level + 1, blockSizes[level + 1]);
-
-            return block;
+            return new DataBlock();
         }
 
         @Override
-        void add(T row) {
-            if (blocks.isEmpty() || blocks.get(blocks.size() - 1).isFull()) blocks.add(createBlock());
-            final Block block = blocks.get(blocks.size() - 1);
-            block.add(row);
+        void add(List<T> data, int start, int end) {
+            int position = 0;
+            int updatePosition = Math.max(0, blocks.size() - 1);
 
-            for (Column column : columns) {
-                BitSet bitSet = columnBitSets.get(column.index);
-                bitSet.or(block.columnBitSets.get(column.index));
+            if (blocks.isEmpty()) {
+                Block block = createBlock();
+                blocks.add(block);
+            }
+
+            while (position < data.size()) {
+                Block block = blocks.get(blocks.size() - 1);
+                final int free = block.free();
+                if (free == 0) {
+                    block = createBlock();
+                    blocks.add(block);
+                }
+
+                int toAdd = Math.min(free, data.size() - position);
+                block.add(data, position, position + toAdd);
+                position += toAdd;
+            }
+
+            for (int i = updatePosition; i < blocks.size(); i++) {
+                Block block = blocks.get(i);
+                for (Column column : columns) {
+                    BitSet bitSet = columnBitSets.get(column.index);
+                    bitSet.or(block.columnBitSets.get(column.index));
+                }
             }
         }
 
@@ -440,59 +458,65 @@ public final class FastSelect<T> {
         }
 
         @Override
-        void add(T row) {
-            size++;
+        void add(List<T> data, int start, int end) {
+            size += end - start;
 
-            for (Column column : columns) {
-                try {
-                    if (column.type == long.class) {
-                        long v = (long) mhRepo.get(column.name).invoke(row);
-                        ((LongData) column.data).add(v);
+            for (int i = start; i < end; i++) {
+                T row = data.get(i);
 
-                    } else if (column.type == long[].class) {
-                        long[] v = (long[]) mhRepo.get(column.name).invoke(row);
-                        ((MultiLongData) column.data).add(v);
+                for (final Column column : columns) {
+                    final MethodHandle methodHandle = column.getter;
 
-                    } else if (column.type == short[].class) {
-                        short[] v = (short[]) mhRepo.get(column.name).invoke(row);
-                        ((MultiShortData) column.data).add(v);
-                        // set all bits
-                        for (short v1 : v) setColumnBitSet(column, v1);
+                    try {
+                        if (column.type == long.class) {
+                            long v = (long) methodHandle.invoke(row);
+                            ((LongData) column.data).add(v);
 
-                    } else if (column.type == byte[].class) {
-                        byte[] v = (byte[]) mhRepo.get(column.name).invoke(row);
-                        ((MultiByteData) column.data).add(v);
-                        // set all bits
-                        for (byte v1 : v) setColumnBitSet(column, v1);
+                        } else if (column.type == long[].class) {
+                            long[] v = (long[]) methodHandle.invoke(row);
+                            ((MultiLongData) column.data).add(v);
 
-                    } else if (column.type == int.class) {
-                        int v = (int) mhRepo.get(column.name).invoke(row);
-                        ((IntData) column.data).add(v);
+                        } else if (column.type == short[].class) {
+                            short[] v = (short[]) methodHandle.invoke(row);
+                            ((MultiShortData) column.data).add(v);
+                            // set all bits
+                            for (short v1 : v) setColumnBitSet(column, v1);
 
-                        IntRange intRange = intRanges.get(column.index);
-                        intRange.max = Math.max(intRange.max, v);
-                        intRange.min = Math.min(intRange.min, v);
+                        } else if (column.type == byte[].class) {
+                            byte[] v = (byte[]) methodHandle.invoke(row);
+                            ((MultiByteData) column.data).add(v);
+                            // set all bits
+                            for (byte v1 : v) setColumnBitSet(column, v1);
+
+                        } else if (column.type == int.class) {
+                            int v = (int) methodHandle.invoke(row);
+                            ((IntData) column.data).add(v);
+
+                            IntRange intRange = intRanges.get(column.index);
+                            intRange.max = Math.max(intRange.max, v);
+                            intRange.min = Math.min(intRange.min, v);
 
 
-                    } else if (column.type == short.class) {
-                        short v = (short) mhRepo.get(column.name).invoke(row);
-                        ((ShortData) column.data).add(v);
-                        setColumnBitSet(column, v);
+                        } else if (column.type == short.class) {
+                            short v = (short) methodHandle.invoke(row);
+                            ((ShortData) column.data).add(v);
+                            setColumnBitSet(column, v);
 
-                    } else if (column.type == byte.class) {
-                        byte v = (byte) mhRepo.get(column.name).invoke(row);
-                        ((ByteData) column.data).add(v);
-                        setColumnBitSet(column, v);
+                        } else if (column.type == byte.class) {
+                            byte v = (byte) methodHandle.invoke(row);
+                            ((ByteData) column.data).add(v);
+                            setColumnBitSet(column, v);
 
-                    } else if (column.type == String.class) {
-                        String v = (String) mhRepo.get(column.name).invoke(row);
-                        ((StringData) column.data).add(v);
+                        } else if (column.type == String.class) {
+                            String v = (String) methodHandle.invoke(row);
+                            ((StringData) column.data).add(v);
 
-                    } else {
-                        throw new IllegalArgumentException("!");
+                        } else {
+                            throw new IllegalArgumentException("!");
+                        }
+                    } catch (Throwable throwable) {
+                        throw new RuntimeException(throwable);
                     }
-                } catch (Throwable throwable) {
-                    throw new RuntimeException(throwable);
                 }
             }
         }
@@ -532,9 +556,8 @@ public final class FastSelect<T> {
             }
         }
 
-        @Override
-        boolean isFull() {
-            return size == getMaxSize();
+        int free() {
+            return getMaxSize() - size;
         }
 
         private int getMaxSize() {

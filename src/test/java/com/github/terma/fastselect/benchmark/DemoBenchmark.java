@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static com.sun.javafx.tools.resource.DeployResource.Type.data;
+
 //@Fork(value = 1, jvmArgs = {"-Xmx7g", "-XX:CompileThreshold=1", "-XX:CompileCommand=print,*.FastSelect", "-prof perfasm:intelSyntax=true"})
 @Fork(value = 1, jvmArgs = {"-Xmx7g", "-XX:CompileThreshold=1"})
 @BenchmarkMode({Mode.AverageTime})
@@ -65,10 +67,10 @@ public class DemoBenchmark {
     }
 
     static void fill(int itemsToCreate, PlayerFactory<DemoData> playerFactory) throws Exception {
-        System.out.println(playerFactory + " started");
+//        System.out.println(playerFactory + " started");
 
-        final MemMeter memMeter = new MemMeter();
-        final long start = System.currentTimeMillis();
+//        final MemMeter memMeter = new MemMeter();
+//        final long start = System.currentTimeMillis();
 
         final List<DemoData> data = new ArrayList<>();
 
@@ -100,10 +102,10 @@ public class DemoBenchmark {
 
             data.add(item);
 
-            if (i % 1000 == 0) {
+            if (i % 10000 == 0) {
                 playerFactory.addData(data);
                 data.clear();
-                System.out.print(".");
+//                System.out.print(".");
             }
         }
 
@@ -112,11 +114,11 @@ public class DemoBenchmark {
 
         System.out.println();
 
-        final long time = System.currentTimeMillis() - start;
-
-        System.out.println(playerFactory + " prepared, volume: " + itemsToCreate + ", mem used: "
-                + memMeter.getUsedMb() + "Mb, preparation time " + time + " msec");
-        System.out.println("Filler finished");
+//        final long time = System.currentTimeMillis() - start;
+//
+//        System.out.println(playerFactory + " prepared, volume: " + itemsToCreate + ", mem used: "
+//                + memMeter.getUsedMb() + "Mb, preparation time " + time + " msec");
+//        System.out.println("Filler finished");
     }
 
     @Setup

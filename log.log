@@ -218,3 +218,10 @@ DemoBenchmark.groupByGAndR_50_Threads          1000          H2   1000000  avgt 
 DemoBenchmark.groupByGAndR_50_Threads          1000          H2  10000000  avgt       465427.022          ms/op
 DemoBenchmark.groupByGAndR_50_Threads          1000  FastSelect   1000000  avgt          387.122          ms/op
 DemoBenchmark.groupByGAndR_50_Threads          1000  FastSelect  10000000  avgt         2614.599          ms/op
+
+### first measure for creation
+Benchmark                 (blockSize)    (engine)  (volume)  Mode  Cnt      Score   Error  Units
+CreatingBenchmark.create         1000  FastSelect   1000000  avgt       32840.468          ms/op
+CreatingBenchmark.create         1000  FastSelect   1000000  avgt       28327.878          ms/op <<< -4s
+CreatingBenchmark.create         1000  FastSelect   1000000  avgt       27459.878          ms/op <<< -1s
+
