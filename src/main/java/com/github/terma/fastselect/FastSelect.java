@@ -69,6 +69,7 @@ import java.util.*;
  * @see com.github.terma.fastselect.callbacks.GroupCountCallback
  * @see com.github.terma.fastselect.callbacks.MultiGroupCountCallback
  */
+@SuppressWarnings("WeakerAccess")
 @ThreadSafe
 public final class FastSelect<T> {
 
@@ -102,6 +103,7 @@ public final class FastSelect<T> {
 
         for (Column column : columns) {
             column.getter = mhRepo.get(column.name);
+            column.setter = mhRepo.set(column.name);
         }
     }
 
@@ -224,19 +226,61 @@ public final class FastSelect<T> {
             }
         });
 
-        for (Integer p : positions) {
-            try {
+        createObjects(callback, positions);
+    }
+
+    /**
+     * Support comparator based sorting. So you can implement any kind of sorting.
+     * <p>
+     * WARNING! This method uses comparator which provided by client. So any performance issues
+     * in comparator code will affect performance for this method.
+     *
+     * @param where      - where
+     * @param callback   - callback
+     * @param comparator - comparator
+     */
+    public void selectAndSort(final AbstractRequest[] where, final LimitCallback<T> callback,
+                              final FastSelectComparator comparator) {
+        final List<Integer> positions = new ArrayList<>();
+        select(where, new ArrayLayoutCallback() {
+            @Override
+            public void data(int position) {
+                positions.add(position);
+            }
+        });
+
+        final Data[] sortData = new Data[columns.size()];
+        for (int i = 0; i < columns.size(); i++) sortData[i] = columns.get(i).data;
+
+        Collections.sort(positions, new Comparator<Integer>() {
+            @Override
+            public int compare(Integer position1, Integer position2) {
+                return comparator.compare(sortData, position1, position2);
+            }
+        });
+
+        createObjects(callback, positions);
+    }
+
+    private void createObjects(final LimitCallback<T> callback, final List<Integer> positions) {
+        try {
+            for (Integer p : positions) {
                 final T o = dataClass.newInstance();
-                for (final FastSelect.Column column : columns) {
-                    MethodHandle methodHandle = mhRepo.set(column.name);
-                    methodHandle.invoke(o, column.data.get(p));
+                for (final Column column : columns) {
+                    column.setter.invoke(o, column.data.get(p));
                 }
                 callback.data(o);
                 if (callback.needToStop()) return;
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
             }
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    public List<T> selectAndSort(final AbstractRequest[] where, final FastSelectComparator comparator) {
+        ListLimitCallback<T> result = new ListLimitCallback<>(Integer.MAX_VALUE);
+        selectAndSort(where, result, comparator);
+        return result.getResult();
     }
 
     public List<T> selectAndSort(final AbstractRequest[] where, final String... sortBy) {
@@ -277,6 +321,7 @@ public final class FastSelect<T> {
         public final Data data;
         final Class type;
         MethodHandle getter;
+        MethodHandle setter;
         int index;
 
         public Column(final String name, final Class type) {
@@ -328,20 +373,19 @@ public final class FastSelect<T> {
 
     private abstract class Block {
 
-        final List<BitSet> columnBitSets = new ArrayList<>();
-        final List<IntRange> intRanges = new ArrayList<>();
+        protected final List<BitSet> columnBitSets = new ArrayList<>();
+        protected final List<IntRange> intRanges = new ArrayList<>();
 
         abstract int free();
 
         void setColumnBitSet(Column column, int bit) {
+            // todo implement indexing for negative values, currently just use direct scan
             if (bit >= MIN_COLUMN_BIT) {
                 columnBitSets.get(column.index).set(bit);
-            } else {
-//                 todo implement indexing for negative values, currently just use direct scan
             }
         }
 
-        abstract void add(List<T> row, int start, int end);
+        abstract void add(List<T> dataToAdd, int addFrom, int addTo);
 
         abstract void select(AbstractRequest[] where, ArrayLayoutCallback callback);
 
@@ -416,30 +460,26 @@ public final class FastSelect<T> {
             }
         }
 
-        private Block createBlock() {
-            return new DataBlock();
-        }
-
         @Override
-        void add(List<T> data, int start, int end) {
+        void add(List<T> dataToAdd, int addFrom, int addTo) {
             int position = 0;
             int updatePosition = Math.max(0, blocks.size() - 1);
 
             if (blocks.isEmpty()) {
-                Block block = createBlock();
+                Block block = new DataBlock(columns.get(0).data.size());
                 blocks.add(block);
             }
 
-            while (position < data.size()) {
+            while (position < dataToAdd.size()) {
                 Block block = blocks.get(blocks.size() - 1);
                 final int free = block.free();
                 if (free == 0) {
-                    block = createBlock();
+                    block = new DataBlock(columns.get(0).data.size());
                     blocks.add(block);
                 }
 
-                int toAdd = Math.min(free, data.size() - position);
-                block.add(data, position, position + toAdd);
+                int toAdd = Math.min(free, dataToAdd.size() - position);
+                block.add(dataToAdd, position, position + toAdd);
                 position += toAdd;
             }
 
@@ -456,12 +496,11 @@ public final class FastSelect<T> {
 
     private final class DataBlock extends Block {
 
-        final int start;
+        private final int start;
         private int size;
 
-        private DataBlock() {
-            this.start = columns.get(0).data.size();
-
+        private DataBlock(int start) {
+            this.start = start;
             for (Column ignored : columns) {
                 columnBitSets.add(new BitSet());
                 intRanges.add(new IntRange());
@@ -474,14 +513,13 @@ public final class FastSelect<T> {
         }
 
         /**
-         * @param rows  - block of data to add
-         * @param start - start position in rows (inclusive)
-         * @param end   - end position in rows (exclusive)
+         * @param dataToAdd - block of data to add
+         * @param addFrom   - addFrom position in dataToAdd (inclusive)
+         * @param addTo     - addTo position in dataToAdd (exclusive)
          */
         @Override
-        void add(List<T> rows, int start, int end) {
-            final int additionalSize = end - start;
-            size += additionalSize;
+        void add(List<T> dataToAdd, int addFrom, int addTo) {
+            final int additionalSize = addTo - addFrom;
 
             try {
                 for (final Column column : columns) {
@@ -489,21 +527,21 @@ public final class FastSelect<T> {
 
                     if (column.type == long.class) {
                         final LongData data = (LongData) column.data;
-                        for (int i = start; i < end; i++) {
-                            data.add((long) methodHandle.invoke(rows.get(i)));
+                        for (int i = addFrom; i < addTo; i++) {
+                            data.add((long) methodHandle.invoke(dataToAdd.get(i)));
                         }
 
                     } else if (column.type == long[].class) {
                         MultiLongData data = (MultiLongData) column.data;
-                        for (int i = start; i < end; i++) {
-                            long[] v = (long[]) methodHandle.invoke(rows.get(i));
+                        for (int i = addFrom; i < addTo; i++) {
+                            long[] v = (long[]) methodHandle.invoke(dataToAdd.get(i));
                             data.add(v);
                         }
 
                     } else if (column.type == short[].class) {
                         final MultiShortData data = (MultiShortData) column.data;
-                        for (int i = start; i < end; i++) {
-                            short[] v = (short[]) methodHandle.invoke(rows.get(i));
+                        for (int i = addFrom; i < addTo; i++) {
+                            short[] v = (short[]) methodHandle.invoke(dataToAdd.get(i));
                             data.add(v);
                             // set all bits
                             for (short v1 : v) setColumnBitSet(column, v1);
@@ -511,8 +549,8 @@ public final class FastSelect<T> {
 
                     } else if (column.type == byte[].class) {
                         MultiByteData data = (MultiByteData) column.data;
-                        for (int i = start; i < end; i++) {
-                            byte[] v = (byte[]) methodHandle.invoke(rows.get(i));
+                        for (int i = addFrom; i < addTo; i++) {
+                            byte[] v = (byte[]) methodHandle.invoke(dataToAdd.get(i));
                             data.add(v);
                             // set all bits
                             for (byte v1 : v) setColumnBitSet(column, v1);
@@ -524,9 +562,9 @@ public final class FastSelect<T> {
 
                         data.allocate(additionalSize);
 
-                        for (int i = start; i < end; i++) {
-                            int v = (int) methodHandle.invoke(rows.get(i));
-                            data.set(i, v);
+                        for (int i = addFrom, position = this.start + size; i < addTo; i++, position++) {
+                            int v = (int) methodHandle.invoke(dataToAdd.get(i));
+                            data.set(position, v);
 
                             intRange.max = Math.max(intRange.max, v);
                             intRange.min = Math.min(intRange.min, v);
@@ -534,8 +572,8 @@ public final class FastSelect<T> {
 
                     } else if (column.type == short.class) {
                         final ShortData data = (ShortData) column.data;
-                        for (int i = start; i < end; i++) {
-                            short v = (short) methodHandle.invoke(rows.get(i));
+                        for (int i = addFrom; i < addTo; i++) {
+                            short v = (short) methodHandle.invoke(dataToAdd.get(i));
                             data.add(v);
                             setColumnBitSet(column, v);
                         }
@@ -544,16 +582,16 @@ public final class FastSelect<T> {
                         final ByteData data = (ByteData) column.data;
                         data.allocate(additionalSize);
 
-                        for (int i = start; i < end; i++) {
-                            byte v = (byte) methodHandle.invoke(rows.get(i));
-                            data.set(i, v);
+                        for (int i = addFrom, position = this.start + size; i < addTo; i++, position++) {
+                            byte v = (byte) methodHandle.invoke(dataToAdd.get(i));
+                            data.set(position, v);
                             setColumnBitSet(column, v);
                         }
 
                     } else if (column.type == String.class) {
                         final StringData data = (StringData) column.data;
-                        for (int i = start; i < end; i++) {
-                            String v = (String) methodHandle.invoke(rows.get(i));
+                        for (int i = addFrom; i < addTo; i++) {
+                            String v = (String) methodHandle.invoke(dataToAdd.get(i));
                             data.add(v);
                         }
 
@@ -564,6 +602,8 @@ public final class FastSelect<T> {
             } catch (Throwable throwable) {
                 throw new RuntimeException(throwable);
             }
+
+            size += additionalSize;
         }
 
         @Override

@@ -18,7 +18,6 @@ package com.github.terma.fastselect.benchmark;
 
 import com.github.terma.fastselect.demo.DemoData;
 import com.github.terma.fastselect.utils.BlockRoundValue;
-import com.github.terma.fastselect.utils.MemMeter;
 import com.github.terma.fastselect.utils.RoundValue;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
@@ -31,8 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import static com.sun.javafx.tools.resource.DeployResource.Type.data;
 
 //@Fork(value = 1, jvmArgs = {"-Xmx7g", "-XX:CompileThreshold=1", "-XX:CompileCommand=print,*.FastSelect", "-prof perfasm:intelSyntax=true"})
 @Fork(value = 1, jvmArgs = {"-Xmx7g", "-XX:CompileThreshold=1"})
@@ -53,7 +50,7 @@ public class DemoBenchmark {
     @Param({"1000"})
     private int blockSize;
 
-    @Param({"10000000"}) // "1000000", "10000000", "60000000"
+    @Param({"1000000"}) // "1000000", "10000000", "60000000"
     private int volume;
 
     @Param({"FastSelect"}) // "Oracle", "FastSelect", "H2"
@@ -67,11 +64,6 @@ public class DemoBenchmark {
     }
 
     static void fill(int itemsToCreate, PlayerFactory<DemoData> playerFactory) throws Exception {
-//        System.out.println(playerFactory + " started");
-
-//        final MemMeter memMeter = new MemMeter();
-//        final long start = System.currentTimeMillis();
-
         final List<DemoData> data = new ArrayList<>();
 
         final BlockRoundValue bsIdRandom = new BlockRoundValue(
@@ -93,11 +85,6 @@ public class DemoBenchmark {
             item.prr = (byte) prrValue.next();
             item.csr = (byte) csrValue.next();
 
-            /*
-            make distribution more realistic.
-            Instead of normal use small deviation in near blocks than make hure shift for next
-            portion.
-             */
             item.bsid = bsIdRandom.next();
 
             data.add(item);
@@ -105,20 +92,11 @@ public class DemoBenchmark {
             if (i % 10000 == 0) {
                 playerFactory.addData(data);
                 data.clear();
-//                System.out.print(".");
             }
         }
 
         playerFactory.addData(data);
         data.clear();
-
-        System.out.println();
-
-//        final long time = System.currentTimeMillis() - start;
-//
-//        System.out.println(playerFactory + " prepared, volume: " + itemsToCreate + ", mem used: "
-//                + memMeter.getUsedMb() + "Mb, preparation time " + time + " msec");
-//        System.out.println("Filler finished");
     }
 
     @Setup
@@ -135,7 +113,7 @@ public class DemoBenchmark {
         System.out.println(player.playDetailsByGAndRAndSorting());
     }
 
-    @Benchmark
+    //    @Benchmark
     @Threads(1)
     public Object groupByGAndR() throws Exception {
         return player.playGroupByGAndR();
@@ -153,12 +131,12 @@ public class DemoBenchmark {
         return player.playGroupByGAndR();
     }
 
-//    @Benchmark
+    //    @Benchmark
     public Object groupByBsIdAndR() throws Exception {
         return player.playGroupByBsIdAndR();
     }
 
-    //    @Benchmark
+    @Benchmark
     public Object detailsByGAndRAndSorting() throws Exception {
         return player.playDetailsByGAndRAndSorting();
     }

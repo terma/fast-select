@@ -225,3 +225,14 @@ CreatingBenchmark.create         1000  FastSelect   1000000  avgt       32840.46
 CreatingBenchmark.create         1000  FastSelect   1000000  avgt       28327.878          ms/op <<< 12%
 CreatingBenchmark.create         1000  FastSelect   1000000  avgt       27459.878          ms/op <<< 15%
 CreatingBenchmark.create         1000  FastSelect   1000000  avgt       23558.073          ms/op <<< 30%
+
+### example of result for 1M
+whereGAndR: 200 from 1000
+whereBsIdAndR: 0 from 1000
+Check play:
+{1={1=5715, 2=5714, 3=5714, 4=5714, 5=5714, 6=5715}, 2={1=5714, 2=5715, 3=5714, 4=5714, 5=5714, 6=5714}, 3={1=5715, 2=5714, 3=5715, 4=5714, 5=5714, 6=5714}, 4={1=5714, 2=5715, 3=5714, 4=5715, 5=5714, 6=5714}}
+{}
+25
+
+### before
+DemoBenchmark.detailsByGAndRAndSorting         1000  FastSelect   1000000  avgt       22.220          ms/op
