@@ -1,8 +1,0 @@
-language: java
-
-install: true
-
-jdk:
-  - oraclejdk7
-
-script: mvn package jacoco:report coveralls:report
