@@ -89,3 +89,7 @@ More use cases you can find in javadoc ```callbacks``` package
 * filter by < or >
 * Serialization/Deserialization
 * On fly modification
+
+## Javadoc
+
+[http://terma.github.io/fast-select/]
