@@ -13,6 +13,7 @@ In-memory storage with low latency access for online analytic with huge volume o
 * API to support fast filtering, grouping, sorting, selecting
 * Small lib ```~53 kb```
 * Free open source under Apache 2.0 license.
+* [Javadoc](http://terma.github.io/fast-select/)
 
 ## Memory Usage
 
@@ -89,3 +90,4 @@ More use cases you can find in javadoc ```callbacks``` package
 * filter by < or >
 * Serialization/Deserialization
 * On fly modification
+
