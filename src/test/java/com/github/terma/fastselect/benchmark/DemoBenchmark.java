@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 //@Fork(value = 1, jvmArgs = {"-Xmx7g", "-XX:CompileThreshold=1", "-XX:CompileCommand=print,*.FastSelect", "-prof perfasm:intelSyntax=true"})
-@Fork(value = 1, jvmArgs = {"-Xmx7g", "-XX:CompileThreshold=1"})
+@Fork(value = 1, jvmArgs = {"-Xmx7g", "-XX:CompileThreshold=1", "-XX:+UnlockDiagnosticVMOptions", "-XX:+PrintAssembly"})
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
