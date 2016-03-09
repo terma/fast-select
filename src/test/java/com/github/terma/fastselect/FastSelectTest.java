@@ -16,11 +16,13 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
+import com.github.terma.fastselect.callbacks.ArrayLayoutCallback;
 import com.github.terma.fastselect.data.Data;
 import com.github.terma.fastselect.data.IntStringData;
 import junit.framework.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -66,6 +68,20 @@ public class FastSelectTest {
                 new TestIntByte(12, (byte) 0),
                 new TestIntByte(1000, (byte) 0)),
                 result);
+    }
+
+    @Test
+    public void shouldSelectAndProvidePositions() {
+        FastSelect<TestIntByte> database = new FastSelect<>(TestIntByte.class);
+        database.addAll(asList(
+                new TestIntByte(12, (byte) 0),
+                new TestIntByte(9, (byte) 0),
+                new TestIntByte(1000, (byte) 0)));
+
+        List result = database.selectPositions(
+                new AbstractRequest[]{new IntRequest("value1", new int[]{12, 9})});
+
+        Assert.assertEquals(asList(0, 1), result);
     }
 
     @Test
@@ -143,6 +159,32 @@ public class FastSelectTest {
                 new TestLongShort(1231312, (short) 1),
                 new TestLongShort(9, (short) 1)),
                 result);
+    }
+
+    @Test
+    public void supportSortingByComparatorWithArrayLayoutCallback() {
+        FastSelect<TestLongShort> database = new FastSelect<>(TestLongShort.class);
+        database.addAll(asList(
+                new TestLongShort(Long.MAX_VALUE, (short) 1),
+                new TestLongShort(9, (short) 2),
+                new TestLongShort(1231312, (short) 1)));
+
+        final List<Integer> positions = new ArrayList<>();
+
+        database.selectAndSort(
+                new AbstractRequest[]{new ShortRequest("short1", new int[]{1})}, new FastSelectComparator() {
+                    @Override
+                    public int compare(Data[] columnDatas, int position1, int position2) {
+                        return -1 * columnDatas[0].compare(position1, position2);
+                    }
+                }, new ArrayLayoutCallback() {
+                    @Override
+                    public void data(int position) {
+                        positions.add(position);
+                    }
+                });
+
+        Assert.assertEquals(asList(0, 2), positions);
     }
 
     @Test

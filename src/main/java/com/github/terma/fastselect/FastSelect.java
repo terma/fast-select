@@ -181,36 +181,21 @@ public final class FastSelect<T> {
         rootBlock.select(where, callback);
     }
 
-    public int blockTouch(final AbstractRequest[] where) {
-        prepareRequest(where);
-        return rootBlock.blockTouch(where);
-    }
-
     public void select(final AbstractRequest[] where, final ArrayLayoutLimitCallback callback) {
         prepareRequest(where);
         rootBlock.select(where, callback);
     }
 
-    private void prepareRequest(final AbstractRequest[] where) {
-        for (final AbstractRequest condition : where) {
-            condition.column = columnsByNames.get(condition.name);
+    public void select(final AbstractRequest[] where, final Callback<T> callback) {
+        select(where, new ArrayToObjectCallback<>(dataClass, columns, mhRepo, callback));
+    }
 
-            if (condition.column == null) throw new IllegalArgumentException(
-                    "Can't find requested column: " + condition.name + " in " + columns);
-
-            condition.prepare();
-        }
+    public void select(final AbstractRequest[] where, final LimitCallback<T> callback) {
+        select(where, new ArrayToObjectLimitCallback<>(dataClass, columns, mhRepo, callback));
     }
 
     public void selectAndSort(final AbstractRequest[] where, final LimitCallback<T> callback, final String... sortBy) {
-        final List<Integer> positions = new ArrayList<>();
-        ArrayLayoutCallback myCallback = new ArrayLayoutCallback() {
-            @Override
-            public void data(int position) {
-                positions.add(position);
-            }
-        };
-        select(where, myCallback);
+        final List<Integer> positions = selectPositions(where);
 
         final List<Data> sortData = new ArrayList<>();
         for (String s : sortBy) sortData.add(columnsByNames.get(s).data);
@@ -241,13 +226,7 @@ public final class FastSelect<T> {
      */
     public void selectAndSort(final AbstractRequest[] where, final LimitCallback<T> callback,
                               final FastSelectComparator comparator) {
-        final List<Integer> positions = new ArrayList<>();
-        select(where, new ArrayLayoutCallback() {
-            @Override
-            public void data(int position) {
-                positions.add(position);
-            }
-        });
+        final List<Integer> positions = selectPositions(where);
 
         final Data[] sortData = new Data[columns.size()];
         for (int i = 0; i < columns.size(); i++) sortData[i] = columns.get(i).data;
@@ -262,19 +241,32 @@ public final class FastSelect<T> {
         createObjects(callback, positions);
     }
 
-    private void createObjects(final LimitCallback<T> callback, final List<Integer> positions) {
-        try {
-            for (Integer p : positions) {
-                final T o = dataClass.newInstance();
-                for (final Column column : columns) {
-                    column.setter.invoke(o, column.data.get(p));
-                }
-                callback.data(o);
-                if (callback.needToStop()) return;
+    public List<Integer> selectPositions(final AbstractRequest[] where) {
+        final List<Integer> positions = new ArrayList<>();
+        select(where, new ArrayLayoutCallback() {
+            @Override
+            public void data(int position) {
+                positions.add(position);
             }
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
+        });
+        return positions;
+    }
+
+    public void selectAndSort(final AbstractRequest[] where, final FastSelectComparator comparator,
+                              final ArrayLayoutCallback callback) {
+        final List<Integer> positions = selectPositions(where);
+
+        final Data[] sortData = new Data[columns.size()];
+        for (int i = 0; i < columns.size(); i++) sortData[i] = columns.get(i).data;
+
+        Collections.sort(positions, new Comparator<Integer>() {
+            @Override
+            public int compare(Integer position1, Integer position2) {
+                return comparator.compare(sortData, position1, position2);
+            }
+        });
+
+        for (Integer position : positions) callback.data(position);
     }
 
     public List<T> selectAndSort(final AbstractRequest[] where, final FastSelectComparator comparator) {
@@ -289,12 +281,9 @@ public final class FastSelect<T> {
         return result.getResult();
     }
 
-    public void select(final AbstractRequest[] where, final Callback<T> callback) {
-        select(where, new ArrayToObjectCallback<>(dataClass, columns, mhRepo, callback));
-    }
-
-    public void select(final AbstractRequest[] where, final LimitCallback<T> callback) {
-        select(where, new ArrayToObjectLimitCallback<>(dataClass, columns, mhRepo, callback));
+    public int blockTouch(final AbstractRequest[] where) {
+        prepareRequest(where);
+        return rootBlock.blockTouch(where);
     }
 
     public int size() {
@@ -313,6 +302,32 @@ public final class FastSelect<T> {
 
     public int dataBlockSize() {
         return blockSizes[blockSizes.length - 1];
+    }
+
+    private void prepareRequest(final AbstractRequest[] where) {
+        for (final AbstractRequest condition : where) {
+            condition.column = columnsByNames.get(condition.name);
+
+            if (condition.column == null) throw new IllegalArgumentException(
+                    "Can't find requested column: " + condition.name + " in " + columns);
+
+            condition.prepare();
+        }
+    }
+
+    private void createObjects(final LimitCallback<T> callback, final List<Integer> positions) {
+        try {
+            for (Integer p : positions) {
+                final T o = dataClass.newInstance();
+                for (final Column column : columns) {
+                    column.setter.invoke(o, column.data.get(p));
+                }
+                callback.data(o);
+                if (callback.needToStop()) return;
+            }
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static class Column {

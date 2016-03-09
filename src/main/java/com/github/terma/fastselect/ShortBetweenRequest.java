@@ -16,44 +16,52 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
-import com.github.terma.fastselect.data.StringData;
+import com.github.terma.fastselect.data.IntData;
+import com.github.terma.fastselect.data.ShortData;
 
-import java.util.Arrays;
 import java.util.BitSet;
 
 /**
- * SQL analog <code>where STRING_FIELD = '???'</code>
- * Exact select. For like or case insensitive use {@link StringLikeRequest} and {@link StringNoCaseLikeRequest}
+ * Math's analog is "a to []". Include min and max.
+ * For equal select use {@link ShortRequest}
  */
-public class StringRequest extends AbstractRequest {
+public class ShortBetweenRequest extends AbstractRequest {
 
-    private final byte[] bytes;
+    private final short min;
+    private final short max;
+    private short[] data;
 
-    public StringRequest(String name, String value) {
+    public ShortBetweenRequest(String name, short min, short max) {
         super(name);
-        bytes = value.getBytes();
+        this.min = min;
+        this.max = max;
     }
 
     @Override
-    boolean inBlock(final BitSet bitSet) {
-        // todo try to use block info for string filter, now just always goto full scan
+    boolean inBlock(BitSet bitSet) {
         return true;
     }
 
     @Override
+    boolean inBlock(IntRange intRange) {
+        return intRange.max >= min && intRange.min <= max;
+    }
+
+    @Override
     boolean checkValue(int position) {
-        StringData data = (StringData) column.data;
-        byte[] value = data.getRaw(position);
-        return Arrays.equals(bytes, value);
+        final short value = data[position];
+        return value >= min && value <= max;
     }
 
     @Override
     void prepare() {
+        // caching
+        data = ((ShortData) column.data).data;
     }
 
     @Override
     public String toString() {
-        return "StringRequest {name: " + name + ", value: " + new String(bytes) + '}';
+        return "{name: " + name + ", min: " + min + ", max: " + max + '}';
     }
 
 }

@@ -18,20 +18,21 @@ package com.github.terma.fastselect;
 
 import com.github.terma.fastselect.data.StringData;
 
-import java.util.Arrays;
 import java.util.BitSet;
 
 /**
- * SQL analog <code>where STRING_FIELD = '???'</code>
- * Exact select. For like or case insensitive use {@link StringLikeRequest} and {@link StringNoCaseLikeRequest}
+ * SQL analog <code>where lowerCase(STRING_FIELD) like lowerCase('%SUBSTRING%')</code>
+ * <p>
+ * Case sensitive like select use {@link StringLikeRequest}
+ * Case sensitive exact select use {@link StringRequest}
  */
-public class StringRequest extends AbstractRequest {
+public class StringNoCaseLikeRequest extends AbstractRequest {
 
-    private final byte[] bytes;
+    private final String like;
 
-    public StringRequest(String name, String value) {
+    public StringNoCaseLikeRequest(String name, String like) {
         super(name);
-        bytes = value.getBytes();
+        this.like = like.toLowerCase();
     }
 
     @Override
@@ -43,8 +44,8 @@ public class StringRequest extends AbstractRequest {
     @Override
     boolean checkValue(int position) {
         StringData data = (StringData) column.data;
-        byte[] value = data.getRaw(position);
-        return Arrays.equals(bytes, value);
+        String value = (String) data.get(position);
+        return value.toLowerCase().contains(like);
     }
 
     @Override
@@ -53,7 +54,7 @@ public class StringRequest extends AbstractRequest {
 
     @Override
     public String toString() {
-        return "StringRequest {name: " + name + ", value: " + new String(bytes) + '}';
+        return "StringNoCaseLikeRequest {name: " + name + ", like: " + like + '}';
     }
 
 }
