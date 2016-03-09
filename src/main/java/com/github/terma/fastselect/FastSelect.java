@@ -252,8 +252,8 @@ public final class FastSelect<T> {
         return positions;
     }
 
-    public void selectAndSort(final AbstractRequest[] where, final ArrayLayoutCallback callback,
-                              final FastSelectComparator comparator) {
+    public void selectAndSort(final AbstractRequest[] where, final FastSelectComparator comparator,
+                              final ArrayLayoutCallback callback) {
         final List<Integer> positions = selectPositions(where);
 
         final Data[] sortData = new Data[columns.size()];
