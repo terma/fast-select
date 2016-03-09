@@ -4,7 +4,7 @@
 
     <groupId>com.github.terma</groupId>
     <artifactId>fast-select</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.4</version>
 
     <name>Fast Select</name>
     <description>Read Only In-Memory Storage with Fast MultiFilter Select</description>
@@ -283,7 +283,7 @@
         <developerConnection>scm:git:https://github.com/terma/fast-select.git</developerConnection>
         <connection>scm:git:https://github.com/terma/fast-select.git</connection>
         <url>https://github.com/terma/fast-select</url>
-        <tag>HEAD</tag>
+        <tag>fast-select-1.4</tag>
     </scm>
 
 </project>
