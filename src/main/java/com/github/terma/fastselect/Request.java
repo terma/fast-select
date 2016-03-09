@@ -19,6 +19,11 @@ package com.github.terma.fastselect;
 import java.util.Arrays;
 import java.util.BitSet;
 
+/**
+ * Deprecated Class.
+ * <p>
+ * Please use {@link AbstractRequest} as base class. And any child of it for specific select criteria.
+ */
 @Deprecated
 public class Request extends AbstractRequest {
 
