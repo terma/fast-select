@@ -20,11 +20,11 @@ public interface Data {
 
     int DEFAULT_SIZE = 16;
 
-    int OBJECT_HEADER_BYTES = 16;
-    int REFERENCE_BYTES = 8;
-    int SHORT_BYTES = 2;
-    int INT_BYTES = 4;
-    int LONG_BYTES = 8;
+    long OBJECT_HEADER_BYTES = 16;
+    long REFERENCE_BYTES = 8;
+    long SHORT_BYTES = 2;
+    long INT_BYTES = 4;
+    long LONG_BYTES = 8;
 
     boolean check(int position, int[] values);
 
