@@ -273,6 +273,8 @@ public final class FastSelect<T> {
         return mem;
     }
 
+    public List<Column> getColumns() { return columns; }
+
     public Map<String, Column> getColumnsByNames() {
         return columnsByNames;
     }
@@ -395,7 +397,7 @@ public final class FastSelect<T> {
     private abstract class Block {
 
         protected final List<BitSet> columnBitSets = new ArrayList<>();
-        protected final List<IntRange> intRanges = new ArrayList<>();
+        protected final List<Range> ranges = new ArrayList<>();
 
         abstract int free();
 
@@ -447,7 +449,7 @@ public final class FastSelect<T> {
                     final BitSet columnBitSet = block.columnBitSets.get(request.column.index);
                     if (!request.inBlock(columnBitSet)) return false;
                 } else if (block.getClass() == DataBlock.class && request.column.type == int.class) {
-                    if (!request.inBlock(block.intRanges.get(request.column.index))) return false;
+                    if (!request.inBlock(block.ranges.get(request.column.index))) return false;
                 }
             }
             return true;
@@ -524,7 +526,7 @@ public final class FastSelect<T> {
             this.start = start;
             for (Column ignored : columns) {
                 columnBitSets.add(new BitSet());
-                intRanges.add(new IntRange());
+                ranges.add(new Range());
             }
         }
 
@@ -579,7 +581,7 @@ public final class FastSelect<T> {
 
                     } else if (column.type == int.class) {
                         final IntData data = (IntData) column.data;
-                        final IntRange intRange = intRanges.get(column.index);
+                        final Range range = ranges.get(column.index);
 
                         data.allocate(additionalSize);
 
@@ -587,8 +589,8 @@ public final class FastSelect<T> {
                             int v = (int) methodHandle.invoke(dataToAdd.get(i));
                             data.set(position, v);
 
-                            intRange.max = Math.max(intRange.max, v);
-                            intRange.min = Math.min(intRange.min, v);
+                            range.max = Math.max(range.max, v);
+                            range.min = Math.min(range.min, v);
                         }
 
                     } else if (column.type == short.class) {

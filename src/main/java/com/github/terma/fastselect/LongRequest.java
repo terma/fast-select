@@ -16,16 +16,16 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
-import com.github.terma.fastselect.data.IntData;
 import com.github.terma.fastselect.data.LongData;
 
 import java.util.Arrays;
 import java.util.BitSet;
 
+@SuppressWarnings("WeakerAccess")
 public class LongRequest extends AbstractRequest {
 
-    private final long[] values;
-    private long[] data;
+    private final long[] values; // after .prepared() sorted by ASC
+    private long[] data; // cache
 
     public LongRequest(String name, long[] values) {
         super(name);
@@ -38,8 +38,8 @@ public class LongRequest extends AbstractRequest {
     }
 
     @Override
-    boolean inBlock(IntRange intRange) {
-        return values[0] <= intRange.max && values[values.length - 1] >= intRange.min;
+    boolean inBlock(Range range) {
+        return values[0] <= range.max && values[values.length - 1] >= range.min;
     }
 
     @Override

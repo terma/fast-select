@@ -39,7 +39,7 @@ public abstract class AbstractRequest {
      */
     abstract boolean inBlock(BitSet bitSet);
 
-    boolean inBlock(IntRange intRange) {return true;}
+    boolean inBlock(Range range) {return true;}
 
     /**
      * Method for internal usage.

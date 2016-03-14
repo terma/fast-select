@@ -64,7 +64,7 @@ public class LongBetweenRequestTest {
 
     @Test
     public void acceptInBlockIfRangeInBetween() {
-        IntRange range = new IntRange();
+        Range range = new Range();
         range.min = 2;
         range.max = 4;
 
@@ -73,7 +73,7 @@ public class LongBetweenRequestTest {
 
     @Test
     public void acceptInBlockIfRangeCoverBetween() {
-        IntRange range = new IntRange();
+        Range range = new Range();
         range.min = 0;
         range.max = 11;
 
@@ -82,7 +82,7 @@ public class LongBetweenRequestTest {
 
     @Test
     public void acceptInBlockIfRangeCoverMin() {
-        IntRange range = new IntRange();
+        Range range = new Range();
         range.min = -90;
         range.max = 1;
 
@@ -91,7 +91,7 @@ public class LongBetweenRequestTest {
 
     @Test
     public void acceptInBlockIfRangeCoverMax() {
-        IntRange range = new IntRange();
+        Range range = new Range();
         range.min = 10;
         range.max = 100;
 
@@ -100,7 +100,7 @@ public class LongBetweenRequestTest {
 
     @Test
     public void notAcceptInBlockIfRangeLeftFrom() {
-        IntRange range = new IntRange();
+        Range range = new Range();
         range.min = -90;
         range.max = 0;
 
@@ -109,7 +109,7 @@ public class LongBetweenRequestTest {
 
     @Test
     public void notAcceptInBlockIfRangeRightFrom() {
-        IntRange range = new IntRange();
+        Range range = new Range();
         range.min = 11;
         range.max = 1000;
 

@@ -68,10 +68,12 @@ public class FastSelectMXBeanImpl implements FastSelectMXBean {
         return fastSelect.mem() / 1024 / 1024 / 1024;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<ColumnBean> getColumns() {
         List<ColumnBean> columnBeans = new ArrayList<>();
-        for (Object column : fastSelect.getColumnsByNames().values()) {
+
+        for (Object column : fastSelect.getColumns()) {
             FastSelect.Column column1 = (FastSelect.Column) column;
             columnBeans.add(new ColumnBean(column1.name, column1.getType().getName(),
                     column1.size(), column1.allocatedSize(), column1.mem()));

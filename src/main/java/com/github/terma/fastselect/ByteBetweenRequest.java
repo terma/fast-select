@@ -42,8 +42,8 @@ public class ByteBetweenRequest extends AbstractRequest {
     }
 
     @Override
-    boolean inBlock(IntRange intRange) {
-        return intRange.max >= min && intRange.min <= max;
+    boolean inBlock(Range range) {
+        return range.max >= min && range.min <= max;
     }
 
     @Override

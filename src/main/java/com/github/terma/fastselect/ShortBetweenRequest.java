@@ -16,7 +16,6 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
-import com.github.terma.fastselect.data.IntData;
 import com.github.terma.fastselect.data.ShortData;
 
 import java.util.BitSet;
@@ -43,8 +42,8 @@ public class ShortBetweenRequest extends AbstractRequest {
     }
 
     @Override
-    boolean inBlock(IntRange intRange) {
-        return intRange.max >= min && intRange.min <= max;
+    boolean inBlock(Range range) {
+        return range.max >= min && range.min <= max;
     }
 
     @Override

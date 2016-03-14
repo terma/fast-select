@@ -37,8 +37,8 @@ public class IntRequest extends AbstractRequest {
     }
 
     @Override
-    boolean inBlock(IntRange intRange) {
-        return values[0] <= intRange.max && values[values.length - 1] >= intRange.min;
+    boolean inBlock(Range range) {
+        return values[0] <= range.max && values[values.length - 1] >= range.min;
     }
 
     @Override

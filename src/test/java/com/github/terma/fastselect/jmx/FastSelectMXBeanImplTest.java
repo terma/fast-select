@@ -76,11 +76,11 @@ public class FastSelectMXBeanImplTest {
         List<ColumnBean> columnBeans = fastSelectMXBean.getColumns();
 
         Assert.assertEquals(23, columnBeans.size());
-        Assert.assertEquals("ui", columnBeans.get(0).getName());
-        Assert.assertEquals("java.lang.String", columnBeans.get(0).getType());
+        Assert.assertEquals("prg", columnBeans.get(0).getName());
+        Assert.assertEquals("byte", columnBeans.get(0).getType());
         Assert.assertEquals(16, columnBeans.get(0).getAllocatedSize());
         Assert.assertEquals(0, columnBeans.get(0).getSize());
-        Assert.assertEquals(168, columnBeans.get(0).getMemInBytes());
+        Assert.assertEquals(44, columnBeans.get(0).getMemInBytes());
         Assert.assertEquals(0, columnBeans.get(0).getMemInMb());
         Assert.assertEquals(0, columnBeans.get(0).getMemInGb());
     }
