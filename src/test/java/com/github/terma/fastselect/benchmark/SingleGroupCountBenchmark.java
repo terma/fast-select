@@ -54,11 +54,8 @@ import java.util.concurrent.TimeUnit;
 @Measurement(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
 public class SingleGroupCountBenchmark {
 
-    @Param({"100"})
-    private int blockSize1;
-
     @Param({"1000"})
-    private int blockSize2;
+    private int blockSize;
 
     @Param({"1000000"}) // "10000000"
     private int volume;
@@ -74,16 +71,12 @@ public class SingleGroupCountBenchmark {
     }
 
     static FastSelect<DemoData> initDatabase(int blockSize, int volume) {
-        return initDatabase(new int[]{blockSize}, volume);
-    }
-
-    static FastSelect<DemoData> initDatabase(int[] blockSizes, int volume) {
-        return DemoUtils.createFastSelect(blockSizes, volume);
+        return DemoUtils.createFastSelect(blockSize, volume);
     }
 
     @Setup
     public void init() throws InterruptedException {
-        fastSelect = initDatabase(new int[]{blockSize2}, volume);
+        fastSelect = initDatabase(blockSize, volume);
 
         // test run
         CounterCallback counter = new CounterCallback();

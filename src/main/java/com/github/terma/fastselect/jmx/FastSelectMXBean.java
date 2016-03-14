@@ -14,18 +14,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.github.terma.fastselect.benchmark;
+package com.github.terma.fastselect.jmx;
 
-import com.github.terma.fastselect.data.IntData;
+import java.util.List;
 
-public class Stand {
+public interface FastSelectMXBean {
 
-    public static void main(String[] args) {
-        IntData intData = new IntData(1000);
-        for (int i = 0; i < 1000; i++) {
-            intData.allocate(1);
-            intData.set(i, 12);
-        }
-    }
+    int getSize();
+
+    int getAllocatedSize();
+
+    long getMemInBytes();
+
+    long getMemInMb();
+
+    long getMemInGb();
+
+    List<ColumnBean> getColumns();
 
 }

@@ -20,12 +20,18 @@ import java.util.Arrays;
 
 public class ShortData implements Data {
 
+    private final int inc;
+
     public short[] data = new short[16];
     public int size = 0;
 
+    public ShortData(int inc) {
+        this.inc = inc;
+    }
+
     public void add(short v) {
         if (size == data.length) {
-            data = Arrays.copyOf(data, size + INC);
+            data = Arrays.copyOf(data, size + inc);
         }
         data[size] = v;
         size++;
@@ -53,8 +59,22 @@ public class ShortData implements Data {
     }
 
     @Override
+    public void compact() {
+        data = Arrays.copyOf(data, size);
+    }
+
+    @Override
     public int size() {
         return size;
     }
 
+    @Override
+    public int allocatedSize() {
+        return data.length;
+    }
+
+    @Override
+    public long mem() {
+        return OBJECT_HEADER_BYTES + REFERENCE_BYTES + INT_BYTES + data.length * SHORT_BYTES;
+    }
 }

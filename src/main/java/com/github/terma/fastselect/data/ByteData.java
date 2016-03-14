@@ -20,13 +20,19 @@ import java.util.Arrays;
 
 public class ByteData implements Data {
 
-    public byte[] data = new byte[16];
+    private final int inc;
+
+    public byte[] data = new byte[DEFAULT_SIZE];
     public int size = 0;
+
+    public ByteData(int inc) {
+        this.inc = inc;
+    }
 
     public void allocate(int additionalSize) {
         size += additionalSize;
         while (size > data.length) {
-            data = Arrays.copyOf(data, size + INC);
+            data = Arrays.copyOf(data, size + inc);
         }
     }
 
@@ -36,7 +42,7 @@ public class ByteData implements Data {
 
     public void add(byte v) {
         if (size == data.length) {
-            data = Arrays.copyOf(data, size + INC);
+            data = Arrays.copyOf(data, size + inc);
         }
         data[size] = v;
         size++;
@@ -64,8 +70,23 @@ public class ByteData implements Data {
     }
 
     @Override
+    public void compact() {
+        data = Arrays.copyOf(data, size);
+    }
+
+    @Override
     public int size() {
         return size;
+    }
+
+    @Override
+    public int allocatedSize() {
+        return data.length;
+    }
+
+    @Override
+    public long mem() {
+        return OBJECT_HEADER_BYTES + REFERENCE_BYTES + INT_BYTES + data.length;
     }
 
 }

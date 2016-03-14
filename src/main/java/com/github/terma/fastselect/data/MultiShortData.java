@@ -20,8 +20,13 @@ import java.util.Arrays;
 
 public class MultiShortData implements Data {
 
-    public IntData index = new IntData();
-    public ShortData data = new ShortData();
+    public final IntData index;
+    public final ShortData data;
+
+    public MultiShortData(final int inc) {
+        index = new IntData(inc);
+        data = new ShortData(inc);
+    }
 
     public void add(short[] values) {
         index.add(data.size); // store index of first element of data
@@ -71,9 +76,25 @@ public class MultiShortData implements Data {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public void compact() {
+        index.compact();
+        data.compact();
+    }
+
 
     @Override
     public int size() {
         return index.size();
+    }
+
+    @Override
+    public int allocatedSize() {
+        return index.allocatedSize();
+    }
+
+    @Override
+    public long mem() {
+        return 0;
     }
 }

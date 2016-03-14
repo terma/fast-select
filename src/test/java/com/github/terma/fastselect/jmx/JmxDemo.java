@@ -14,25 +14,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.github.terma.fastselect.benchmark;
+package com.github.terma.fastselect.jmx;
 
 import com.github.terma.fastselect.FastSelect;
 import com.github.terma.fastselect.FastSelectBuilder;
 import com.github.terma.fastselect.demo.DemoData;
 
-import java.util.List;
+import javax.management.JMException;
+import java.util.concurrent.TimeUnit;
 
-class PlayerFactoryFastSelect implements PlayerFactory<DemoData> {
+public class JmxDemo {
 
-    private FastSelect<DemoData> fastSelect = new FastSelectBuilder<>(DemoData.class).create();
+    public static void main(String[] args) throws InterruptedException, JMException {
+        FastSelect<DemoData> database = new FastSelectBuilder<>(DemoData.class).create();
+        FastSelectMXBeanImpl.register("test", database);
 
-    @Override
-    public void addData(List<DemoData> data) throws Exception {
-        fastSelect.addAll(data);
+        Thread.sleep(TimeUnit.HOURS.toMillis(1));
+
+        System.out.println(database.hashCode());
     }
 
-    @Override
-    public Player createPlayer() throws Exception {
-        return new PlayerFastSelect(fastSelect);
-    }
 }

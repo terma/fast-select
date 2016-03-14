@@ -20,8 +20,13 @@ import java.util.Arrays;
 
 public class MultiByteData implements Data {
 
-    public IntData index = new IntData();
-    public ByteData data = new ByteData();
+    public final IntData index;
+    public final ByteData data;
+
+    public MultiByteData(final int inc) {
+        index = new IntData(inc);
+        data = new ByteData(inc);
+    }
 
     public void add(byte[] values) {
         index.add(data.size); // store index of first element of data
@@ -72,9 +77,25 @@ public class MultiByteData implements Data {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public void compact() {
+        index.compact();
+        data.compact();
+    }
 
     @Override
     public int size() {
         return index.size();
     }
+
+    @Override
+    public int allocatedSize() {
+        return index.allocatedSize();
+    }
+
+    @Override
+    public long mem() {
+        return OBJECT_HEADER_BYTES + 2 * REFERENCE_BYTES + index.mem() + data.mem();
+    }
+
 }

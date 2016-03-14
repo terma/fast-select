@@ -22,8 +22,6 @@ import com.github.terma.fastselect.utils.MethodHandlerRepository;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.lang.invoke.MethodHandle;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
@@ -65,6 +63,7 @@ import java.util.*;
  * https://gist.github.com/raphw/881e1745996f9d314ab0#file-result-field-txt</a>
  *
  * @author Artem Stasiuk
+ * @see FastSelectBuilder
  * @see ArrayLayoutCallback
  * @see com.github.terma.fastselect.callbacks.GroupCountCallback
  * @see com.github.terma.fastselect.callbacks.MultiGroupCountCallback
@@ -72,8 +71,6 @@ import java.util.*;
 @SuppressWarnings("WeakerAccess")
 @ThreadSafe
 public final class FastSelect<T> {
-
-    private final static int[] DEFAULT_BLOCK_SIZES = new int[]{1000};
 
     private final static long MIN_COLUMN_BIT = 0;
 
@@ -85,15 +82,16 @@ public final class FastSelect<T> {
     private final Map<String, Column> columnsByNames;
 
     /**
-     * @param blockSizes - block sizes
-     * @param dataClass  - data class
-     * @param columns    list of {@link FastSelect.Column} data for them will be extracted from dataClass object
-     *                   and used for filtering.
+     * @param blockSize - block size
+     * @param dataClass - data class
+     * @param columns   list of {@link FastSelect.Column} data for them will be extracted from dataClass object
+     *                  and used for filtering.
      */
+    // todo don't throw exception when inc is small than data to add
     // todo add description for block sizes parameter
-    public FastSelect(final int[] blockSizes, final Class<T> dataClass, final List<Column> columns) {
+    public FastSelect(final int blockSize, final Class<T> dataClass, final List<Column> columns) {
         // todo check that block sizes not zero or negative or empty
-        this.blockSizes = Arrays.copyOf(blockSizes, blockSizes.length);
+        this.blockSizes = new int[]{blockSize};
         this.dataClass = dataClass;
         this.columns = columns;
         this.rootBlock = new SuperBlock(-1, Integer.MAX_VALUE);
@@ -105,45 +103,6 @@ public final class FastSelect<T> {
             column.getter = mhRepo.get(column.name);
             column.setter = mhRepo.set(column.name);
         }
-    }
-
-    public FastSelect(final int blockSize, final Class<T> dataClass, final Column... columns) {
-        this(blockSize, dataClass, Arrays.asList(columns));
-    }
-
-    public FastSelect(final int blockSize, final Class<T> dataClass, final List<Column> columns) {
-        this(new int[]{blockSize}, dataClass, columns);
-    }
-
-    public FastSelect(final int[] blockSizes, final Class<T> dataClass) {
-        this(blockSizes, dataClass, getColumnsFromDataClass(dataClass));
-    }
-
-    /**
-     * Derive list of columns from class fields (exclude any inherited)
-     *
-     * @param blockSize - block size
-     * @param dataClass - data class
-     */
-    public FastSelect(final int blockSize, final Class<T> dataClass) {
-        this(blockSize, dataClass, getColumnsFromDataClass(dataClass));
-    }
-
-    public FastSelect(final Class<T> dataClass) {
-        this(DEFAULT_BLOCK_SIZES, dataClass, getColumnsFromDataClass(dataClass));
-    }
-
-    public FastSelect(final Class<T> dataClass, final List<Column> columns) {
-        this(DEFAULT_BLOCK_SIZES, dataClass, columns);
-    }
-
-    private static List<Column> getColumnsFromDataClass(Class dataClass) {
-        final List<Column> columns = new ArrayList<>();
-        for (Field field : dataClass.getDeclaredFields()) {
-            if (!field.isSynthetic() && !Modifier.isStatic(field.getModifiers()))
-                columns.add(new Column(field.getName(), field.getType()));
-        }
-        return columns;
     }
 
     private static Map<String, Column> initColumnsByName(List<Column> columns) {
@@ -160,6 +119,24 @@ public final class FastSelect<T> {
 
     public void addAll(final List<T> data) {
         rootBlock.add(data, 0, -1);
+    }
+
+    /**
+     * To free preallocated (no real data) space.
+     * <p>
+     * In general when you add data to FastSelect. Column sizes don't same with columns allocated space.
+     * That's because allocation of new space is relative heavy operation. So FastSelect increase column size
+     * for new data by steps.
+     * <p>
+     * For example default size is 16. So when you are going to add 17th item column allocated space will be not
+     * enough. As result FastSelect will try to allocated more space for column. Means increase column space on
+     * 300000 (default).
+     * <p>
+     * Result. In FastSelect you have 17 items. However space allocated for 300016 items. Some times you don't
+     * want add more and you need to clean up allocated space. That's method for that.
+     */
+    public void compact() {
+        for (final Column column : columns) column.compact();
     }
 
     public List<T> select(final AbstractRequest[] where) {
@@ -290,6 +267,12 @@ public final class FastSelect<T> {
         return columns.iterator().next().data.size();
     }
 
+    public long mem() {
+        long mem = 0;
+        for (final Column column : columns) mem += column.mem();
+        return mem;
+    }
+
     public Map<String, Column> getColumnsByNames() {
         return columnsByNames;
     }
@@ -330,6 +313,10 @@ public final class FastSelect<T> {
         }
     }
 
+    public int allocatedSize() {
+        return columns.get(0).allocatedSize();
+    }
+
     public static class Column {
 
         public final String name;
@@ -339,30 +326,34 @@ public final class FastSelect<T> {
         MethodHandle setter;
         int index;
 
-        public Column(final String name, final Class type) {
+        public Column(final String name, final Class type, final int inc) {
             this.name = name;
             this.type = type;
 
             if (type == long.class) {
-                data = new LongData();
+                data = new LongData(inc);
             } else if (type == long[].class) {
-                data = new MultiLongData();
+                data = new MultiLongData(inc);
             } else if (type == short[].class) {
-                data = new MultiShortData();
+                data = new MultiShortData(inc);
             } else if (type == byte[].class) {
-                data = new MultiByteData();
+                data = new MultiByteData(inc);
             } else if (type == int.class) {
-                data = new IntData();
+                data = new IntData(inc);
             } else if (type == short.class) {
-                data = new ShortData();
+                data = new ShortData(inc);
             } else if (type == byte.class) {
-                data = new ByteData();
+                data = new ByteData(inc);
             } else if (type == String.class) {
-                data = new StringData();
+                data = new StringData(inc);
             } else {
                 throw new IllegalArgumentException("Unsupportable column type: " + type
                         + ". Support byte,short,int,long,byte[],short[],int[],long[]!");
             }
+        }
+
+        public void compact() {
+            data.compact();
         }
 
         @Override
@@ -384,6 +375,21 @@ public final class FastSelect<T> {
             }
         }
 
+        public int allocatedSize() {
+            return data.allocatedSize();
+        }
+
+        public long mem() {
+            return data.mem();
+        }
+
+        public int size() {
+            return data.size();
+        }
+
+        public Class getType() {
+            return type;
+        }
     }
 
     private abstract class Block {

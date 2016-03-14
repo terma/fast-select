@@ -29,7 +29,7 @@ public class StringLikeRequestTest {
     @Before
     public void init() {
         request = new StringLikeRequest("x", "AA");
-        FastSelect.Column column = new FastSelect.Column("x", String.class);
+        FastSelect.Column column = new FastSelect.Column("x", String.class, 1000);
         data = (StringData) column.data;
         request.column = column;
         request.prepare();

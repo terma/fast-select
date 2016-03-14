@@ -29,7 +29,7 @@ public class ShortBetweenRequestTest {
     @Before
     public void init() {
         request = new ShortBetweenRequest("x", (short) 1, (short) 10);
-        FastSelect.Column column = new FastSelect.Column("x", short.class);
+        FastSelect.Column column = new FastSelect.Column("x", short.class, 1000);
         data = (ShortData) column.data;
         request.column = column;
         request.prepare();
