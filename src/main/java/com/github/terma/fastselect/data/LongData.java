@@ -20,12 +20,18 @@ import java.util.Arrays;
 
 public class LongData implements Data {
 
+    private final int inc;
+
     public long[] data = new long[16];
     public int size = 0;
 
+    public LongData(int inc) {
+        this.inc = inc;
+    }
+
     public void add(long v) {
         if (size == data.length) {
-            data = Arrays.copyOf(data, size + INC);
+            data = Arrays.copyOf(data, size + inc);
         }
         data[size] = v;
         size++;
@@ -54,8 +60,22 @@ public class LongData implements Data {
     }
 
     @Override
+    public void compact() {
+        data = Arrays.copyOf(data, size);
+    }
+
+    @Override
     public int size() {
         return size;
     }
 
+    @Override
+    public int allocatedSize() {
+        return data.length;
+    }
+
+    @Override
+    public int memSize() {
+        return OBJECT_HEADER_BYTES + REFERENCE_BYTES + INT_BYTES + data.length * LONG_BYTES;
+    }
 }

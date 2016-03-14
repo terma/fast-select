@@ -20,8 +20,13 @@ import java.util.Arrays;
 
 public class MultiLongData implements Data {
 
-    public IntData index = new IntData();
-    public LongData data = new LongData();
+    public IntData index;
+    public LongData data;
+
+    public MultiLongData(final int inc) {
+        index = new IntData(inc);
+        data = new LongData(inc);
+    }
 
     public void add(long[] values) {
         index.add(data.size); // store index of first element of data
@@ -73,7 +78,23 @@ public class MultiLongData implements Data {
     }
 
     @Override
+    public void compact() {
+        index.compact();
+        data.compact();
+    }
+
+    @Override
     public int size() {
         return index.size();
+    }
+
+    @Override
+    public int allocatedSize() {
+        return index.allocatedSize();
+    }
+
+    @Override
+    public int memSize() {
+        return 0;
     }
 }

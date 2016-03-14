@@ -19,7 +19,11 @@ package com.github.terma.fastselect.data;
 public class StringData implements Data {
 
     private static final byte[] ZERO = new byte[0];
-    private final MultiByteData data = new MultiByteData();
+    private final MultiByteData data;
+
+    public StringData(final int inc) {
+        data = new MultiByteData(inc);
+    }
 
     public void add(String v) {
         final byte[] bytes = v == null ? ZERO : v.getBytes();
@@ -47,6 +51,11 @@ public class StringData implements Data {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public void compact() {
+        data.compact();
+    }
+
     public byte[] getRaw(int position) {
         return (byte[]) data.get(position);
     }
@@ -56,4 +65,13 @@ public class StringData implements Data {
         return data.size();
     }
 
+    @Override
+    public int allocatedSize() {
+        return data.allocatedSize();
+    }
+
+    @Override
+    public int memSize() {
+        return data.memSize();
+    }
 }

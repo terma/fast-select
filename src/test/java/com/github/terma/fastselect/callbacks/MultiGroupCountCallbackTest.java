@@ -16,22 +16,22 @@ public class MultiGroupCountCallbackTest {
 
     @Test(expected = NegativeArraySizeException.class)
     public void throwExceptionIfOneGroup() {
-        FastSelect.Column column = new FastSelect.Column("x", int.class);
+        FastSelect.Column column = new FastSelect.Column("x", int.class, 100);
         new MultiGroupCountCallback(column);
     }
 
     @Test
     public void empty() {
-        FastSelect.Column column1 = new FastSelect.Column("1", int.class);
-        FastSelect.Column column2 = new FastSelect.Column("2", int.class);
+        FastSelect.Column column1 = new FastSelect.Column("1", int.class, 100);
+        FastSelect.Column column2 = new FastSelect.Column("2", int.class, 100);
         MultiGroupCountCallback multiGroupCountCallback = new MultiGroupCountCallback(column1, column2);
         Assert.assertEquals(new HashMap<>(), multiGroupCountCallback.getCounters());
     }
 
     @Test
     public void nonEmpty() {
-        FastSelect.Column column1 = new FastSelect.Column("1", int.class);
-        FastSelect.Column column2 = new FastSelect.Column("2", int.class);
+        FastSelect.Column column1 = new FastSelect.Column("1", int.class, 100);
+        FastSelect.Column column2 = new FastSelect.Column("2", int.class, 100);
         ((IntData) column1.data).add(1);
         ((IntData) column2.data).add(2);
 
@@ -46,8 +46,8 @@ public class MultiGroupCountCallbackTest {
 
     @Test
     public void nonEmptyMulti() {
-        FastSelect.Column column1 = new FastSelect.Column("1", int.class);
-        FastSelect.Column column2 = new FastSelect.Column("2", int.class);
+        FastSelect.Column column1 = new FastSelect.Column("1", int.class, 100);
+        FastSelect.Column column2 = new FastSelect.Column("2", int.class, 100);
         ((IntData) column1.data).add(1);
         ((IntData) column2.data).add(2);
 
@@ -69,8 +69,8 @@ public class MultiGroupCountCallbackTest {
 
     @Test(expected = ArrayIndexOutOfBoundsException.class)
     public void throwExceptionIfNotExistentPosition() {
-        FastSelect.Column column1 = new FastSelect.Column("1", int.class);
-        FastSelect.Column column2 = new FastSelect.Column("2", int.class);
+        FastSelect.Column column1 = new FastSelect.Column("1", int.class, 100);
+        FastSelect.Column column2 = new FastSelect.Column("2", int.class, 100);
 
         MultiGroupCountCallback multiGroupCountCallback = new MultiGroupCountCallback(column1, column2);
         multiGroupCountCallback.data(66);

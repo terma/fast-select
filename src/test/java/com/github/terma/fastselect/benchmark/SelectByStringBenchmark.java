@@ -18,6 +18,7 @@ package com.github.terma.fastselect.benchmark;
 
 import com.github.terma.fastselect.AbstractRequest;
 import com.github.terma.fastselect.FastSelect;
+import com.github.terma.fastselect.FastSelectBuilder;
 import com.github.terma.fastselect.StringRequest;
 import com.github.terma.fastselect.callbacks.CounterCallback;
 import com.github.terma.fastselect.data.IntStringData;
@@ -52,7 +53,7 @@ public class SelectByStringBenchmark {
 
     @Setup
     public void init() throws InterruptedException {
-        fastSelect = new FastSelect<>(IntStringData.class);
+        fastSelect = new FastSelectBuilder<>(IntStringData.class).inc(volume).create();
 
         List<IntStringData> example = new ArrayList<>();
         for (int i = 0; i < volume; i++) {

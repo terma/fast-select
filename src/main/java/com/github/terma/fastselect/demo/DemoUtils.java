@@ -16,10 +16,7 @@ limitations under the License.
 
 package com.github.terma.fastselect.demo;
 
-import com.github.terma.fastselect.AbstractRequest;
-import com.github.terma.fastselect.ByteRequest;
-import com.github.terma.fastselect.FastSelect;
-import com.github.terma.fastselect.IntRequest;
+import com.github.terma.fastselect.*;
 import com.github.terma.fastselect.utils.MemMeter;
 import com.github.terma.fastselect.utils.RoundValue;
 import com.github.terma.fastselect.utils.SpecialRandom;
@@ -29,13 +26,13 @@ import java.util.List;
 
 public abstract class DemoUtils {
 
-    public static FastSelect<DemoData> createFastSelect(int[] blockSizes, int itemsToCreate) {
+    public static FastSelect<DemoData> createFastSelect(int blockSize, int itemsToCreate) {
         System.out.println("Filler started");
 
         final MemMeter memMeter = new MemMeter();
         final long start = System.currentTimeMillis();
 
-        FastSelect<DemoData> database = new FastSelect<>(blockSizes, DemoData.class);
+        FastSelect<DemoData> database =  new FastSelectBuilder<>(DemoData.class).blockSize(blockSize).create();
 
         final List<DemoData> data = new ArrayList<>();
 

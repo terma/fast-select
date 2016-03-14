@@ -18,7 +18,13 @@ package com.github.terma.fastselect.data;
 
 public interface Data {
 
-    int INC = 10000000;
+    int DEFAULT_SIZE = 16;
+
+    int OBJECT_HEADER_BYTES = 16;
+    int REFERENCE_BYTES = 8;
+    int SHORT_BYTES = 2;
+    int INT_BYTES = 4;
+    int LONG_BYTES = 8;
 
     boolean check(int position, int[] values);
 
@@ -28,6 +34,17 @@ public interface Data {
 
     int compare(int position1, int position2);
 
+    void compact();
+
     int size();
+
+    int allocatedSize();
+
+    /**
+     * Approximate size of Data structure in memory.
+     *
+     * @return - size in bytes
+     */
+    int memSize();
 
 }

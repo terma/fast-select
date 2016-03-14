@@ -29,7 +29,7 @@ public class IntBetweenRequestTest {
     @Before
     public void init() {
         request = new IntBetweenRequest("x", 1, 10);
-        FastSelect.Column column = new FastSelect.Column("x", int.class);
+        FastSelect.Column column = new FastSelect.Column("x", int.class, 1000);
         data = (IntData) column.data;
         request.column = column;
         request.prepare();

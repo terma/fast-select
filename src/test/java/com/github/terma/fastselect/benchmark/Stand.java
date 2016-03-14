@@ -21,7 +21,7 @@ import com.github.terma.fastselect.data.IntData;
 public class Stand {
 
     public static void main(String[] args) {
-        IntData intData = new IntData();
+        IntData intData = new IntData(1000);
         for (int i = 0; i < 1000; i++) {
             intData.allocate(1);
             intData.set(i, 12);

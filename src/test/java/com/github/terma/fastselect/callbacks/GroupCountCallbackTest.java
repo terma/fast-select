@@ -11,14 +11,14 @@ public class GroupCountCallbackTest {
 
     @Test
     public void empty() {
-        FastSelect.Column column1 = new FastSelect.Column("1", int.class);
+        FastSelect.Column column1 = new FastSelect.Column("1", int.class, 100);
         GroupCountCallback groupCountCallback = new GroupCountCallback(column1);
         Assert.assertEquals(new HashMap<>(), groupCountCallback.getCounters());
     }
 
     @Test
     public void nonEmpty() {
-        FastSelect.Column column1 = new FastSelect.Column("1", int.class);
+        FastSelect.Column column1 = new FastSelect.Column("1", int.class, 100);
         ((IntData) column1.data).add(1);
 
         GroupCountCallback multiGroupCountCallback = new GroupCountCallback(column1);
@@ -30,7 +30,7 @@ public class GroupCountCallbackTest {
 
     @Test
     public void nonEmptyMulti() {
-        FastSelect.Column column1 = new FastSelect.Column("1", int.class);
+        FastSelect.Column column1 = new FastSelect.Column("1", int.class, 100);
         ((IntData) column1.data).add(1);
         ((IntData) column1.data).add(5);
 
@@ -47,7 +47,7 @@ public class GroupCountCallbackTest {
 
     @Test(expected = ArrayIndexOutOfBoundsException.class)
     public void throwExceptionIfNotExistentPosition() {
-        FastSelect.Column column1 = new FastSelect.Column("1", int.class);
+        FastSelect.Column column1 = new FastSelect.Column("1", int.class, 100);
 
         GroupCountCallback groupCountCallback = new GroupCountCallback(column1);
         groupCountCallback.data(66);

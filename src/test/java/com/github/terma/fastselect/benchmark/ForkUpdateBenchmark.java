@@ -47,11 +47,7 @@ public class ForkUpdateBenchmark {
     }
 
     static FastSelect<DemoData> initDatabase(int blockSize, int volume) {
-        return initDatabase(new int[]{blockSize}, volume);
-    }
-
-    static FastSelect<DemoData> initDatabase(int[] blockSizes, int volume) {
-        return DemoUtils.createFastSelect(blockSizes, volume);
+        return DemoUtils.createFastSelect(blockSize, volume);
     }
 
     @Setup

@@ -29,7 +29,7 @@ public class ByteBetweenRequestTest {
     @Before
     public void init() {
         request = new ByteBetweenRequest("x", (byte) 1, (byte) 10);
-        FastSelect.Column column = new FastSelect.Column("x", byte.class);
+        FastSelect.Column column = new FastSelect.Column("x", byte.class, 1000);
         data = (ByteData) column.data;
         request.column = column;
         request.prepare();

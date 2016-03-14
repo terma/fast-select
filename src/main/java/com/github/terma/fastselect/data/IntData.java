@@ -20,12 +20,18 @@ import java.util.Arrays;
 
 public class IntData implements Data {
 
+    private final int inc;
+
     public int[] data = new int[16];
     public int size = 0;
 
+    public IntData(int inc) {
+        this.inc = inc;
+    }
+
     public void allocate(int additionalSize) {
         size += additionalSize;
-        while (size > data.length) data = Arrays.copyOf(data, size + INC);
+        while (size > data.length) data = Arrays.copyOf(data, size + inc);
     }
 
     public void set(int index, int v) {
@@ -34,7 +40,7 @@ public class IntData implements Data {
 
     public void add(int v) {
         if (size == data.length) {
-            data = Arrays.copyOf(data, size + INC);
+            data = Arrays.copyOf(data, size + inc);
         }
         data[size] = v;
         size++;
@@ -62,8 +68,22 @@ public class IntData implements Data {
     }
 
     @Override
+    public void compact() {
+        data = Arrays.copyOf(data, size);
+    }
+
+    @Override
     public int size() {
         return size;
     }
 
+    @Override
+    public int allocatedSize() {
+        return data.length;
+    }
+
+    @Override
+    public int memSize() {
+        return OBJECT_HEADER_BYTES + REFERENCE_BYTES + INT_BYTES + data.length * INT_BYTES;
+    }
 }
