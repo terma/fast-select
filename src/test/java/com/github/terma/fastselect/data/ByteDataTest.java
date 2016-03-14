@@ -45,10 +45,10 @@ public class ByteDataTest {
     @Test
     public void provideMemSize() {
         ByteData data = new ByteData(100);
-        Assert.assertEquals(44, data.memSize());
+        Assert.assertEquals(44, data.mem());
 
         for (byte i = 0; i < 50; i++) data.add(i);
-        Assert.assertEquals(144, data.memSize());
+        Assert.assertEquals(144, data.mem());
     }
 
 }

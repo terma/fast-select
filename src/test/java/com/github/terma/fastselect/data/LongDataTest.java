@@ -45,10 +45,10 @@ public class LongDataTest {
     @Test
     public void provideMemSize() {
         LongData data = new LongData(100);
-        Assert.assertEquals(156, data.memSize());
+        Assert.assertEquals(156, data.mem());
 
         for (short i = 0; i < 50; i++) data.add(i);
-        Assert.assertEquals(956, data.memSize());
+        Assert.assertEquals(956, data.mem());
     }
 
 }

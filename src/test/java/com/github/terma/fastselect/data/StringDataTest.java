@@ -45,10 +45,10 @@ public class StringDataTest {
     @Test
     public void provideMemSize() {
         StringData data = new StringData(100);
-        Assert.assertEquals(168, data.memSize());
+        Assert.assertEquals(168, data.mem());
 
         for (short i = 0; i < 50; i++) data.add(String.valueOf(i));
-        Assert.assertEquals(668, data.memSize());
+        Assert.assertEquals(668, data.mem());
     }
 
 }

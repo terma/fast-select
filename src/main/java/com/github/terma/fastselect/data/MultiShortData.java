@@ -94,7 +94,7 @@ public class MultiShortData implements Data {
     }
 
     @Override
-    public int memSize() {
+    public long mem() {
         return 0;
     }
 }

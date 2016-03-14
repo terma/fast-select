@@ -71,7 +71,7 @@ public class StringData implements Data {
     }
 
     @Override
-    public int memSize() {
-        return data.memSize();
+    public long mem() {
+        return data.mem();
     }
 }

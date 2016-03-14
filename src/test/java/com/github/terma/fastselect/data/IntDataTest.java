@@ -45,10 +45,10 @@ public class IntDataTest {
     @Test
     public void provideMemSize() {
         IntData data = new IntData(100);
-        Assert.assertEquals(92, data.memSize());
+        Assert.assertEquals(92, data.mem());
 
         for (int i = 0; i < 50; i++) data.add(i);
-        Assert.assertEquals(492, data.memSize());
+        Assert.assertEquals(492, data.mem());
     }
 
 }

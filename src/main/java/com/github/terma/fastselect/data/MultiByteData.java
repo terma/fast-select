@@ -94,8 +94,8 @@ public class MultiByteData implements Data {
     }
 
     @Override
-    public int memSize() {
-        return OBJECT_HEADER_BYTES + 2 * REFERENCE_BYTES + index.memSize() + data.memSize();
+    public long mem() {
+        return OBJECT_HEADER_BYTES + 2 * REFERENCE_BYTES + index.mem() + data.mem();
     }
 
 }

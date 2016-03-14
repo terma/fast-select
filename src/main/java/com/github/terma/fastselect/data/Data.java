@@ -45,6 +45,6 @@ public interface Data {
      *
      * @return - size in bytes
      */
-    int memSize();
+    long mem();
 
 }

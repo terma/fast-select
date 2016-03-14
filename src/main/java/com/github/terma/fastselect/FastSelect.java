@@ -267,6 +267,12 @@ public final class FastSelect<T> {
         return columns.iterator().next().data.size();
     }
 
+    public long mem() {
+        long mem = 0;
+        for (final Column column : columns) mem += column.mem();
+        return mem;
+    }
+
     public Map<String, Column> getColumnsByNames() {
         return columnsByNames;
     }
@@ -371,6 +377,18 @@ public final class FastSelect<T> {
 
         public int allocatedSize() {
             return data.allocatedSize();
+        }
+
+        public long mem() {
+            return data.mem();
+        }
+
+        public int size() {
+            return data.size();
+        }
+
+        public Class getType() {
+            return type;
         }
     }
 

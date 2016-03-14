@@ -45,10 +45,10 @@ public class ShortDataTest {
     @Test
     public void provideMemSize() {
         ShortData data = new ShortData(100);
-        Assert.assertEquals(60, data.memSize());
+        Assert.assertEquals(60, data.mem());
 
         for (short i = 0; i < 50; i++) data.add(i);
-        Assert.assertEquals(260, data.memSize());
+        Assert.assertEquals(260, data.mem());
     }
 
 }

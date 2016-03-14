@@ -28,6 +28,7 @@ public class FastSelectBuilder<T> {
     public static final int DEFAULT_INC = 300000;
 
     private final Class<T> dataClass;
+
     private int blockSize = DEFAULT_BLOCK_SIZE;
     private int inc = DEFAULT_INC;
     private List<FastSelect.Column> columns;
