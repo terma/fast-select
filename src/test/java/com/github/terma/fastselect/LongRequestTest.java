@@ -122,4 +122,11 @@ public class LongRequestTest {
         Assert.assertFalse(longRequest.inBlock(range));
     }
 
+    @Test
+    public void provideToString() {
+        LongRequest longRequest = createRequest(column, -2, -1);
+
+        Assert.assertEquals("{name: x, values: [-2, -1]}", longRequest.toString());
+    }
+
 }
