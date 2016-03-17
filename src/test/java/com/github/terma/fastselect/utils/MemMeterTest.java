@@ -30,7 +30,7 @@ public class MemMeterTest {
     @Test
     public void provideDeltaOfUsedMem() {
         MemMeter memMeter = new MemMeter();
-        long[] data = new long[1000000];
+        long[] data = new long[9000000];
         Assert.assertTrue(memMeter.getUsed() > 0);
         Assert.assertTrue(data.length > 0);
     }
