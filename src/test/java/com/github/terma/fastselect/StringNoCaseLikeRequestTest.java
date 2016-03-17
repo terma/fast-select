@@ -21,6 +21,8 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.BitSet;
+
 public class StringNoCaseLikeRequestTest {
 
     private StringData data;
@@ -42,6 +44,11 @@ public class StringNoCaseLikeRequestTest {
         Assert.assertTrue(request.checkValue(0));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void cantBeUsedToSearchNull() {
+        new StringNoCaseLikeRequest("x", null);
+    }
+
     @Test
     public void acceptSubstringValue() {
         data.add("AAA");
@@ -61,6 +68,17 @@ public class StringNoCaseLikeRequestTest {
         data.add("G");
 
         Assert.assertFalse(request.checkValue(0));
+    }
+
+    @Test
+    public void alwaysAcceptInBlock() {
+        Assert.assertTrue(request.inBlock((BitSet) null));
+        Assert.assertTrue(request.inBlock(new BitSet()));
+    }
+
+    @Test
+    public void provideUsefulToString() {
+        Assert.assertEquals("StringNoCaseLikeRequest {name: x, like: aa}", request.toString());
     }
 
 }

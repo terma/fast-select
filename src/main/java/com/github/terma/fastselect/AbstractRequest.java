@@ -37,9 +37,13 @@ public abstract class AbstractRequest {
      * @param bitSet - block bitmap (we use it only for numeric types)
      * @return - true if block could contains data good for request
      */
-    abstract boolean inBlock(BitSet bitSet);
+    boolean inBlock(BitSet bitSet) {
+        return true;
+    }
 
-    boolean inBlock(Range range) {return true;}
+    boolean inBlock(Range range) {
+        return true;
+    }
 
     /**
      * Method for internal usage.
@@ -52,6 +56,9 @@ public abstract class AbstractRequest {
     /**
      * Method for internal usage. Prepare request state to scan through data set
      */
-    abstract void prepare();
+    void prepare() {
+    }
+
+    ;
 
 }

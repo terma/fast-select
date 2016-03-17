@@ -18,27 +18,24 @@ package com.github.terma.fastselect;
 
 import com.github.terma.fastselect.data.StringData;
 
-import java.util.BitSet;
-
 /**
  * SQL analog <code>where lowerCase(STRING_FIELD) like lowerCase('%SUBSTRING%')</code>
+ * <p>
+ * Implemented as full scan
  * <p>
  * Case sensitive like select use {@link StringLikeRequest}
  * Case sensitive exact select use {@link StringRequest}
  */
+@SuppressWarnings("WeakerAccess")
 public class StringNoCaseLikeRequest extends AbstractRequest {
 
     private final String like;
 
     public StringNoCaseLikeRequest(String name, String like) {
         super(name);
-        this.like = like.toLowerCase();
-    }
 
-    @Override
-    boolean inBlock(final BitSet bitSet) {
-        // todo try to use block info for string filter, now just always goto full scan
-        return true;
+        if (like == null) throw new IllegalArgumentException("Can't search null string!");
+        this.like = like.toLowerCase();
     }
 
     @Override
@@ -46,10 +43,6 @@ public class StringNoCaseLikeRequest extends AbstractRequest {
         StringData data = (StringData) column.data;
         String value = (String) data.get(position);
         return value.toLowerCase().contains(like);
-    }
-
-    @Override
-    void prepare() {
     }
 
     @Override
