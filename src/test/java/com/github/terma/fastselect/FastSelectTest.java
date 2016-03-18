@@ -404,7 +404,7 @@ public class FastSelectTest {
                 new LongMultiValues(new long[]{1, 2}),
                 new LongMultiValues(new long[]{11, 12})));
 
-        List<LongMultiValues> r = database.select(new AbstractRequest[]{new Request("a", new int[]{12})});
+        List<LongMultiValues> r = database.select(new AbstractRequest[]{new MultiLongRequest("a", 12)});
 
         Assert.assertEquals(r, singletonList(new LongMultiValues(new long[]{11, 12})));
     }
@@ -419,7 +419,7 @@ public class FastSelectTest {
                 new LongMultiValues(new long[]{1, 0})
         ));
 
-        List<LongMultiValues> r = database.select(new AbstractRequest[]{new Request("a", new int[]{12})});
+        List<LongMultiValues> r = database.select(new AbstractRequest[]{new MultiLongRequest("a", 12)});
 
         Assert.assertEquals(asList(new LongMultiValues(new long[]{11, 12}), new LongMultiValues(new long[]{33, 12})), r);
     }
@@ -428,20 +428,21 @@ public class FastSelectTest {
     public void supportsLongMultiValuesColumnsManyCriteria() {
         FastSelect<LongMultiValues> database = new FastSelectBuilder<>(LongMultiValues.class).blockSize(1).create();
         database.addAll(asList(
-                new LongMultiValues(new long[]{1, 2}),
-                new LongMultiValues(new long[]{11, 12}),
-                new LongMultiValues(new long[]{33, 12}),
-                new LongMultiValues(new long[]{1, 0})
+                new LongMultiValues(new long[]{Long.MIN_VALUE, 2}),
+                new LongMultiValues(new long[]{11, Long.MAX_VALUE}),
+                new LongMultiValues(new long[]{33, Long.MAX_VALUE}),
+                new LongMultiValues(new long[]{Long.MIN_VALUE, 0})
         ));
 
-        List<LongMultiValues> r = database.select(new AbstractRequest[]{new Request("a", new int[]{1, 12})});
+        List<LongMultiValues> r = database.select(new AbstractRequest[]{
+                new MultiLongRequest("a", Long.MIN_VALUE, Long.MAX_VALUE)});
 
         Assert.assertEquals(
                 asList(
-                        new LongMultiValues(new long[]{1, 2}),
-                        new LongMultiValues(new long[]{11, 12}),
-                        new LongMultiValues(new long[]{33, 12}),
-                        new LongMultiValues(new long[]{1, 0})),
+                        new LongMultiValues(new long[]{Long.MIN_VALUE, 2}),
+                        new LongMultiValues(new long[]{11, Long.MAX_VALUE}),
+                        new LongMultiValues(new long[]{33, Long.MAX_VALUE}),
+                        new LongMultiValues(new long[]{Long.MIN_VALUE, 0})),
                 r);
     }
 

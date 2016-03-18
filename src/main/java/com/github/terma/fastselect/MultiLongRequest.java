@@ -16,23 +16,23 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
-import com.github.terma.fastselect.data.MultiShortData;
+import com.github.terma.fastselect.data.MultiLongData;
 
 import java.util.Arrays;
 
 /**
- * For {code}short[]{code} data type. Storage implementation is {@link MultiShortData}
+ * For {code}long[]{code} data type. Storage implementation is {@link MultiLongData}
  * <p>
  * SQL analog is {code}where COLUMN_X in (?, ?...){code}
  */
 @SuppressWarnings("WeakerAccess")
-public class MultiShortRequest extends AbstractRequest {
+public class MultiLongRequest extends AbstractRequest {
 
-    private final short[] values;
-    private MultiShortData data;
-    private short[] realData;
+    private final long[] values;
+    private MultiLongData data;
+    private long[] realData;
 
-    public MultiShortRequest(final String name, final short... values) {
+    public MultiLongRequest(final String name, final long... values) {
         super(name);
         this.values = values;
     }
@@ -50,7 +50,7 @@ public class MultiShortRequest extends AbstractRequest {
 
     @Override
     public void prepare() {
-        data = ((MultiShortData) column.data);
+        data = ((MultiLongData) column.data);
         realData = data.data.data;
     }
 

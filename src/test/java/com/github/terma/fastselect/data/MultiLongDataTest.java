@@ -19,55 +19,56 @@ package com.github.terma.fastselect.data;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class MultiShortDataTest {
+public class MultiLongDataTest {
 
     @Test
     public void provideAllocatedSize() {
-        MultiShortData data = new MultiShortData(100);
+        MultiLongData data = new MultiLongData(100);
         Assert.assertEquals(Data.DEFAULT_SIZE, data.allocatedSize());
 
-        for (byte i = 0; i < 50; i++) data.add(new short[]{i});
+        for (byte i = 0; i < 50; i++) data.add(new long[]{i});
         Assert.assertEquals(Data.DEFAULT_SIZE + 100, data.allocatedSize());
     }
 
     @Test
     public void supportCompact() {
-        MultiShortData data = new MultiShortData(100);
-        for (byte i = 0; i < 17; i++) data.add(new short[]{i});
+        MultiLongData data = new MultiLongData(100);
+        for (byte i = 0; i < 17; i++) data.add(new long[]{i});
         Assert.assertEquals(116, data.allocatedSize());
 
         data.compact();
 
         Assert.assertEquals(17, data.allocatedSize());
-        for (byte i = 0; i < data.size(); i++) Assert.assertArrayEquals(new short[]{i}, (short[]) data.get(i));
+        for (byte i = 0; i < data.size(); i++) Assert.assertArrayEquals(new long[]{i}, (long[]) data.get(i));
     }
 
     @Test
     public void provideMemSize() {
-        MultiShortData data = new MultiShortData(100);
-        Assert.assertEquals(184, data.mem());
+        MultiLongData data = new MultiLongData(100);
+        Assert.assertEquals(280, data.mem());
 
-        for (byte i = 0; i < 50; i++) data.add(new short[]{i});
-        Assert.assertEquals(784, data.mem());
+        for (byte i = 0; i < 50; i++) data.add(new long[] {i});
+        Assert.assertEquals(1480, data.mem());
     }
 
     @Test
     public void provideInc() {
-        Assert.assertEquals(33, new MultiShortData(33).inc());
+        Assert.assertEquals(33, new MultiLongData(33).inc());
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void dontSupportCompare() {
-        new MultiShortData(22).compare(0, 1);
+        new MultiLongData(22).compare(0, 1);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void dontSupportPlainCheckAsOldApproach() {
-        new MultiShortData(22).plainCheck(0, null);
+        new MultiLongData(22).plainCheck(0, null);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void dontSupportCheckAsOldApproach() {
-        new MultiShortData(22).check(0, null);
+        new MultiLongData(22).check(0, null);
     }
+
 }

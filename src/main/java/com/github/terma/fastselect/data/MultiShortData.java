@@ -45,12 +45,12 @@ public class MultiShortData implements Data {
 
     @Override
     public boolean check(int position, int[] values) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Please use with MultiShortRequest!");
     }
 
     @Override
     public boolean plainCheck(int position, byte[] values) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Please use with MultiShortRequest!");
     }
 
     @Override

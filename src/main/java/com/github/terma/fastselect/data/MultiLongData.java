@@ -16,8 +16,6 @@ limitations under the License.
 
 package com.github.terma.fastselect.data;
 
-import java.util.Arrays;
-
 public class MultiLongData implements Data {
 
     public IntData index;
@@ -43,24 +41,12 @@ public class MultiLongData implements Data {
 
     @Override
     public boolean check(int position, int[] values) {
-        int dataStartPosition = getDataStart(position);
-        int dataEndPosition = getDataEnd(position);
-        for (int i = dataStartPosition; i < dataEndPosition; i++) {
-            if (Arrays.binarySearch(values, (int) data.data[i]) >= 0) return true;
-        }
-        return false;
+        throw new UnsupportedOperationException("Please use with MultiLongRequest!");
     }
 
     @Override
     public boolean plainCheck(int position, byte[] values) {
-        int dataStartPosition = getDataStart(position);
-        int dataEndPosition = getDataEnd(position);
-        for (int i = dataStartPosition; i < dataEndPosition; i++) {
-            // todo will work when data in int range need to fix that
-            int value = (int) data.data[i];
-            if (value < values.length && values[value] > 0) return true;
-        }
-        return false;
+        throw new UnsupportedOperationException("Please use with MultiLongRequest!");
     }
 
     @Override
@@ -95,7 +81,7 @@ public class MultiLongData implements Data {
 
     @Override
     public long mem() {
-        return 0;
+        return OBJECT_HEADER_BYTES + 2 * REFERENCE_BYTES + index.mem() + data.mem();
     }
 
     @Override
