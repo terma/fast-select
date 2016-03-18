@@ -77,4 +77,10 @@ public class ShortData implements Data {
     public long mem() {
         return OBJECT_HEADER_BYTES + REFERENCE_BYTES + INT_BYTES + data.length * SHORT_BYTES;
     }
+
+    @Override
+    public int inc() {
+        return inc;
+    }
+
 }

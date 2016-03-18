@@ -97,4 +97,10 @@ public class MultiLongData implements Data {
     public long mem() {
         return 0;
     }
+
+    @Override
+    public int inc() {
+        return index.inc();
+    }
+
 }

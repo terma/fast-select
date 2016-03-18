@@ -74,4 +74,9 @@ public class StringData implements Data {
     public long mem() {
         return data.mem();
     }
+
+    @Override
+    public int inc() {
+        return data.inc();
+    }
 }

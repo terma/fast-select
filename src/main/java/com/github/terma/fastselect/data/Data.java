@@ -47,4 +47,6 @@ public interface Data {
      */
     long mem();
 
+    int inc();
+
 }

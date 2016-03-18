@@ -97,4 +97,11 @@ public class MultiShortData implements Data {
     public long mem() {
         return 0;
     }
+
+
+    @Override
+    public int inc() {
+        return index.inc();
+    }
+
 }

@@ -98,4 +98,9 @@ public class MultiByteData implements Data {
         return OBJECT_HEADER_BYTES + 2 * REFERENCE_BYTES + index.mem() + data.mem();
     }
 
+    @Override
+    public int inc() {
+        return index.inc();
+    }
+
 }

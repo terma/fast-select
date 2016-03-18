@@ -86,4 +86,9 @@ public class IntData implements Data {
     public long mem() {
         return OBJECT_HEADER_BYTES + REFERENCE_BYTES + INT_BYTES + data.length * INT_BYTES;
     }
+
+    @Override
+    public int inc() {
+        return inc;
+    }
 }

@@ -89,4 +89,9 @@ public class ByteData implements Data {
         return OBJECT_HEADER_BYTES + REFERENCE_BYTES + INT_BYTES + data.length;
     }
 
+    @Override
+    public int inc() {
+        return inc;
+    }
+
 }
