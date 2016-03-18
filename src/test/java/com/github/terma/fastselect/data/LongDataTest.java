@@ -51,4 +51,9 @@ public class LongDataTest {
         Assert.assertEquals(956, data.mem());
     }
 
+    @Test
+    public void provideInc() {
+        Assert.assertEquals(33, new LongData(33).inc());
+    }
+
 }

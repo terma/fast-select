@@ -51,4 +51,9 @@ public class ByteDataTest {
         Assert.assertEquals(144, data.mem());
     }
 
+    @Test
+    public void provideInc() {
+        Assert.assertEquals(33, new ByteData(33).inc());
+    }
+
 }

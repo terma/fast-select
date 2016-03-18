@@ -63,4 +63,9 @@ public class StringLikeRequestTest {
         Assert.assertFalse(request.checkValue(0));
     }
 
+    @Test
+    public void provideToString() {
+        Assert.assertEquals("StringLikeRequest {name: 'col', like: 'valLike'}", new StringLikeRequest("col", "valLike").toString());
+    }
+
 }

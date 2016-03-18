@@ -18,11 +18,13 @@ package com.github.terma.fastselect;
 
 import com.github.terma.fastselect.data.StringData;
 
-import java.util.BitSet;
-
 /**
  * SQL analog <code>where STRING_FIELD like '%SUBSTRING%'</code>
+ *
+ * @see StringNoCaseLikeRequest
+ * @see StringRequest
  */
+@SuppressWarnings("WeakerAccess")
 public class StringLikeRequest extends AbstractRequest {
 
     private final String like;
@@ -33,12 +35,6 @@ public class StringLikeRequest extends AbstractRequest {
     }
 
     @Override
-    boolean inBlock(final BitSet bitSet) {
-        // todo try to use block info for string filter, now just always goto full scan
-        return true;
-    }
-
-    @Override
     boolean checkValue(int position) {
         StringData data = (StringData) column.data;
         String value = (String) data.get(position);
@@ -46,12 +42,8 @@ public class StringLikeRequest extends AbstractRequest {
     }
 
     @Override
-    void prepare() {
-    }
-
-    @Override
     public String toString() {
-        return "StringLikeRequest {name: " + name + ", like: " + like + '}';
+        return "StringLikeRequest {name: '" + name + "', like: '" + like + "'}";
     }
 
 }

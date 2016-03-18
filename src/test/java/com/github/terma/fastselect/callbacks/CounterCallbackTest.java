@@ -21,4 +21,12 @@ public class CounterCallbackTest {
         Assert.assertEquals(3, counterCallback.getCount());
     }
 
+    @Test
+    public void provideToString() {
+        CounterCallback counterCallback = new CounterCallback();
+        counterCallback.data(1);
+        counterCallback.data(3);
+        Assert.assertEquals("CounterCallback {count: 2}", counterCallback.toString());
+    }
+
 }

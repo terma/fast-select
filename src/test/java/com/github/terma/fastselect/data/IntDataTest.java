@@ -51,4 +51,9 @@ public class IntDataTest {
         Assert.assertEquals(492, data.mem());
     }
 
+    @Test
+    public void provideInc() {
+        Assert.assertEquals(33, new IntData(33).inc());
+    }
+
 }

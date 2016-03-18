@@ -51,4 +51,9 @@ public class ShortDataTest {
         Assert.assertEquals(260, data.mem());
     }
 
+    @Test
+    public void provideInc() {
+        Assert.assertEquals(33, new ShortData(33).inc());
+    }
+
 }
