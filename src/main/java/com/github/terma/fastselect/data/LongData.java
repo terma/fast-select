@@ -38,18 +38,6 @@ public class LongData implements Data {
     }
 
     @Override
-    public boolean check(int position, int[] values) {
-        return Arrays.binarySearch(values, (int) data[position]) >= 0;
-    }
-
-    @Override
-    public boolean plainCheck(int position, byte[] values) {
-        // todo will work when data in int range need to fix that
-        int value = (int) data[position];
-        return value < values.length && values[value] > 0;
-    }
-
-    @Override
     public Object get(int position) {
         return data[position];
     }

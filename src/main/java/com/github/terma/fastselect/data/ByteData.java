@@ -49,17 +49,6 @@ public class ByteData implements Data {
     }
 
     @Override
-    public boolean check(int position, int[] values) {
-        return Arrays.binarySearch(values, data[position]) >= 0;
-    }
-
-    @Override
-    public boolean plainCheck(int position, byte[] values) {
-        byte value = data[position];
-        return value < values.length && values[value] > 0;
-    }
-
-    @Override
     public Object get(int position) {
         return data[position];
     }

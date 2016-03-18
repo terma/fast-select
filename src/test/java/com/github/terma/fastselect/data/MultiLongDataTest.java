@@ -61,14 +61,4 @@ public class MultiLongDataTest {
         new MultiLongData(22).compare(0, 1);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void dontSupportPlainCheckAsOldApproach() {
-        new MultiLongData(22).plainCheck(0, null);
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void dontSupportCheckAsOldApproach() {
-        new MultiLongData(22).check(0, null);
-    }
-
 }

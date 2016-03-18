@@ -43,16 +43,6 @@ public class MultiByteData implements Data {
     }
 
     @Override
-    public boolean check(int position, int[] values) {
-        throw new UnsupportedOperationException("Please use with MultiByteRequest!");
-    }
-
-    @Override
-    public boolean plainCheck(int position, byte[] values) {
-        throw new UnsupportedOperationException("Please use with MultiByteRequest!");
-    }
-
-    @Override
     public Object get(int position) {
         int start = getDataStart(position);
         int end = getDataEnd(position);

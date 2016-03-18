@@ -31,16 +31,6 @@ public class StringData implements Data {
     }
 
     @Override
-    public boolean check(int position, int[] values) {
-        throw new UnsupportedOperationException("String field doesn't support filter!");
-    }
-
-    @Override
-    public boolean plainCheck(int position, byte[] values) {
-        throw new UnsupportedOperationException("String field doesn't support filter!");
-    }
-
-    @Override
     public Object get(int position) {
         final byte[] bytes = getRaw(position);
         return new String(bytes);

@@ -61,14 +61,4 @@ public class MultiByteDataTest {
         new MultiByteData(22).compare(0, 1);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void dontSupportPlainCheckAsOldApproach() {
-        new MultiByteData(22).plainCheck(0, null);
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void dontSupportCheckAsOldApproach() {
-        new MultiByteData(22).check(0, null);
-    }
-
 }

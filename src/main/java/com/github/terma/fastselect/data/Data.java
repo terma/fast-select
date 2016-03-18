@@ -26,10 +26,6 @@ public interface Data {
     long INT_BYTES = 4;
     long LONG_BYTES = 8;
 
-    boolean check(int position, int[] values);
-
-    boolean plainCheck(int position, byte[] values);
-
     Object get(int position);
 
     int compare(int position1, int position2);
