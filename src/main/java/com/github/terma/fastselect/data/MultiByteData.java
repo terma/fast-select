@@ -16,8 +16,9 @@ limitations under the License.
 
 package com.github.terma.fastselect.data;
 
-import java.util.Arrays;
-
+/**
+ * @see com.github.terma.fastselect.MultiByteRequest
+ */
 public class MultiByteData implements Data {
 
     public final IntData index;
@@ -43,24 +44,12 @@ public class MultiByteData implements Data {
 
     @Override
     public boolean check(int position, int[] values) {
-        int dataStartPosition = getDataStart(position);
-        int dataEndPosition = getDataEnd(position);
-        for (int i = dataStartPosition; i < dataEndPosition; i++) {
-            if (Arrays.binarySearch(values, (int) data.data[i]) >= 0) return true;
-        }
-        return false;
+        throw new UnsupportedOperationException("Please use with MultiByteRequest!");
     }
 
     @Override
     public boolean plainCheck(int position, byte[] values) {
-        int dataStartPosition = getDataStart(position);
-        int dataEndPosition = getDataEnd(position);
-        for (int i = dataStartPosition; i < dataEndPosition; i++) {
-            int value = data.data[i];
-            if (value < values.length && values[value] > 0) return true;
-        }
-        return false;
-
+        throw new UnsupportedOperationException("Please use with MultiByteRequest!");
     }
 
     @Override

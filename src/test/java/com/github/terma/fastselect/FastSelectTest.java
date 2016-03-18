@@ -503,7 +503,7 @@ public class FastSelectTest {
                 new ByteMultiValues(new byte[]{1, 2}),
                 new ByteMultiValues(new byte[]{11, 12})));
 
-        List<ByteMultiValues> r = database.select(new AbstractRequest[]{new Request("a", new int[]{12})});
+        List<ByteMultiValues> r = database.select(new AbstractRequest[]{new MultiByteRequest("a", (byte) 12)});
 
         Assert.assertEquals(r, singletonList(new ByteMultiValues(new byte[]{11, 12})));
     }
@@ -518,7 +518,8 @@ public class FastSelectTest {
                 new ByteMultiValues(new byte[]{1, 0})
         ));
 
-        List<ByteMultiValues> r = database.select(new AbstractRequest[]{new Request("a", new int[]{12})});
+        List<ByteMultiValues> r = database.select(
+                new AbstractRequest[]{new MultiByteRequest("a", (byte) 12)});
 
         Assert.assertEquals(asList(new ByteMultiValues(new byte[]{11, 12}), new ByteMultiValues(new byte[]{33, 12})), r);
     }
@@ -533,7 +534,7 @@ public class FastSelectTest {
                 new ByteMultiValues(new byte[]{1, 0})
         ));
 
-        List<ByteMultiValues> r = database.select(new AbstractRequest[]{new Request("a", new int[]{1, 12})});
+        List<ByteMultiValues> r = database.select(new AbstractRequest[]{new MultiByteRequest("a", (byte) 1, (byte) 12)});
 
         Assert.assertEquals(
                 asList(
@@ -608,6 +609,7 @@ public class FastSelectTest {
         public byte value2;
 
         // empty constructor for database to be able restore object
+        @SuppressWarnings("unused")
         public TestIntByte() {
             this(0, (byte) 0);
         }
