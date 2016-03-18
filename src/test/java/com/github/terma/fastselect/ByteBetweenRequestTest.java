@@ -118,4 +118,9 @@ public class ByteBetweenRequestTest {
         Assert.assertFalse(request.inBlock(range));
     }
 
+    @Test
+    public void provideToString() {
+        Assert.assertEquals("{name: 'col', min: -12, max: 90}", new ByteBetweenRequest("col", (byte) -12, (byte) 90).toString());
+    }
+
 }

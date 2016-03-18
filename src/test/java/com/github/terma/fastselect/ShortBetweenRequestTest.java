@@ -118,4 +118,10 @@ public class ShortBetweenRequestTest {
         Assert.assertFalse(request.inBlock(range));
     }
 
+    @Test
+    public void provideToString() {
+        Assert.assertEquals("{name: 'col', min: -12, max: 32000}",
+                new ShortBetweenRequest("col", (short) -12, (short) 32000).toString());
+    }
+
 }

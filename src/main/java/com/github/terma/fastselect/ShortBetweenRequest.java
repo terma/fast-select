@@ -54,7 +54,7 @@ public class ShortBetweenRequest extends AbstractRequest {
 
     @Override
     public String toString() {
-        return "{name: " + name + ", min: " + min + ", max: " + max + '}';
+        return "{name: '" + name + "', min: " + min + ", max: " + max + '}';
     }
 
 }

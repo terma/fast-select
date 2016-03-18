@@ -22,6 +22,7 @@ import com.github.terma.fastselect.data.ByteData;
  * Math's analog is "a to []". Include min and max.
  * For equal select use {@link ByteRequest}
  */
+@SuppressWarnings("WeakerAccess")
 public class ByteBetweenRequest extends AbstractRequest {
 
     private final byte min;
@@ -53,7 +54,7 @@ public class ByteBetweenRequest extends AbstractRequest {
 
     @Override
     public String toString() {
-        return "{name: " + name + ", min: " + min + ", max: " + max + '}';
+        return "{name: '" + name + "', min: " + min + ", max: " + max + '}';
     }
 
 }

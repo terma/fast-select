@@ -22,6 +22,7 @@ import com.github.terma.fastselect.data.IntData;
  * Math's analog is "a to []". Include min and max.
  * For equal select use {@link IntRequest}
  */
+@SuppressWarnings("WeakerAccess")
 public class IntBetweenRequest extends AbstractRequest {
 
     private final int min;
@@ -53,7 +54,7 @@ public class IntBetweenRequest extends AbstractRequest {
 
     @Override
     public String toString() {
-        return "{name: " + name + ", min: " + min + ", max: " + max + '}';
+        return "{name: '" + name + "', min: " + min + ", max: " + max + '}';
     }
 
 }

@@ -118,4 +118,9 @@ public class IntBetweenRequestTest {
         Assert.assertFalse(request.inBlock(range));
     }
 
+    @Test
+    public void provideToString() {
+        Assert.assertEquals("{name: 'col', min: -12, max: 82222000}", new IntBetweenRequest("col", -12, 82222000).toString());
+    }
+
 }

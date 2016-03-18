@@ -116,4 +116,9 @@ public class LongBetweenRequestTest {
         Assert.assertFalse(request.inBlock(range));
     }
 
+    @Test
+    public void provideToString() {
+        Assert.assertEquals("{name: 'col', min: -12, max: 82222000}", new LongBetweenRequest("col", -12, 82222000).toString());
+    }
+
 }
