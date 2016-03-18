@@ -19,7 +19,6 @@ package com.github.terma.fastselect;
 import com.github.terma.fastselect.data.LongData;
 
 import java.util.Arrays;
-import java.util.BitSet;
 
 @SuppressWarnings("WeakerAccess")
 public class LongRequest extends AbstractRequest {
@@ -30,11 +29,6 @@ public class LongRequest extends AbstractRequest {
     public LongRequest(String name, long[] values) {
         super(name);
         this.values = values;
-    }
-
-    @Override
-    boolean inBlock(BitSet bitSet) {
-        return true;
     }
 
     @Override

@@ -18,12 +18,11 @@ package com.github.terma.fastselect;
 
 import com.github.terma.fastselect.data.LongData;
 
-import java.util.BitSet;
-
 /**
  * Math's analog is "a to []". Include min and max.
  * For equal select use {@link IntRequest}
  */
+@SuppressWarnings("WeakerAccess")
 public class LongBetweenRequest extends AbstractRequest {
 
     private final long min;
@@ -34,11 +33,6 @@ public class LongBetweenRequest extends AbstractRequest {
         super(name);
         this.min = min;
         this.max = max;
-    }
-
-    @Override
-    boolean inBlock(BitSet bitSet) {
-        return true;
     }
 
     @Override

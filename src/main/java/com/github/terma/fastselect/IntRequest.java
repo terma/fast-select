@@ -19,7 +19,6 @@ package com.github.terma.fastselect;
 import com.github.terma.fastselect.data.IntData;
 
 import java.util.Arrays;
-import java.util.BitSet;
 
 public class IntRequest extends AbstractRequest {
 
@@ -29,11 +28,6 @@ public class IntRequest extends AbstractRequest {
     public IntRequest(String name, int[] values) {
         super(name);
         this.values = values;
-    }
-
-    @Override
-    boolean inBlock(BitSet bitSet) {
-        return true;
     }
 
     @Override

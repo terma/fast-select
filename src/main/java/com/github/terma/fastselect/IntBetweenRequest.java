@@ -18,8 +18,6 @@ package com.github.terma.fastselect;
 
 import com.github.terma.fastselect.data.IntData;
 
-import java.util.BitSet;
-
 /**
  * Math's analog is "a to []". Include min and max.
  * For equal select use {@link IntRequest}
@@ -34,11 +32,6 @@ public class IntBetweenRequest extends AbstractRequest {
         super(name);
         this.min = min;
         this.max = max;
-    }
-
-    @Override
-    boolean inBlock(BitSet bitSet) {
-        return true;
     }
 
     @Override

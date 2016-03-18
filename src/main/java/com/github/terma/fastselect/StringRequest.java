@@ -19,7 +19,6 @@ package com.github.terma.fastselect;
 import com.github.terma.fastselect.data.StringData;
 
 import java.util.Arrays;
-import java.util.BitSet;
 
 /**
  * SQL analog <code>where STRING_FIELD = '???'</code>
@@ -32,12 +31,6 @@ public class StringRequest extends AbstractRequest {
     public StringRequest(String name, String value) {
         super(name);
         bytes = value.getBytes();
-    }
-
-    @Override
-    boolean inBlock(final BitSet bitSet) {
-        // todo try to use block info for string filter, now just always goto full scan
-        return true;
     }
 
     @Override
