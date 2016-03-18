@@ -36,18 +36,18 @@ public class LongBetweenRequest extends AbstractRequest {
     }
 
     @Override
-    boolean inBlock(Range range) {
+    public boolean inBlock(Range range) {
         return range.max >= min && range.min <= max;
     }
 
     @Override
-    boolean checkValue(int position) {
+    public boolean checkValue(int position) {
         final long value = data[position];
         return value >= min && value <= max;
     }
 
     @Override
-    void prepare() {
+    public void prepare() {
         // caching
         data = ((LongData) column.data).data;
     }

@@ -16,8 +16,10 @@ limitations under the License.
 
 package com.github.terma.fastselect.data;
 
-import java.util.Arrays;
-
+/**
+ * @see com.github.terma.fastselect.MultiShortRequest
+ */
+@SuppressWarnings("WeakerAccess")
 public class MultiShortData implements Data {
 
     public final IntData index;
@@ -43,23 +45,12 @@ public class MultiShortData implements Data {
 
     @Override
     public boolean check(int position, int[] values) {
-        int dataStartPosition = getDataStart(position);
-        int dataEndPosition = getDataEnd(position);
-        for (int i = dataStartPosition; i < dataEndPosition; i++) {
-            if (Arrays.binarySearch(values, (int) data.data[i]) >= 0) return true;
-        }
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean plainCheck(int position, byte[] values) {
-        int dataStartPosition = getDataStart(position);
-        int dataEndPosition = getDataEnd(position);
-        for (int i = dataStartPosition; i < dataEndPosition; i++) {
-            int value = data.data[i];
-            if (value < values.length && values[value] > 0) return true;
-        }
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -95,7 +86,7 @@ public class MultiShortData implements Data {
 
     @Override
     public long mem() {
-        return 0;
+        return OBJECT_HEADER_BYTES + 2 * REFERENCE_BYTES + index.mem() + data.mem();
     }
 
 

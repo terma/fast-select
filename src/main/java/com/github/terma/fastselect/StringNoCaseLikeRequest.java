@@ -39,7 +39,7 @@ public class StringNoCaseLikeRequest extends AbstractRequest {
     }
 
     @Override
-    boolean checkValue(int position) {
+    public  boolean checkValue(int position) {
         StringData data = (StringData) column.data;
         String value = (String) data.get(position);
         return value.toLowerCase().contains(like);

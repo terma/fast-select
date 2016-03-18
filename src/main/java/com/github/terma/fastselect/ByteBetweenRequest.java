@@ -36,18 +36,18 @@ public class ByteBetweenRequest extends AbstractRequest {
     }
 
     @Override
-    boolean inBlock(Range range) {
+    public boolean inBlock(Range range) {
         return range.max >= min && range.min <= max;
     }
 
     @Override
-    boolean checkValue(int position) {
+    public boolean checkValue(int position) {
         final byte value = data[position];
         return value >= min && value <= max;
     }
 
     @Override
-    void prepare() {
+    public void prepare() {
         // caching
         data = ((ByteData) column.data).data;
     }

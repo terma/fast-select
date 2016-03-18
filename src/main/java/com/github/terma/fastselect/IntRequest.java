@@ -31,18 +31,18 @@ public class IntRequest extends AbstractRequest {
     }
 
     @Override
-    boolean inBlock(Range range) {
+    public boolean inBlock(Range range) {
         return values[0] <= range.max && values[values.length - 1] >= range.min;
     }
 
     @Override
-    boolean checkValue(int position) {
+    public boolean checkValue(int position) {
         int value = data[position];
         return values[0] <= value && values[values.length - 1] >= value && Arrays.binarySearch(values, value) > -1;
     }
 
     @Override
-    void prepare() {
+    public void prepare() {
         // caching
         data = ((IntData) column.data).data;
 

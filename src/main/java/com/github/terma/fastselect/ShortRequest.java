@@ -21,6 +21,7 @@ import com.github.terma.fastselect.data.ShortData;
 import java.util.Arrays;
 import java.util.BitSet;
 
+@SuppressWarnings("WeakerAccess")
 public class ShortRequest extends AbstractRequest {
 
     private final int[] values;
@@ -34,7 +35,7 @@ public class ShortRequest extends AbstractRequest {
     }
 
     @Override
-    boolean inBlock(BitSet bitSet) {
+    public boolean inBlock(BitSet bitSet) {
         boolean p = false;
         for (final int value : values) {
             p = p | bitSet.get(value);
@@ -43,18 +44,18 @@ public class ShortRequest extends AbstractRequest {
     }
 
     @Override
-    boolean checkValue(int position) {
+    public boolean checkValue(int position) {
         return plainSet.get(data[position]);
     }
 
     @Override
-    void prepare() {
+    public void prepare() {
         // cache
         data = ((ShortData) column.data).data;
 
         // plain
         plainSet = new BitSet();
-        for (int i = 0; i < values.length; i++) plainSet.set(values[i]);
+        for (int value : values) plainSet.set(value);
     }
 
     @Override

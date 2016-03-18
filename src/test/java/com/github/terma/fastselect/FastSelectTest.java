@@ -452,7 +452,7 @@ public class FastSelectTest {
                 new ShortMultiValues(new short[]{1, 2}),
                 new ShortMultiValues(new short[]{11, 12})));
 
-        List<ShortMultiValues> r = database.select(new AbstractRequest[]{new Request("a", new int[]{12})});
+        List<ShortMultiValues> r = database.select(new AbstractRequest[]{new MultiShortRequest("a", (short) 12)});
 
         Assert.assertEquals(r, singletonList(new ShortMultiValues(new short[]{11, 12})));
     }
@@ -467,7 +467,7 @@ public class FastSelectTest {
                 new ShortMultiValues(new short[]{1, 0})
         ));
 
-        List<ShortMultiValues> r = database.select(new AbstractRequest[]{new Request("a", new int[]{12})});
+        List<ShortMultiValues> r = database.select(new AbstractRequest[]{new MultiShortRequest("a", (short) 12)});
 
         Assert.assertEquals(asList(new ShortMultiValues(new short[]{11, 12}), new ShortMultiValues(new short[]{33, 12})), r);
     }
@@ -482,7 +482,8 @@ public class FastSelectTest {
                 new ShortMultiValues(new short[]{1, 0})
         ));
 
-        List<ShortMultiValues> r = database.select(new AbstractRequest[]{new Request("a", new int[]{1, 12})});
+        List<ShortMultiValues> r = database.select(new AbstractRequest[]{
+                new MultiShortRequest("a", (short) 1, (short) 12)});
 
         Assert.assertEquals(
                 asList(

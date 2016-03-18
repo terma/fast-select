@@ -34,7 +34,7 @@ public class ByteRequest extends AbstractRequest {
     }
 
     @Override
-    boolean inBlock(BitSet bitSet) {
+    public boolean inBlock(BitSet bitSet) {
         boolean p = false;
         for (final int value : values) {
             p = p | bitSet.get(value);
@@ -43,13 +43,13 @@ public class ByteRequest extends AbstractRequest {
     }
 
     @Override
-    boolean checkValue(int position) {
+    public boolean checkValue(int position) {
         byte v = data[position];
         return v < plainSet.length && plainSet[v] > 0;
     }
 
     @Override
-    void prepare() {
+    public void prepare() {
         // cache data
         data = ((ByteData) column.data).data;
 

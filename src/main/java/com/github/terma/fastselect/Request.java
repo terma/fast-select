@@ -37,7 +37,7 @@ public class Request extends AbstractRequest {
     }
 
     @Override
-    boolean inBlock(BitSet bitSet) {
+    public boolean inBlock(BitSet bitSet) {
         boolean p = false;
         for (final int value : values) {
             p = p | bitSet.get(value);
@@ -46,7 +46,7 @@ public class Request extends AbstractRequest {
     }
 
     @Override
-    boolean checkValue(int position) {
+    public boolean checkValue(int position) {
         if (plainValues != null) {
             return column.data.plainCheck(position, plainValues);
         } else {
@@ -55,8 +55,8 @@ public class Request extends AbstractRequest {
     }
 
     @Override
-        // todo implement search by array if direct index can't be used Arrays.sort(condition.values);
-    void prepare() {
+    // todo implement search by array if direct index can't be used Arrays.sort(condition.values);
+    public void prepare() {
         int max = values[0];
         for (int i = 1; i < values.length; i++)
             if (values[i] > max) max = values[i];

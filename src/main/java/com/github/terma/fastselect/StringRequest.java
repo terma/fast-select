@@ -34,14 +34,10 @@ public class StringRequest extends AbstractRequest {
     }
 
     @Override
-    boolean checkValue(int position) {
+    public boolean checkValue(int position) {
         StringData data = (StringData) column.data;
         byte[] value = data.getRaw(position);
         return Arrays.equals(bytes, value);
-    }
-
-    @Override
-    void prepare() {
     }
 
     @Override
