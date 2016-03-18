@@ -89,16 +89,16 @@ public class MultiShortRequestTest {
     public void inBlocksAlwaysTrue() {
         MultiShortRequest request = createRequest(column);
 
-        Assert.assertTrue(request.inBlock((BitSet) null));
-        Assert.assertTrue(request.inBlock(new BitSet()));
+        Assert.assertTrue(request.checkBlock((BitSet) null));
+        Assert.assertTrue(request.checkBlock(new BitSet()));
     }
 
     @Test
     public void inRangeAlwaysTrue() {
         MultiShortRequest request = createRequest(column);
 
-        Assert.assertTrue(request.inBlock((Range) null));
-        Assert.assertTrue(request.inBlock(new Range()));
+        Assert.assertTrue(request.checkBlock((Range) null));
+        Assert.assertTrue(request.checkBlock(new Range()));
     }
 
     @Test

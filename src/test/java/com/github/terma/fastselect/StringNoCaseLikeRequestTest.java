@@ -72,8 +72,8 @@ public class StringNoCaseLikeRequestTest {
 
     @Test
     public void alwaysAcceptInBlock() {
-        Assert.assertTrue(request.inBlock((BitSet) null));
-        Assert.assertTrue(request.inBlock(new BitSet()));
+        Assert.assertTrue(request.checkBlock((BitSet) null));
+        Assert.assertTrue(request.checkBlock(new BitSet()));
     }
 
     @Test

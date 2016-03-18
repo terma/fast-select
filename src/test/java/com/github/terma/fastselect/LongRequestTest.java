@@ -78,8 +78,8 @@ public class LongRequestTest {
     public void inBlocksAlwaysTrue() {
         LongRequest longRequest = createRequest(column);
 
-        Assert.assertTrue(longRequest.inBlock((BitSet) null));
-        Assert.assertTrue(longRequest.inBlock(new BitSet()));
+        Assert.assertTrue(longRequest.checkBlock((BitSet) null));
+        Assert.assertTrue(longRequest.checkBlock(new BitSet()));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class LongRequestTest {
         LongRequest longRequest = createRequest(column, 19000, Long.MAX_VALUE);
 
         Range range = new Range(Long.MIN_VALUE, Long.MAX_VALUE);
-        Assert.assertTrue(longRequest.inBlock(range));
+        Assert.assertTrue(longRequest.checkBlock(range));
     }
 
     @Test
@@ -95,7 +95,7 @@ public class LongRequestTest {
         LongRequest longRequest = createRequest(column, 1, 20);
 
         Range range = new Range(20, Long.MAX_VALUE);
-        Assert.assertTrue(longRequest.inBlock(range));
+        Assert.assertTrue(longRequest.checkBlock(range));
     }
 
     @Test
@@ -103,7 +103,7 @@ public class LongRequestTest {
         LongRequest longRequest = createRequest(column, -1, 20);
 
         Range range = new Range(-90, -1);
-        Assert.assertTrue(longRequest.inBlock(range));
+        Assert.assertTrue(longRequest.checkBlock(range));
     }
 
     @Test
@@ -111,7 +111,7 @@ public class LongRequestTest {
         LongRequest longRequest = createRequest(column, 1, 20);
 
         Range range = new Range(-90, 0);
-        Assert.assertFalse(longRequest.inBlock(range));
+        Assert.assertFalse(longRequest.checkBlock(range));
     }
 
     @Test
@@ -119,7 +119,7 @@ public class LongRequestTest {
         LongRequest longRequest = createRequest(column, -2, -1);
 
         Range range = new Range(0, 12);
-        Assert.assertFalse(longRequest.inBlock(range));
+        Assert.assertFalse(longRequest.checkBlock(range));
     }
 
     @Test

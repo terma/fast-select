@@ -30,6 +30,7 @@ import java.util.Objects;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
+@SuppressWarnings("WeakerAccess")
 public class FastSelectTest {
 
     @Test
@@ -138,7 +139,7 @@ public class FastSelectTest {
                 new TestLongShort(1231312, (short) 1)));
 
         List result = database.selectAndSort(
-                new AbstractRequest[]{new ShortRequest("short1", new int[]{1})}, "long1");
+                new AbstractRequest[]{new ShortRequest("short1", 1)}, "long1");
 
         Assert.assertEquals(asList(
                 new TestLongShort(9, (short) 1),
@@ -156,7 +157,7 @@ public class FastSelectTest {
                 new TestLongShort(1231312, (short) 1)));
 
         List result = database.selectAndSort(
-                new AbstractRequest[]{new ShortRequest("short1", new int[]{1})}, new FastSelectComparator() {
+                new AbstractRequest[]{new ShortRequest("short1", 1)}, new FastSelectComparator() {
                     @Override
                     public int compare(Data[] columnDatas, int position1, int position2) {
                         return -1 * columnDatas[0].compare(position1, position2);
@@ -181,7 +182,7 @@ public class FastSelectTest {
         final List<Integer> positions = new ArrayList<>();
 
         database.selectAndSort(
-                new AbstractRequest[]{new ShortRequest("short1", new int[]{1})}, new FastSelectComparator() {
+                new AbstractRequest[]{new ShortRequest("short1", 1)}, new FastSelectComparator() {
                     @Override
                     public int compare(Data[] columnDatas, int position1, int position2) {
                         return -1 * columnDatas[0].compare(position1, position2);
@@ -371,7 +372,7 @@ public class FastSelectTest {
                 new TestLongShort(9, (short) 3),
                 new TestLongShort(1000, (short) 1)));
 
-        List result = database.select(new AbstractRequest[]{new ShortRequest("short1", new int[]{1})});
+        List result = database.select(new AbstractRequest[]{new ShortRequest("short1", 1)});
 
         Assert.assertEquals(singletonList(new TestLongShort(1000, (short) 1)), result);
     }
@@ -597,7 +598,7 @@ public class FastSelectTest {
         FastSelect<TestLongShort> database = new FastSelectBuilder<>(TestLongShort.class).create();
         database.addAll(data);
 
-        List result = database.select(new AbstractRequest[]{new ShortRequest("short1", new int[]{1})});
+        List result = database.select(new AbstractRequest[]{new ShortRequest("short1", 1)});
 
         Assert.assertEquals(data, result);
     }
@@ -745,6 +746,7 @@ public class FastSelectTest {
         public short short1;
 
         // empty constructor for database to be able restore object
+        @SuppressWarnings("unused")
         public TestLongShort() {
             this(0, (byte) 0);
         }

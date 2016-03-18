@@ -34,7 +34,7 @@ public class ByteRequest extends AbstractRequest {
     }
 
     @Override
-    public boolean inBlock(BitSet bitSet) {
+    public boolean checkBlock(BitSet bitSet) {
         boolean p = false;
         for (final int value : values) {
             p = p | bitSet.get(value);

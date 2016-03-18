@@ -447,9 +447,9 @@ public final class FastSelect<T> {
             for (AbstractRequest request : requests) {
                 if (request.column.type == byte.class || request.column.type == short.class) {
                     final BitSet columnBitSet = block.columnBitSets.get(request.column.index);
-                    if (!request.inBlock(columnBitSet)) return false;
+                    if (!request.checkBlock(columnBitSet)) return false;
                 } else if (block.getClass() == DataBlock.class && request.column.type == int.class) {
-                    if (!request.inBlock(block.ranges.get(request.column.index))) return false;
+                    if (!request.checkBlock(block.ranges.get(request.column.index))) return false;
                 }
             }
             return true;

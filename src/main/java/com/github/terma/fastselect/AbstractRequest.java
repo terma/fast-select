@@ -35,11 +35,11 @@ public abstract class AbstractRequest {
      * @param bitSet - block bitmap (we use it only for numeric types)
      * @return - true if block could contains data good for request
      */
-    public boolean inBlock(BitSet bitSet) {
+    public boolean checkBlock(BitSet bitSet) {
         return true;
     }
 
-    public boolean inBlock(Range range) {
+    public boolean checkBlock(Range range) {
         return true;
     }
 

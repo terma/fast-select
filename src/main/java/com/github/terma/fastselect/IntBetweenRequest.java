@@ -36,7 +36,7 @@ public class IntBetweenRequest extends AbstractRequest {
     }
 
     @Override
-    public boolean inBlock(Range range) {
+    public boolean checkBlock(Range range) {
         return range.max >= min && range.min <= max;
     }
 

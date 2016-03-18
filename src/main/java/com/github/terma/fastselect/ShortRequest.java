@@ -24,18 +24,24 @@ import java.util.BitSet;
 @SuppressWarnings("WeakerAccess")
 public class ShortRequest extends AbstractRequest {
 
-    private final int[] values;
+    private final short[] values;
 
     private BitSet plainSet;
     private short[] data;
 
-    public ShortRequest(String name, int[] values) {
+    public ShortRequest(String name, short... values) {
         super(name);
         this.values = values;
     }
 
+    public ShortRequest(String name, int... values) {
+        super(name);
+        this.values = new short[values.length];
+        for (int i = 0; i < values.length; i++) this.values[i] = (short) values[i];
+    }
+
     @Override
-    public boolean inBlock(BitSet bitSet) {
+    public boolean checkBlock(BitSet bitSet) {
         boolean p = false;
         for (final int value : values) {
             p = p | bitSet.get(value);
@@ -55,12 +61,12 @@ public class ShortRequest extends AbstractRequest {
 
         // plain
         plainSet = new BitSet();
-        for (int value : values) plainSet.set(value);
+        for (short value : values) plainSet.set(value);
     }
 
     @Override
     public String toString() {
-        return "ShortRequest {name: " + name + ", values: " + Arrays.toString(values) + '}';
+        return "ShortRequest {name: '" + name + "', values: " + Arrays.toString(values) + '}';
     }
 
 }
