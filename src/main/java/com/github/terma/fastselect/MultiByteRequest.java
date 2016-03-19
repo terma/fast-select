@@ -50,6 +50,7 @@ public class MultiByteRequest extends AbstractRequest {
 
     @Override
     public void prepare() {
+        Arrays.sort(values);
         data = ((MultiByteData) column.data);
         realData = data.data.data;
     }

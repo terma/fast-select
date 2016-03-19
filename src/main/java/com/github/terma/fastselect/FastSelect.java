@@ -139,7 +139,7 @@ public final class FastSelect<T> {
         for (final Column column : columns) column.compact();
     }
 
-    public List<T> select(final AbstractRequest[] where) {
+    public List<T> select(final AbstractRequest... where) {
         ListCallback<T> result = new ListCallback<>();
         select(where, result);
         return result.getResult();

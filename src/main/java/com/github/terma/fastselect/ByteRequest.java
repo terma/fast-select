@@ -28,7 +28,7 @@ public class ByteRequest extends AbstractRequest {
     private byte[] plainSet;
     private byte[] data;
 
-    public ByteRequest(String name, int[] values) {
+    public ByteRequest(String name, int... values) {
         super(name);
         this.values = values;
     }
