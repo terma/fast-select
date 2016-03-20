@@ -41,10 +41,10 @@ public abstract class Block {
 
     abstract void add(List dataToAdd, int addFrom, int addTo);
 
-    abstract void select(ColumnRequest[] where, ArrayLayoutCallback callback);
+    abstract void select(Request[] where, ArrayLayoutCallback callback);
 
-    abstract int blockTouch(ColumnRequest[] where);
+    abstract int blockTouch(Request[] where);
 
-    abstract void select(ColumnRequest[] where, ArrayLayoutLimitCallback callback);
+    abstract void select(Request[] where, ArrayLayoutLimitCallback callback);
 
 }

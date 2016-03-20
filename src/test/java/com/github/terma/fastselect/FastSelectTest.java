@@ -54,6 +54,25 @@ public class FastSelectTest {
     }
 
     @Test
+    public void selectByOr() {
+        FastSelect<TestIntByte> database = new FastSelectBuilder<>(TestIntByte.class).create();
+        database.addAll(asList(
+                new TestIntByte(12, (byte) 2),
+                new TestIntByte(9, (byte) 9),
+                new TestIntByte(1000, (byte) 0)));
+
+        List result = database.select(new OrRequest(
+                new IntRequest("value1", 12),
+                new ByteRequest("value2", 9)
+        ));
+
+        Assert.assertEquals(asList(
+                new TestIntByte(12, (byte) 2),
+                new TestIntByte(9, (byte) 9)
+        ), result);
+    }
+
+    @Test
     public void shouldFreePreallocatedMem() {
         FastSelect<TestIntByte> database = new FastSelectBuilder<>(TestIntByte.class).create();
 

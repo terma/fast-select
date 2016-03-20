@@ -41,17 +41,17 @@ public class BlockMock extends Block {
     }
 
     @Override
-    void select(ColumnRequest[] where, ArrayLayoutCallback callback) {
+    void select(Request[] where, ArrayLayoutCallback callback) {
 
     }
 
     @Override
-    int blockTouch(ColumnRequest[] where) {
+    int blockTouch(Request[] where) {
         return 0;
     }
 
     @Override
-    void select(ColumnRequest[] where, ArrayLayoutLimitCallback callback) {
+    void select(Request[] where, ArrayLayoutLimitCallback callback) {
 
     }
 }
