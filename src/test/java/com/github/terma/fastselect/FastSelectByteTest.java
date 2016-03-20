@@ -37,7 +37,7 @@ public class FastSelectByteTest {
                 new TestIntByte(1, (byte) 98)));
 
         List result = database.selectAndSort(
-                new AbstractRequest[]{new IntRequest("value1", new int[]{1})}, "value2");
+                new ColumnRequest[]{new IntRequest("value1", 1)}, "value2");
 
         Assert.assertEquals(asList(
                 new TestIntByte(1, (byte) 4),
@@ -55,7 +55,7 @@ public class FastSelectByteTest {
                 new TestLongShort(1, (short) 98)));
 
         List result = database.selectAndSort(
-                new AbstractRequest[]{new LongRequest("long1", new long[]{1})}, "short1");
+                new ColumnRequest[]{new LongRequest("long1", 1)}, "short1");
 
         Assert.assertEquals(asList(
                 new TestLongShort(1, (short) 4),
@@ -72,7 +72,7 @@ public class FastSelectByteTest {
                 new TestIntByte(9, (byte) 0),
                 new TestIntByte(1000, (byte) 0)));
 
-        List result = database.select(new AbstractRequest[]{new IntRequest("value1", new int[]{12})});
+        List result = database.select(new IntRequest("value1", new int[]{12}));
 
         Assert.assertEquals(singletonList(new TestIntByte(12, (byte) 0)), result);
     }
@@ -84,7 +84,7 @@ public class FastSelectByteTest {
         database.addAll(singletonList(new TestIntByte(9, (byte) 0)));
         database.addAll(singletonList(new TestIntByte(1000, (byte) 0)));
 
-        List result = database.select(new AbstractRequest[]{new IntRequest("value1", new int[]{12})});
+        List result = database.select(new IntRequest("value1", new int[]{12}));
 
         Assert.assertEquals(singletonList(new TestIntByte(12, (byte) 0)), result);
     }
@@ -97,7 +97,7 @@ public class FastSelectByteTest {
                 new TestIntByte(9, (byte) 91),
                 new TestIntByte(1000, (byte) 89)));
 
-        List result = database.select(new AbstractRequest[]{
+        List result = database.select(new ColumnRequest[]{
                 new ByteRequest("value2", new int[]{0})
         });
 
@@ -114,7 +114,7 @@ public class FastSelectByteTest {
                 new TestIntByte(12, Byte.MAX_VALUE),
                 new TestIntByte(12, Byte.MIN_VALUE)));
 
-        List result = database.select(new AbstractRequest[]{new IntRequest("value1", new int[]{12})});
+        List result = database.select(new IntRequest("value1", new int[]{12}));
 
         Assert.assertEquals(asList(
                 new TestIntByte(12, (byte) 0),

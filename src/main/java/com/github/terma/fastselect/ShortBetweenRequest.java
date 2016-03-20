@@ -18,12 +18,14 @@ package com.github.terma.fastselect;
 
 import com.github.terma.fastselect.data.ShortData;
 
+import java.util.Map;
+
 /**
  * Math's analog is "a to []". Include min and max.
  * For equal select use {@link ShortRequest}
  */
 @SuppressWarnings("WeakerAccess")
-public class ShortBetweenRequest extends AbstractRequest {
+public class ShortBetweenRequest extends ColumnRequest {
 
     private final short min;
     private final short max;
@@ -36,7 +38,8 @@ public class ShortBetweenRequest extends AbstractRequest {
     }
 
     @Override
-    public boolean checkBlock(Range range) {
+    public boolean checkBlock(Block block) {
+        Range range = block.ranges.get(column.index);
         return range.max >= min && range.min <= max;
     }
 
@@ -47,7 +50,7 @@ public class ShortBetweenRequest extends AbstractRequest {
     }
 
     @Override
-    public void prepare() {
+    public void prepare(Map<String, FastSelect.Column> columnByNames) {
         // caching
         data = ((ShortData) column.data).data;
     }

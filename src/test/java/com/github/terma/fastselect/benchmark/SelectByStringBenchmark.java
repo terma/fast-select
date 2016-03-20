@@ -16,7 +16,7 @@ limitations under the License.
 
 package com.github.terma.fastselect.benchmark;
 
-import com.github.terma.fastselect.AbstractRequest;
+import com.github.terma.fastselect.ColumnRequest;
 import com.github.terma.fastselect.FastSelect;
 import com.github.terma.fastselect.FastSelectBuilder;
 import com.github.terma.fastselect.StringRequest;
@@ -68,8 +68,8 @@ public class SelectByStringBenchmark {
         System.out.println("Result: " + counter.toString());
     }
 
-    private AbstractRequest[] createWhere() {
-        return new AbstractRequest[]{new StringRequest("value2", "UNIQUE string " + volume / 2)};
+    private ColumnRequest[] createWhere() {
+        return new ColumnRequest[]{new StringRequest("value2", "UNIQUE string " + volume / 2)};
     }
 
     @Benchmark

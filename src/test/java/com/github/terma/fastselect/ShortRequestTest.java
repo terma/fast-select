@@ -21,6 +21,9 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ShortRequestTest {
 
     private ShortData data;
@@ -28,8 +31,10 @@ public class ShortRequestTest {
 
     private static ShortRequest createRequest(FastSelect.Column column, short... values) {
         ShortRequest request = new ShortRequest("x", values);
-        request.column = column;
-        request.prepare();
+        Map<String, FastSelect.Column> columnsByNames = new HashMap<>();
+        columnsByNames.put("x", column);
+
+        request.prepare(columnsByNames);
         return request;
     }
 

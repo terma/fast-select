@@ -24,7 +24,7 @@ import java.util.Arrays;
  * SQL analog <code>where STRING_FIELD = '???'</code>
  * Exact select. For like or case insensitive use {@link StringLikeRequest} and {@link StringNoCaseLikeRequest}
  */
-public class StringRequest extends AbstractRequest {
+public class StringRequest extends ColumnRequest {
 
     private final byte[] bytes;
 

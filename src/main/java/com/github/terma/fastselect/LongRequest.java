@@ -19,20 +19,22 @@ package com.github.terma.fastselect;
 import com.github.terma.fastselect.data.LongData;
 
 import java.util.Arrays;
+import java.util.Map;
 
 @SuppressWarnings("WeakerAccess")
-public class LongRequest extends AbstractRequest {
+public class LongRequest extends ColumnRequest {
 
     private final long[] values; // after .prepared() sorted by ASC
     private long[] data; // cache
 
-    public LongRequest(String name, long[] values) {
+    public LongRequest(String name, long... values) {
         super(name);
         this.values = values;
     }
 
     @Override
-    public boolean checkBlock(Range range) {
+    public boolean checkBlock(Block block) {
+        Range range = block.ranges.get(column.index);
         return values[0] <= range.max && values[values.length - 1] >= range.min;
     }
 
@@ -43,7 +45,9 @@ public class LongRequest extends AbstractRequest {
     }
 
     @Override
-    public void prepare() {
+    public void prepare(Map<String, FastSelect.Column> columnByNames) {
+        super.prepare(columnByNames);
+
         // caching
         data = ((LongData) column.data).data;
 

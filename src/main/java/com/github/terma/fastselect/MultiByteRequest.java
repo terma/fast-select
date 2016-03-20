@@ -19,6 +19,7 @@ package com.github.terma.fastselect;
 import com.github.terma.fastselect.data.MultiByteData;
 
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * For {code}byte[]{code} data type. Storage implementation is {@link com.github.terma.fastselect.data.MultiByteData}
@@ -26,7 +27,7 @@ import java.util.Arrays;
  * SQL analog is {code}where COLUMN_X in (?, ?...){code}
  */
 @SuppressWarnings("WeakerAccess")
-public class MultiByteRequest extends AbstractRequest {
+public class MultiByteRequest extends ColumnRequest {
 
     private final byte[] values;
     private MultiByteData data;
@@ -49,7 +50,8 @@ public class MultiByteRequest extends AbstractRequest {
     }
 
     @Override
-    public void prepare() {
+    public void prepare(Map<String, FastSelect.Column> columnByNames) {
+        super.prepare(columnByNames);
         Arrays.sort(values);
         data = ((MultiByteData) column.data);
         realData = data.data.data;

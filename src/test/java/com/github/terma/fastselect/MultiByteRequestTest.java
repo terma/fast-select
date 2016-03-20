@@ -21,7 +21,8 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.BitSet;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MultiByteRequestTest {
 
@@ -31,7 +32,11 @@ public class MultiByteRequestTest {
     private static MultiByteRequest createRequest(FastSelect.Column column, byte... values) {
         MultiByteRequest request = new MultiByteRequest("x", values);
         request.column = column;
-        request.prepare();
+
+        Map<String, FastSelect.Column> columnsByNames = new HashMap<>();
+        columnsByNames.put("x", column);
+
+        request.prepare(columnsByNames);
         return request;
     }
 
@@ -86,19 +91,10 @@ public class MultiByteRequestTest {
     }
 
     @Test
-    public void inBlocksAlwaysTrue() {
+    public void checkBlocksAlwaysTrue() {
         MultiByteRequest request = createRequest(column);
 
-        Assert.assertTrue(request.checkBlock((BitSet) null));
-        Assert.assertTrue(request.checkBlock(new BitSet()));
-    }
-
-    @Test
-    public void inRangeAlwaysTrue() {
-        MultiByteRequest request = createRequest(column);
-
-        Assert.assertTrue(request.checkBlock((Range) null));
-        Assert.assertTrue(request.checkBlock(new Range()));
+        Assert.assertTrue(request.checkBlock(null));
     }
 
     @Test

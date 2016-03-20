@@ -16,7 +16,7 @@ limitations under the License.
 
 package com.github.terma.fastselect.callbacks;
 
-import com.github.terma.fastselect.AbstractRequest;
+import com.github.terma.fastselect.ColumnRequest;
 import com.github.terma.fastselect.FastSelect;
 
 import javax.annotation.concurrent.NotThreadSafe;
@@ -37,7 +37,7 @@ import java.util.Map;
  * <dd><pre>Map&lt;Integer, Map&lt;Integer, Map&lt;Integer, Integer&gt;&gt;&gt;</pre></dd>
  * </dl>
  *
- * Calling {@link FastSelect#select(AbstractRequest[], ArrayLayoutCallback)} twice with same instance is ok.
+ * Calling {@link FastSelect#select(ColumnRequest[], ArrayLayoutCallback)} twice with same instance is ok.
  * Result will be counter twice.
  *
  * @author Artem Stasiuk

@@ -21,7 +21,8 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.BitSet;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MultiShortRequestTest {
 
@@ -31,7 +32,10 @@ public class MultiShortRequestTest {
     private static MultiShortRequest createRequest(FastSelect.Column column, short... values) {
         MultiShortRequest request = new MultiShortRequest("x", values);
         request.column = column;
-        request.prepare();
+        Map<String, FastSelect.Column> columnsByNames = new HashMap<>();
+        columnsByNames.put("x", column);
+
+        request.prepare(columnsByNames);
         return request;
     }
 
@@ -86,19 +90,10 @@ public class MultiShortRequestTest {
     }
 
     @Test
-    public void inBlocksAlwaysTrue() {
+    public void checkBlocksAlwaysTrue() {
         MultiShortRequest request = createRequest(column);
 
-        Assert.assertTrue(request.checkBlock((BitSet) null));
-        Assert.assertTrue(request.checkBlock(new BitSet()));
-    }
-
-    @Test
-    public void inRangeAlwaysTrue() {
-        MultiShortRequest request = createRequest(column);
-
-        Assert.assertTrue(request.checkBlock((Range) null));
-        Assert.assertTrue(request.checkBlock(new Range()));
+        Assert.assertTrue(request.checkBlock(null));
     }
 
     @Test

@@ -18,12 +18,14 @@ package com.github.terma.fastselect;
 
 import com.github.terma.fastselect.data.ByteData;
 
+import java.util.Map;
+
 /**
  * Math's analog is "a to []". Include min and max.
  * For equal select use {@link ByteRequest}
  */
 @SuppressWarnings("WeakerAccess")
-public class ByteBetweenRequest extends AbstractRequest {
+public class ByteBetweenRequest extends ColumnRequest {
 
     private final byte min;
     private final byte max;
@@ -36,7 +38,8 @@ public class ByteBetweenRequest extends AbstractRequest {
     }
 
     @Override
-    public boolean checkBlock(Range range) {
+    public boolean checkBlock(Block block) {
+        Range range = block.ranges.get(column.index);
         return range.max >= min && range.min <= max;
     }
 
@@ -47,7 +50,7 @@ public class ByteBetweenRequest extends AbstractRequest {
     }
 
     @Override
-    public void prepare() {
+    public void prepare(Map<String, FastSelect.Column> columnByNames) {
         // caching
         data = ((ByteData) column.data).data;
     }

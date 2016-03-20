@@ -21,18 +21,23 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class StringLikeRequestTest {
 
     private StringData data;
-    private AbstractRequest request;
+    private ColumnRequest request;
 
     @Before
     public void init() {
         request = new StringLikeRequest("x", "AA");
         FastSelect.Column column = new FastSelect.Column("x", String.class, 1000);
         data = (StringData) column.data;
-        request.column = column;
-        request.prepare();
+        Map<String, FastSelect.Column> columnsByNames = new HashMap<>();
+        columnsByNames.put("x", column);
+
+        request.prepare(columnsByNames);
     }
 
     @Test
