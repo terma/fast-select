@@ -156,7 +156,7 @@ public final class FastSelect<T> {
         rootBlock.select(where, callback);
     }
 
-    public void select(final Request[] where, final ArrayLayoutLimitCallback callback) {
+    public void select(final ArrayLayoutLimitCallback callback, final Request... where) {
         prepareRequest(where);
         rootBlock.select(where, callback);
     }
@@ -165,8 +165,8 @@ public final class FastSelect<T> {
         select(where, new ArrayToObjectCallback<>(dataClass, columns, mhRepo, callback));
     }
 
-    public void select(final Request[] where, final LimitCallback<T> callback) {
-        select(where, new ArrayToObjectLimitCallback<>(dataClass, columns, mhRepo, callback));
+    public void select(final LimitCallback<T> callback, final Request... where) {
+        select(new ArrayToObjectLimitCallback<>(dataClass, columns, mhRepo, callback), where);
     }
 
     public void selectAndSort(final Request[] where, final LimitCallback<T> callback, final String... sortBy) {

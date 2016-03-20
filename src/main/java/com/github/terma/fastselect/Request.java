@@ -39,7 +39,6 @@ public abstract class Request {
      *
      * @param columnByNames - map passed by engine
      */
-    public void prepare(Map<String, FastSelect.Column> columnByNames) {
-    }
+    public abstract void prepare(Map<String, FastSelect.Column> columnByNames);
 
 }

@@ -17,6 +17,7 @@ limitations under the License.
 package com.github.terma.fastselect;
 
 import com.github.terma.fastselect.callbacks.ArrayLayoutCallback;
+import com.github.terma.fastselect.callbacks.LimitCallback;
 import com.github.terma.fastselect.data.Data;
 import com.github.terma.fastselect.data.IntStringData;
 import junit.framework.Assert;
@@ -29,6 +30,7 @@ import java.util.Objects;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static org.mockito.Mockito.*;
 
 @SuppressWarnings("WeakerAccess")
 public class FastSelectTest {
@@ -70,6 +72,26 @@ public class FastSelectTest {
                 new TestIntByte(12, (byte) 2),
                 new TestIntByte(9, (byte) 9)
         ), result);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void selectObjectsAndLimit() {
+        FastSelect<TestIntByte> database = new FastSelectBuilder<>(TestIntByte.class).create();
+        database.addAll(asList(
+                new TestIntByte(12, (byte) 0),
+                new TestIntByte(9, (byte) 0),
+                new TestIntByte(1000, (byte) 0)));
+
+        LimitCallback<TestIntByte> limitCallback = mock(LimitCallback.class);
+        when(limitCallback.needToStop()).thenReturn(false).thenReturn(true);
+
+        database.select(limitCallback, new ByteRequest("value2", 0));
+
+        verify(limitCallback).data(new TestIntByte(12, (byte) 0));
+        verify(limitCallback).data(new TestIntByte(9, (byte) 0));
+        verify(limitCallback, times(3)).needToStop();
+        verifyNoMoreInteractions(limitCallback);
     }
 
     @Test
