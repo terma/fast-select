@@ -67,7 +67,7 @@ public class ByteRequest extends ColumnRequest {
 
     @Override
     public String toString() {
-        return "ByteRequest {name: " + name + ", values: " + Arrays.toString(values) + '}';
+        return "ByteRequest {name: '" + name + "', values: " + Arrays.toString(values) + '}';
     }
 
 }
