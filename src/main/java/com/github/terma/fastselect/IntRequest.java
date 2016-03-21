@@ -56,7 +56,7 @@ public class IntRequest extends ColumnRequest {
 
     @Override
     public String toString() {
-        return "{name: " + name + ", values: " + Arrays.toString(values) + '}';
+        return getClass().getSimpleName() + " {name: '" + name + "', values: " + Arrays.toString(values) + '}';
     }
 
 }
