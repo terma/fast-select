@@ -42,7 +42,7 @@ public class StringRequest extends ColumnRequest {
 
     @Override
     public String toString() {
-        return "StringRequest {name: " + name + ", value: " + new String(bytes) + '}';
+        return name + " = '" + new String(bytes) + "'";
     }
 
 }
