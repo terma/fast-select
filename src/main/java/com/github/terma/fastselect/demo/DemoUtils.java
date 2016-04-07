@@ -87,14 +87,14 @@ public abstract class DemoUtils {
 
     public static ColumnRequest[] whereGAndR() {
         return new ColumnRequest[]{
-                new ByteRequest("prg", new int[]{1, 2, 3, 4}),
-                new ByteRequest("prr", new int[]{1, 2, 3, 4, 5, 6})
+                new ByteRequest("prg", 1, 2, 3, 4),
+                new ByteRequest("prr", 1, 2, 3, 4, 5, 6)
         };
     }
 
     public static ColumnRequest[] whereBsIdAndR() {
         return new ColumnRequest[]{
-                new ByteRequest("prr", new int[]{1, 2, 3, 4, 5, 6}),
+                new ByteRequest("prr", 1, 2, 3, 4, 5, 6),
                 new IntRequest("bsid", getBsIds())
         };
     }

@@ -236,3 +236,11 @@ Check play:
 
 ### before
 DemoBenchmark.detailsByGAndRAndSorting         1000  FastSelect   1000000  avgt       22.220          ms/op
+
+### refactoring (perf not changed)
+Benchmark                               (blockSize)    (engine)  (volume)  Mode  Cnt    Score   Error  Units
+DemoBenchmark.detailsByGAndRAndSorting         1000  FastSelect   1000000  avgt        25.920          ms/op
+DemoBenchmark.groupByBsIdAndR                  1000  FastSelect   1000000  avgt         0.104          ms/op
+DemoBenchmark.groupByGAndR                     1000  FastSelect   1000000  avgt        10.376          ms/op
+DemoBenchmark.groupByGAndR_5_Threads           1000  FastSelect   1000000  avgt        22.491          ms/op
+DemoBenchmark.groupByGAndR_50_Threads          1000  FastSelect   1000000  avgt       205.508          ms/op
