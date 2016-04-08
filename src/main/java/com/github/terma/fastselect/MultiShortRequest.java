@@ -19,6 +19,7 @@ package com.github.terma.fastselect;
 import com.github.terma.fastselect.data.MultiShortData;
 
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * For {code}short[]{code} data type. Storage implementation is {@link MultiShortData}
@@ -26,7 +27,7 @@ import java.util.Arrays;
  * SQL analog is {code}where COLUMN_X in (?, ?...){code}
  */
 @SuppressWarnings("WeakerAccess")
-public class MultiShortRequest extends AbstractRequest {
+public class MultiShortRequest extends ColumnRequest {
 
     private final short[] values;
     private MultiShortData data;
@@ -49,7 +50,9 @@ public class MultiShortRequest extends AbstractRequest {
     }
 
     @Override
-    public void prepare() {
+    public void prepare(Map<String, FastSelect.Column> columnByNames) {
+        super.prepare(columnByNames);
+
         data = ((MultiShortData) column.data);
         realData = data.data.data;
     }

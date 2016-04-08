@@ -19,19 +19,21 @@ package com.github.terma.fastselect;
 import com.github.terma.fastselect.data.IntData;
 
 import java.util.Arrays;
+import java.util.Map;
 
-public class IntRequest extends AbstractRequest {
+public class IntRequest extends ColumnRequest {
 
     private final int[] values;
     private int[] data;
 
-    public IntRequest(String name, int[] values) {
+    public IntRequest(String name, int... values) {
         super(name);
         this.values = values;
     }
 
     @Override
-    public boolean checkBlock(Range range) {
+    public boolean checkBlock(Block block) {
+        Range range = block.ranges.get(column.index);
         return values[0] <= range.max && values[values.length - 1] >= range.min;
     }
 
@@ -42,7 +44,9 @@ public class IntRequest extends AbstractRequest {
     }
 
     @Override
-    public void prepare() {
+    public void prepare(Map<String, FastSelect.Column> columnByNames) {
+        super.prepare(columnByNames);
+
         // caching
         data = ((IntData) column.data).data;
 
@@ -52,7 +56,7 @@ public class IntRequest extends AbstractRequest {
 
     @Override
     public String toString() {
-        return "{name: " + name + ", values: " + Arrays.toString(values) + '}';
+        return getClass().getSimpleName() + " {name: '" + name + "', values: " + Arrays.toString(values) + '}';
     }
 
 }

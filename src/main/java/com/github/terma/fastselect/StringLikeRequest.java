@@ -25,7 +25,7 @@ import com.github.terma.fastselect.data.StringData;
  * @see StringRequest
  */
 @SuppressWarnings("WeakerAccess")
-public class StringLikeRequest extends AbstractRequest {
+public class StringLikeRequest extends ColumnRequest {
 
     private final String like;
 

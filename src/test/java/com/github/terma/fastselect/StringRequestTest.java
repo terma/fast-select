@@ -24,53 +24,80 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StringLikeRequestTest {
+public class StringRequestTest {
 
+    private Map<String, FastSelect.Column> columnsByNames = new HashMap<>();
     private StringData data;
     private ColumnRequest request;
 
     @Before
     public void init() {
-        request = new StringLikeRequest("x", "AA");
+        request = new StringRequest("x", "AA");
         FastSelect.Column column = new FastSelect.Column("x", String.class, 1000);
         data = (StringData) column.data;
-        Map<String, FastSelect.Column> columnsByNames = new HashMap<>();
         columnsByNames.put("x", column);
-
         request.prepare(columnsByNames);
+    }
+
+    @Test
+    public void checkBlockAlwaysTrue() {
+        Assert.assertTrue(request.checkBlock(null));
     }
 
     @Test
     public void acceptSameValue() {
         data.add("AA");
-
         Assert.assertTrue(request.checkValue(0));
     }
 
     @Test
-    public void acceptSubstringValue() {
-        data.add("AAA");
+    public void supportCheckValueNullAsEmpty() {
+        request = new StringRequest("x", "");
+        request.prepare(columnsByNames);
 
+        data.add(null);
+        data.add("A");
         Assert.assertTrue(request.checkValue(0));
+        Assert.assertFalse(request.checkValue(1));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void throwExceptionWhenRequestByNull() {
+        new StringRequest("x", null);
+    }
+
+    @Test
+    public void supportCheckValueEmptyAsEmpty() {
+        request = new StringRequest("x", "");
+        request.prepare(columnsByNames);
+
+        data.add("");
+        data.add("A");
+        Assert.assertTrue(request.checkValue(0));
+        Assert.assertFalse(request.checkValue(1));
+    }
+
+    @Test
+    public void notAcceptSubstringValue() {
+        data.add("AAA");
+        Assert.assertFalse(request.checkValue(0));
     }
 
     @Test
     public void notAcceptNotSubstring() {
         data.add("G");
-
         Assert.assertFalse(request.checkValue(0));
     }
 
     @Test
     public void notAcceptDifferentCase() {
         data.add("aa");
-
         Assert.assertFalse(request.checkValue(0));
     }
 
     @Test
     public void provideToString() {
-        Assert.assertEquals("StringLikeRequest {name: 'col', like: 'valLike'}", new StringLikeRequest("col", "valLike").toString());
+        Assert.assertEquals("col = 'valLike'", new StringRequest("col", "valLike").toString());
     }
 
 }

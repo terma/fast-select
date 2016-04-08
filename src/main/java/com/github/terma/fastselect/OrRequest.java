@@ -16,48 +16,43 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
-import com.github.terma.fastselect.data.ShortData;
-
+import java.util.Arrays;
 import java.util.Map;
 
 /**
- * Math's analog is "a to []". Include min and max.
- * For equal select use {@link ShortRequest}
+ * SQL analog is {code}where CONDITION X or CONDITION Y{code}
  */
 @SuppressWarnings("WeakerAccess")
-public class ShortBetweenRequest extends ColumnRequest {
+public class OrRequest extends Request {
 
-    private final short min;
-    private final short max;
-    private short[] data;
+    private final Request[] requests;
 
-    public ShortBetweenRequest(String name, short min, short max) {
-        super(name);
-        this.min = min;
-        this.max = max;
+    public OrRequest(final Request... requests) {
+        this.requests = requests;
     }
 
     @Override
     public boolean checkBlock(Block block) {
-        Range range = block.ranges.get(column.index);
-        return range.max >= min && range.min <= max;
+        for (final Request request : requests)
+            if (request.checkBlock(block)) return true;
+        return false;
     }
 
     @Override
-    public boolean checkValue(int position) {
-        final short value = data[position];
-        return value >= min && value <= max;
+    public boolean checkValue(final int position) {
+        for (final Request request : requests)
+            if (request.checkValue(position)) return true;
+        return false;
     }
 
     @Override
     public void prepare(Map<String, FastSelect.Column> columnByNames) {
-        // caching
-        data = ((ShortData) column.data).data;
+        for (final Request request : requests) request.prepare(columnByNames);
     }
 
     @Override
     public String toString() {
-        return "{name: '" + name + "', min: " + min + ", max: " + max + '}';
+        return getClass().getSimpleName() + " " + Arrays.toString(requests);
     }
 
 }

@@ -85,16 +85,16 @@ public abstract class DemoUtils {
         return database;
     }
 
-    public static AbstractRequest[] whereGAndR() {
-        return new AbstractRequest[]{
-                new ByteRequest("prg", new int[]{1, 2, 3, 4}),
-                new ByteRequest("prr", new int[]{1, 2, 3, 4, 5, 6})
+    public static ColumnRequest[] whereGAndR() {
+        return new ColumnRequest[]{
+                new ByteRequest("prg", 1, 2, 3, 4),
+                new ByteRequest("prr", 1, 2, 3, 4, 5, 6)
         };
     }
 
-    public static AbstractRequest[] whereBsIdAndR() {
-        return new AbstractRequest[]{
-                new ByteRequest("prr", new int[]{1, 2, 3, 4, 5, 6}),
+    public static ColumnRequest[] whereBsIdAndR() {
+        return new ColumnRequest[]{
+                new ByteRequest("prr", 1, 2, 3, 4, 5, 6),
                 new IntRequest("bsid", getBsIds())
         };
     }

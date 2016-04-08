@@ -20,21 +20,23 @@ import com.github.terma.fastselect.data.ByteData;
 
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Map;
 
-public class ByteRequest extends AbstractRequest {
+public class ByteRequest extends ColumnRequest {
 
     private final int[] values;
 
     private byte[] plainSet;
     private byte[] data;
 
-    public ByteRequest(String name, int[] values) {
+    public ByteRequest(String name, int... values) {
         super(name);
         this.values = values;
     }
 
     @Override
-    public boolean checkBlock(BitSet bitSet) {
+    public boolean checkBlock(Block block) {
+        BitSet bitSet = block.columnBitSets.get(column.index);
         boolean p = false;
         for (final int value : values) {
             p = p | bitSet.get(value);
@@ -49,7 +51,9 @@ public class ByteRequest extends AbstractRequest {
     }
 
     @Override
-    public void prepare() {
+    public void prepare(Map<String, FastSelect.Column> columnByNames) {
+        super.prepare(columnByNames);
+
         // cache data
         data = ((ByteData) column.data).data;
 
@@ -63,7 +67,7 @@ public class ByteRequest extends AbstractRequest {
 
     @Override
     public String toString() {
-        return "ByteRequest {name: " + name + ", values: " + Arrays.toString(values) + '}';
+        return "ByteRequest {name: '" + name + "', values: " + Arrays.toString(values) + '}';
     }
 
 }

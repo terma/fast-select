@@ -72,8 +72,6 @@ import java.util.*;
 @ThreadSafe
 public final class FastSelect<T> {
 
-    private final static long MIN_COLUMN_BIT = 0;
-
     private final int[] blockSizes;
     private final Class<T> dataClass;
     private final MethodHandlerRepository mhRepo;
@@ -139,7 +137,7 @@ public final class FastSelect<T> {
         for (final Column column : columns) column.compact();
     }
 
-    public List<T> select(final AbstractRequest[] where) {
+    public List<T> select(final Request... where) {
         ListCallback<T> result = new ListCallback<>();
         select(where, result);
         return result.getResult();
@@ -153,25 +151,25 @@ public final class FastSelect<T> {
      *                 {@link FastSelect} creation.
      * @param callback callback. Will be called for each item accepted by where.
      */
-    public void select(final AbstractRequest[] where, final ArrayLayoutCallback callback) {
+    public void select(final Request[] where, final ArrayLayoutCallback callback) {
         prepareRequest(where);
         rootBlock.select(where, callback);
     }
 
-    public void select(final AbstractRequest[] where, final ArrayLayoutLimitCallback callback) {
+    public void select(final ArrayLayoutLimitCallback callback, final Request... where) {
         prepareRequest(where);
         rootBlock.select(where, callback);
     }
 
-    public void select(final AbstractRequest[] where, final Callback<T> callback) {
+    public void select(final Request[] where, final Callback<T> callback) {
         select(where, new ArrayToObjectCallback<>(dataClass, columns, mhRepo, callback));
     }
 
-    public void select(final AbstractRequest[] where, final LimitCallback<T> callback) {
-        select(where, new ArrayToObjectLimitCallback<>(dataClass, columns, mhRepo, callback));
+    public void select(final LimitCallback<T> callback, final Request... where) {
+        select(new ArrayToObjectLimitCallback<>(dataClass, columns, mhRepo, callback), where);
     }
 
-    public void selectAndSort(final AbstractRequest[] where, final LimitCallback<T> callback, final String... sortBy) {
+    public void selectAndSort(final Request[] where, final LimitCallback<T> callback, final String... sortBy) {
         final List<Integer> positions = selectPositions(where);
 
         final List<Data> sortData = new ArrayList<>();
@@ -201,7 +199,7 @@ public final class FastSelect<T> {
      * @param callback   - callback
      * @param comparator - comparator
      */
-    public void selectAndSort(final AbstractRequest[] where, final LimitCallback<T> callback,
+    public void selectAndSort(final ColumnRequest[] where, final LimitCallback<T> callback,
                               final FastSelectComparator comparator) {
         final List<Integer> positions = selectPositions(where);
 
@@ -218,7 +216,7 @@ public final class FastSelect<T> {
         createObjects(callback, positions);
     }
 
-    public List<Integer> selectPositions(final AbstractRequest[] where) {
+    public List<Integer> selectPositions(final Request[] where) {
         final List<Integer> positions = new ArrayList<>();
         select(where, new ArrayLayoutCallback() {
             @Override
@@ -229,7 +227,7 @@ public final class FastSelect<T> {
         return positions;
     }
 
-    public void selectAndSort(final AbstractRequest[] where, final FastSelectComparator comparator,
+    public void selectAndSort(final ColumnRequest[] where, final FastSelectComparator comparator,
                               final ArrayLayoutCallback callback) {
         final List<Integer> positions = selectPositions(where);
 
@@ -246,19 +244,19 @@ public final class FastSelect<T> {
         for (Integer position : positions) callback.data(position);
     }
 
-    public List<T> selectAndSort(final AbstractRequest[] where, final FastSelectComparator comparator) {
+    public List<T> selectAndSort(final ColumnRequest[] where, final FastSelectComparator comparator) {
         ListLimitCallback<T> result = new ListLimitCallback<>(Integer.MAX_VALUE);
         selectAndSort(where, result, comparator);
         return result.getResult();
     }
 
-    public List<T> selectAndSort(final AbstractRequest[] where, final String... sortBy) {
+    public List<T> selectAndSort(final ColumnRequest[] where, final String... sortBy) {
         ListLimitCallback<T> result = new ListLimitCallback<>(Integer.MAX_VALUE);
         selectAndSort(where, result, sortBy);
         return result.getResult();
     }
 
-    public int blockTouch(final AbstractRequest[] where) {
+    public int blockTouch(final ColumnRequest[] where) {
         prepareRequest(where);
         return rootBlock.blockTouch(where);
     }
@@ -273,7 +271,9 @@ public final class FastSelect<T> {
         return mem;
     }
 
-    public List<Column> getColumns() { return columns; }
+    public List<Column> getColumns() {
+        return columns;
+    }
 
     public Map<String, Column> getColumnsByNames() {
         return columnsByNames;
@@ -289,15 +289,8 @@ public final class FastSelect<T> {
         return blockSizes[blockSizes.length - 1];
     }
 
-    private void prepareRequest(final AbstractRequest[] where) {
-        for (final AbstractRequest condition : where) {
-            condition.column = columnsByNames.get(condition.name);
-
-            if (condition.column == null) throw new IllegalArgumentException(
-                    "Can't find requested column: " + condition.name + " in " + columns);
-
-            condition.prepare();
-        }
+    private void prepareRequest(final Request[] where) {
+        for (final Request condition : where) condition.prepare(columnsByNames);
     }
 
     private void createObjects(final LimitCallback<T> callback, final List<Integer> positions) {
@@ -394,30 +387,6 @@ public final class FastSelect<T> {
         }
     }
 
-    private abstract class Block {
-
-        protected final List<BitSet> columnBitSets = new ArrayList<>();
-        protected final List<Range> ranges = new ArrayList<>();
-
-        abstract int free();
-
-        void setColumnBitSet(Column column, int bit) {
-            // todo implement indexing for negative values, currently just use direct scan
-            if (bit >= MIN_COLUMN_BIT) {
-                columnBitSets.get(column.index).set(bit);
-            }
-        }
-
-        abstract void add(List<T> dataToAdd, int addFrom, int addTo);
-
-        abstract void select(AbstractRequest[] where, ArrayLayoutCallback callback);
-
-        abstract int blockTouch(AbstractRequest[] where);
-
-        abstract void select(AbstractRequest[] where, ArrayLayoutLimitCallback callback);
-
-    }
-
     private final class SuperBlock extends Block {
 
         final int level;
@@ -443,20 +412,15 @@ public final class FastSelect<T> {
             throw new UnsupportedOperationException();
         }
 
-        private boolean inBlock(AbstractRequest[] requests, Block block) {
-            for (AbstractRequest request : requests) {
-                if (request.column.type == byte.class || request.column.type == short.class) {
-                    final BitSet columnBitSet = block.columnBitSets.get(request.column.index);
-                    if (!request.checkBlock(columnBitSet)) return false;
-                } else if (block.getClass() == DataBlock.class && request.column.type == int.class) {
-                    if (!request.checkBlock(block.ranges.get(request.column.index))) return false;
-                }
+        private boolean inBlock(Request[] requests, Block block) {
+            for (Request request : requests) {
+                if (!request.checkBlock(block)) return false;
             }
             return true;
         }
 
         @Override
-        void select(AbstractRequest[] where, ArrayLayoutCallback callback) {
+        void select(Request[] where, ArrayLayoutCallback callback) {
             for (final Block block : blocks) {
                 if (!inBlock(where, block)) continue;
                 block.select(where, callback);
@@ -464,7 +428,7 @@ public final class FastSelect<T> {
         }
 
         @Override
-        int blockTouch(AbstractRequest[] where) {
+        int blockTouch(Request[] where) {
             int c = 0;
             for (final Block block : blocks) {
                 if (!inBlock(where, block)) continue;
@@ -474,7 +438,7 @@ public final class FastSelect<T> {
         }
 
         @Override
-        void select(AbstractRequest[] where, ArrayLayoutLimitCallback callback) {
+        void select(Request[] where, ArrayLayoutLimitCallback callback) {
             for (final Block block : blocks) {
                 if (!inBlock(where, block)) continue;
                 block.select(where, callback);
@@ -484,7 +448,7 @@ public final class FastSelect<T> {
         }
 
         @Override
-        void add(List<T> dataToAdd, int addFrom, int addTo) {
+        void add(List dataToAdd, int addFrom, int addTo) {
             int position = 0;
             int updatePosition = Math.max(0, blocks.size() - 1);
 
@@ -541,7 +505,7 @@ public final class FastSelect<T> {
          * @param addTo     - addTo position in dataToAdd (exclusive)
          */
         @Override
-        void add(List<T> dataToAdd, int addFrom, int addTo) {
+        void add(List dataToAdd, int addFrom, int addTo) {
             final int additionalSize = addTo - addFrom;
 
             try {
@@ -550,8 +514,13 @@ public final class FastSelect<T> {
 
                     if (column.type == long.class) {
                         final LongData data = (LongData) column.data;
+                        final Range range = ranges.get(column.index);
+
                         for (int i = addFrom; i < addTo; i++) {
-                            data.add((long) methodHandle.invoke(dataToAdd.get(i)));
+                            long v = (long) methodHandle.invoke(dataToAdd.get(i));
+                            data.add(v);
+                            range.max = Math.max(range.max, v);
+                            range.min = Math.min(range.min, v);
                         }
 
                     } else if (column.type == long[].class) {
@@ -630,13 +599,13 @@ public final class FastSelect<T> {
         }
 
         @Override
-        void select(AbstractRequest[] where, ArrayLayoutCallback callback) {
+        void select(Request[] where, ArrayLayoutCallback callback) {
 //            System.out.println("B");
 
             final int end = start + size;
             opa:
             for (int i = start; i < end; i++) {
-                for (final AbstractRequest request : where) {
+                for (final Request request : where) {
                     if (!request.checkValue(i)) continue opa;
                 }
 
@@ -645,16 +614,16 @@ public final class FastSelect<T> {
         }
 
         @Override
-        int blockTouch(AbstractRequest[] where) {
+        int blockTouch(Request[] where) {
             return 1;
         }
 
         @Override
-        void select(AbstractRequest[] where, ArrayLayoutLimitCallback callback) {
+        void select(Request[] where, ArrayLayoutLimitCallback callback) {
             final int end = start + size;
             opa:
             for (int i = start; i < end; i++) {
-                for (final AbstractRequest request : where) {
+                for (final Request request : where) {
                     if (!request.checkValue(i)) continue opa;
                 }
 

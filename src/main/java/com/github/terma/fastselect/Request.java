@@ -16,30 +16,15 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
-import java.util.BitSet;
+import java.util.Map;
 
-public abstract class AbstractRequest {
-
-    public final String name;
+public abstract class Request {
 
     /**
-     * Field for internal usage by framework you don't need to fill it.
-     */
-    public FastSelect.Column column;
-
-    public AbstractRequest(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @param bitSet - block bitmap (we use it only for numeric types)
+     * @param block - block bitmap (we use it only for numeric types)
      * @return - true if block could contains data good for request
      */
-    public boolean checkBlock(BitSet bitSet) {
-        return true;
-    }
-
-    public boolean checkBlock(Range range) {
+    public boolean checkBlock(Block block) {
         return true;
     }
 
@@ -50,9 +35,10 @@ public abstract class AbstractRequest {
     public abstract boolean checkValue(int position);
 
     /**
-     * Prepare request state to scan through data set
+     * Prepare request to scan through data set
+     *
+     * @param columnByNames - map passed by engine
      */
-    public void prepare() {
-    }
+    public abstract void prepare(Map<String, FastSelect.Column> columnByNames);
 
 }

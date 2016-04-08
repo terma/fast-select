@@ -16,7 +16,7 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
-import com.github.terma.fastselect.data.ShortData;
+import com.github.terma.fastselect.data.ByteData;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,13 +24,13 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ShortRequestTest {
+public class ByteRequestTest {
 
-    private ShortData data;
+    private ByteData data;
     private FastSelect.Column column;
 
-    private static ShortRequest createRequest(FastSelect.Column column, short... values) {
-        ShortRequest request = new ShortRequest("x", values);
+    private static ByteRequest createRequest(FastSelect.Column column, int... values) {
+        ByteRequest request = new ByteRequest("x", values);
         Map<String, FastSelect.Column> columnsByNames = new HashMap<>();
         columnsByNames.put("x", column);
 
@@ -40,16 +40,16 @@ public class ShortRequestTest {
 
     @Before
     public void init() {
-        column = new FastSelect.Column("x", short.class, 100);
-        data = (ShortData) column.data;
+        column = new FastSelect.Column("x", byte.class, 100);
+        data = (ByteData) column.data;
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void checkValueDontSupportNegativeValues() {
-        data.add(Short.MIN_VALUE);
-        data.add((short) 0);
+        data.add(Byte.MIN_VALUE);
+        data.add((byte) 0);
 
-        ShortRequest request = createRequest(column, Short.MIN_VALUE);
+        ByteRequest request = createRequest(column, Byte.MIN_VALUE);
 
         Assert.assertTrue(request.checkValue(0));
         Assert.assertFalse(request.checkValue(1));
@@ -57,10 +57,10 @@ public class ShortRequestTest {
 
     @Test
     public void provideToString() {
-        Assert.assertEquals("ShortRequest {name: 'x', values: [0, 32767]}",
-                createRequest(column, (short) 0, Short.MAX_VALUE).toString());
-        Assert.assertEquals("ShortRequest {name: 'x', values: [0]}", createRequest(column, (short) 0).toString());
-        Assert.assertEquals("ShortRequest {name: 'x', values: []}", createRequest(column).toString());
+        Assert.assertEquals("ByteRequest {name: 'x', values: [0, 127]}",
+                createRequest(column, 0, Byte.MAX_VALUE).toString());
+        Assert.assertEquals("ByteRequest {name: 'x', values: [0]}", createRequest(column, 0).toString());
+        Assert.assertEquals("ByteRequest {name: 'x', values: []}", createRequest(column).toString());
     }
 
 }
