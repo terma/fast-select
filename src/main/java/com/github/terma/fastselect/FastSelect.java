@@ -169,6 +169,17 @@ public final class FastSelect<T> {
         select(new ArrayToObjectLimitCallback<>(dataClass, columns, mhRepo, callback), where);
     }
 
+    public List<Integer> selectPositions(final Request[] where) {
+        final List<Integer> positions = new ArrayList<>();
+        select(where, new ArrayLayoutCallback() {
+            @Override
+            public void data(int position) {
+                positions.add(position);
+            }
+        });
+        return positions;
+    }
+
     public void selectAndSort(final Request[] where, final LimitCallback<T> callback, final String... sortBy) {
         final List<Integer> positions = selectPositions(where);
 
@@ -214,17 +225,6 @@ public final class FastSelect<T> {
         });
 
         createObjects(callback, positions);
-    }
-
-    public List<Integer> selectPositions(final Request[] where) {
-        final List<Integer> positions = new ArrayList<>();
-        select(where, new ArrayLayoutCallback() {
-            @Override
-            public void data(int position) {
-                positions.add(position);
-            }
-        });
-        return positions;
     }
 
     public void selectAndSort(final ColumnRequest[] where, final FastSelectComparator comparator,
