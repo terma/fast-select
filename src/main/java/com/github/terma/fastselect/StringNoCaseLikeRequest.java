@@ -27,7 +27,7 @@ import com.github.terma.fastselect.data.StringData;
  * Case sensitive exact select use {@link StringRequest}
  */
 @SuppressWarnings("WeakerAccess")
-public class StringNoCaseLikeRequest extends AbstractRequest {
+public class StringNoCaseLikeRequest extends ColumnRequest {
 
     private final String like;
 

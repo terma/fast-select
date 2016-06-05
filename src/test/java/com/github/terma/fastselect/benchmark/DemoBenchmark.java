@@ -32,7 +32,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 //@Fork(value = 1, jvmArgs = {"-Xmx7g", "-XX:CompileThreshold=1", "-XX:CompileCommand=print,*.FastSelect", "-prof perfasm:intelSyntax=true"})
-@Fork(value = 1, jvmArgs = {"-Xmx7g", "-XX:CompileThreshold=1", "-XX:+UnlockDiagnosticVMOptions", "-XX:+PrintAssembly"})
+//@Fork(value = 1, jvmArgs = {"-Xmx7g", "-XX:CompileThreshold=1", "-XX:+UnlockDiagnosticVMOptions", "-XX:+PrintAssembly"})
+@Fork(value = 1, jvmArgs = {"-Xmx7g", "-XX:CompileThreshold=1"})
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
@@ -113,25 +114,25 @@ public class DemoBenchmark {
         System.out.println(player.playDetailsByGAndRAndSorting());
     }
 
-    //    @Benchmark
+    @Benchmark
     @Threads(1)
     public Object groupByGAndR() throws Exception {
         return player.playGroupByGAndR();
     }
 
-    //    @Benchmark
+    @Benchmark
     @Threads(5)
     public Object groupByGAndR_5_Threads() throws Exception {
         return player.playGroupByGAndR();
     }
 
-    //    @Benchmark
+    @Benchmark
     @Threads(50)
     public Object groupByGAndR_50_Threads() throws Exception {
         return player.playGroupByGAndR();
     }
 
-    //    @Benchmark
+    @Benchmark
     public Object groupByBsIdAndR() throws Exception {
         return player.playGroupByBsIdAndR();
     }

@@ -21,7 +21,8 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.BitSet;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LongRequestTest {
 
@@ -31,7 +32,11 @@ public class LongRequestTest {
     private static LongRequest createRequest(FastSelect.Column column, long... values) {
         LongRequest request = new LongRequest("x", values);
         request.column = column;
-        request.prepare();
+
+        Map<String, FastSelect.Column> columnsByNames = new HashMap<>();
+        columnsByNames.put("x", column);
+
+        request.prepare(columnsByNames);
         return request;
     }
 
@@ -75,19 +80,11 @@ public class LongRequestTest {
     }
 
     @Test
-    public void inBlocksAlwaysTrue() {
-        LongRequest longRequest = createRequest(column);
-
-        Assert.assertTrue(longRequest.checkBlock((BitSet) null));
-        Assert.assertTrue(longRequest.checkBlock(new BitSet()));
-    }
-
-    @Test
     public void acceptIfInRange() {
         LongRequest longRequest = createRequest(column, 19000, Long.MAX_VALUE);
 
         Range range = new Range(Long.MIN_VALUE, Long.MAX_VALUE);
-        Assert.assertTrue(longRequest.checkBlock(range));
+        Assert.assertTrue(longRequest.checkBlock(new BlockMock(range)));
     }
 
     @Test
@@ -95,7 +92,7 @@ public class LongRequestTest {
         LongRequest longRequest = createRequest(column, 1, 20);
 
         Range range = new Range(20, Long.MAX_VALUE);
-        Assert.assertTrue(longRequest.checkBlock(range));
+        Assert.assertTrue(longRequest.checkBlock(new BlockMock(range)));
     }
 
     @Test
@@ -103,7 +100,7 @@ public class LongRequestTest {
         LongRequest longRequest = createRequest(column, -1, 20);
 
         Range range = new Range(-90, -1);
-        Assert.assertTrue(longRequest.checkBlock(range));
+        Assert.assertTrue(longRequest.checkBlock(new BlockMock(range)));
     }
 
     @Test
@@ -111,7 +108,7 @@ public class LongRequestTest {
         LongRequest longRequest = createRequest(column, 1, 20);
 
         Range range = new Range(-90, 0);
-        Assert.assertFalse(longRequest.checkBlock(range));
+        Assert.assertFalse(longRequest.checkBlock(new BlockMock(range)));
     }
 
     @Test
@@ -119,7 +116,7 @@ public class LongRequestTest {
         LongRequest longRequest = createRequest(column, -2, -1);
 
         Range range = new Range(0, 12);
-        Assert.assertFalse(longRequest.checkBlock(range));
+        Assert.assertFalse(longRequest.checkBlock(new BlockMock(range)));
     }
 
     @Test

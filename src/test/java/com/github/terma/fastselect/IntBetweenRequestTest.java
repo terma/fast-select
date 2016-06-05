@@ -24,7 +24,7 @@ import org.junit.Test;
 public class IntBetweenRequestTest {
 
     private IntData data;
-    private AbstractRequest request;
+    private ColumnRequest request;
 
     @Before
     public void init() {
@@ -32,7 +32,7 @@ public class IntBetweenRequestTest {
         FastSelect.Column column = new FastSelect.Column("x", int.class, 1000);
         data = (IntData) column.data;
         request.column = column;
-        request.prepare();
+        request.prepare(null);
     }
 
     @Test
@@ -70,7 +70,7 @@ public class IntBetweenRequestTest {
         range.min = 2;
         range.max = 4;
 
-        Assert.assertTrue(request.checkBlock(range));
+        Assert.assertTrue(request.checkBlock(new BlockMock(range)));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class IntBetweenRequestTest {
         range.min = 0;
         range.max = 11;
 
-        Assert.assertTrue(request.checkBlock(range));
+        Assert.assertTrue(request.checkBlock(new BlockMock(range)));
     }
 
     @Test
@@ -88,7 +88,7 @@ public class IntBetweenRequestTest {
         range.min = -90;
         range.max = 1;
 
-        Assert.assertTrue(request.checkBlock(range));
+        Assert.assertTrue(request.checkBlock(new BlockMock(range)));
     }
 
     @Test
@@ -97,7 +97,7 @@ public class IntBetweenRequestTest {
         range.min = 10;
         range.max = 100;
 
-        Assert.assertTrue(request.checkBlock(range));
+        Assert.assertTrue(request.checkBlock(new BlockMock(range)));
     }
 
     @Test
@@ -106,7 +106,7 @@ public class IntBetweenRequestTest {
         range.min = -90;
         range.max = 0;
 
-        Assert.assertFalse(request.checkBlock(range));
+        Assert.assertFalse(request.checkBlock(new BlockMock(range)));
     }
 
     @Test
@@ -115,7 +115,7 @@ public class IntBetweenRequestTest {
         range.min = 11;
         range.max = 1000;
 
-        Assert.assertFalse(request.checkBlock(range));
+        Assert.assertFalse(request.checkBlock(new BlockMock(range)));
     }
 
     @Test

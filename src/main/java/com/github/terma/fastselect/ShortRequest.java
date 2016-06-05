@@ -20,9 +20,10 @@ import com.github.terma.fastselect.data.ShortData;
 
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Map;
 
 @SuppressWarnings("WeakerAccess")
-public class ShortRequest extends AbstractRequest {
+public class ShortRequest extends ColumnRequest {
 
     private final short[] values;
 
@@ -41,7 +42,8 @@ public class ShortRequest extends AbstractRequest {
     }
 
     @Override
-    public boolean checkBlock(BitSet bitSet) {
+    public boolean checkBlock(Block block) {
+        BitSet bitSet = block.columnBitSets.get(column.index);
         boolean p = false;
         for (final int value : values) {
             p = p | bitSet.get(value);
@@ -55,7 +57,9 @@ public class ShortRequest extends AbstractRequest {
     }
 
     @Override
-    public void prepare() {
+    public void prepare(Map<String, FastSelect.Column> columnByNames) {
+        super.prepare(columnByNames);
+
         // cache
         data = ((ShortData) column.data).data;
 
