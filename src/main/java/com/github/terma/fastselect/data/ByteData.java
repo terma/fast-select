@@ -22,11 +22,26 @@ public class ByteData implements Data {
 
     private final int inc;
 
-    public byte[] data = new byte[DEFAULT_SIZE];
-    public int size = 0;
+    public byte[] data;
+    public int size;
 
     public ByteData(int inc) {
+        this.size = 0;
         this.inc = inc;
+        this.data = new byte[DEFAULT_SIZE];
+    }
+
+    public ByteData(ByteData data, byte[] needToCopy) {
+        this.inc = data.inc;
+        this.data = new byte[data.data.length];
+        this.size = needToCopy.length;
+        int c = 0;
+        for (int i = 0; i < needToCopy.length; i++) {
+            if (needToCopy[i] == 1) {
+                this.data[c] = data.data[i];
+                c++;
+            }
+        }
     }
 
     public void allocate(int additionalSize) {
@@ -81,6 +96,11 @@ public class ByteData implements Data {
     @Override
     public int inc() {
         return inc;
+    }
+
+    @Override
+    public Data copy(final byte[] needToCopy) {
+        return new ByteData(this, needToCopy);
     }
 
 }

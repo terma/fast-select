@@ -45,4 +45,6 @@ public interface Data {
 
     int inc();
 
+    Data copy(byte[] needToCopy);
+
 }

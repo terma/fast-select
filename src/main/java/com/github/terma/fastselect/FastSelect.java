@@ -61,6 +61,9 @@ import java.util.*;
  * More information about that:
  * <a href="https://gist.github.com/raphw/881e1745996f9d314ab0#file-result-field-txt">
  * https://gist.github.com/raphw/881e1745996f9d314ab0#file-result-field-txt</a>
+ * <p>
+ * <h3>JMX</h3>
+ * To see static of {@link FastSelect} you can use {@link com.github.terma.fastselect.jmx.FastSelectMXBeanImpl}
  *
  * @author Artem Stasiuk
  * @see FastSelectBuilder
@@ -169,6 +172,17 @@ public final class FastSelect<T> {
         select(new ArrayToObjectLimitCallback<>(dataClass, columns, mhRepo, callback), where);
     }
 
+    public List<Integer> selectPositions(final Request[] where) {
+        final List<Integer> positions = new ArrayList<>();
+        select(where, new ArrayLayoutCallback() {
+            @Override
+            public void data(int position) {
+                positions.add(position);
+            }
+        });
+        return positions;
+    }
+
     public void selectAndSort(final Request[] where, final LimitCallback<T> callback, final String... sortBy) {
         final List<Integer> positions = selectPositions(where);
 
@@ -199,7 +213,7 @@ public final class FastSelect<T> {
      * @param callback   - callback
      * @param comparator - comparator
      */
-    public void selectAndSort(final ColumnRequest[] where, final LimitCallback<T> callback,
+    public void selectAndSort(final Request[] where, final LimitCallback<T> callback,
                               final FastSelectComparator comparator) {
         final List<Integer> positions = selectPositions(where);
 
@@ -216,18 +230,7 @@ public final class FastSelect<T> {
         createObjects(callback, positions);
     }
 
-    public List<Integer> selectPositions(final Request[] where) {
-        final List<Integer> positions = new ArrayList<>();
-        select(where, new ArrayLayoutCallback() {
-            @Override
-            public void data(int position) {
-                positions.add(position);
-            }
-        });
-        return positions;
-    }
-
-    public void selectAndSort(final ColumnRequest[] where, final FastSelectComparator comparator,
+    public void selectAndSort(final Request[] where, final FastSelectComparator comparator,
                               final ArrayLayoutCallback callback) {
         final List<Integer> positions = selectPositions(where);
 
@@ -244,16 +247,41 @@ public final class FastSelect<T> {
         for (Integer position : positions) callback.data(position);
     }
 
-    public List<T> selectAndSort(final ColumnRequest[] where, final FastSelectComparator comparator) {
+    public List<T> selectAndSort(final Request[] where, final FastSelectComparator comparator) {
         ListLimitCallback<T> result = new ListLimitCallback<>(Integer.MAX_VALUE);
         selectAndSort(where, result, comparator);
         return result.getResult();
     }
 
-    public List<T> selectAndSort(final ColumnRequest[] where, final String... sortBy) {
+    public List<T> selectAndSort(final Request[] where, final String... sortBy) {
         ListLimitCallback<T> result = new ListLimitCallback<>(Integer.MAX_VALUE);
         selectAndSort(where, result, sortBy);
         return result.getResult();
+    }
+
+    /**
+     * Create new instance of {@link FastSelect} with same data class, columns and block size
+     * with data which accepted by passed where.
+     * <p>
+     * Allocated size will be same with original. Use {@link FastSelect#compact()} to trim
+     *
+     * @param where - conditions to copy only specific data
+     * @return - copy
+     */
+    public FastSelect<T> copy(final Request[] where) {
+        final byte[] needToCopy = new byte[size()];
+        select(where, new ArrayLayoutCallback() {
+            @Override
+            public void data(int position) {
+                needToCopy[position] = 1;
+            }
+        });
+
+        final List<Column> columnsCopy = new ArrayList<>();
+        for (Column column : columns) columnsCopy.add(column.copy(needToCopy));
+        FastSelect<T> copy = new FastSelect<>(blockSizes[0], dataClass, columnsCopy);
+        copy.rootBlock.init();
+        return copy;
     }
 
     public int blockTouch(final ColumnRequest[] where) {
@@ -265,6 +293,9 @@ public final class FastSelect<T> {
         return columns.iterator().next().data.size();
     }
 
+    /**
+     * @return - size of memory for current instance with data in bytes
+     */
     public long mem() {
         long mem = 0;
         for (final Column column : columns) mem += column.mem();
@@ -329,6 +360,8 @@ public final class FastSelect<T> {
                 data = new LongData(inc);
             } else if (type == long[].class) {
                 data = new MultiLongData(inc);
+            } else if (type == int[].class) {
+                data = new MultiIntData(inc);
             } else if (type == short[].class) {
                 data = new MultiShortData(inc);
             } else if (type == byte[].class) {
@@ -345,6 +378,12 @@ public final class FastSelect<T> {
                 throw new IllegalArgumentException("Unsupportable column type: " + type
                         + ". Support byte,short,int,long,byte[],short[],int[],long[]!");
             }
+        }
+
+        public Column(final Column column, byte[] needToCopy) {
+            this.name = column.name;
+            this.type = column.type;
+            this.data = column.data.copy(needToCopy);
         }
 
         public void compact() {
@@ -385,6 +424,11 @@ public final class FastSelect<T> {
         public Class getType() {
             return type;
         }
+
+        public Column copy(byte[] needToCopy) {
+            return new Column(this, needToCopy);
+        }
+
     }
 
     private final class SuperBlock extends Block {
@@ -448,6 +492,19 @@ public final class FastSelect<T> {
         }
 
         @Override
+        public void init() {
+            int start = 0;
+            int size = columns.iterator().next().size();
+            while (start < size) {
+                int blockSize = Math.min(size - start, dataBlockSize());
+                DataBlock block = new DataBlock(start, blockSize);
+                block.init();
+                blocks.add(block);
+                start += block.getMaxSize();
+            }
+        }
+
+        @Override
         void add(List dataToAdd, int addFrom, int addTo) {
             int position = 0;
             int updatePosition = Math.max(0, blocks.size() - 1);
@@ -486,8 +543,13 @@ public final class FastSelect<T> {
         private final int start;
         private int size;
 
-        private DataBlock(int start) {
+        private DataBlock(final int start) {
+            this(start, 0);
+        }
+
+        private DataBlock(final int start, final int size) {
             this.start = start;
+            this.size = size;
             for (Column ignored : columns) {
                 columnBitSets.add(new BitSet());
                 ranges.add(new Range());
@@ -527,6 +589,13 @@ public final class FastSelect<T> {
                         MultiLongData data = (MultiLongData) column.data;
                         for (int i = addFrom; i < addTo; i++) {
                             long[] v = (long[]) methodHandle.invoke(dataToAdd.get(i));
+                            data.add(v);
+                        }
+
+                    } else if (column.type == int[].class) {
+                        MultiIntData data = (MultiIntData) column.data;
+                        for (int i = addFrom; i < addTo; i++) {
+                            int[] v = (int[]) methodHandle.invoke(dataToAdd.get(i));
                             data.add(v);
                         }
 
@@ -600,8 +669,6 @@ public final class FastSelect<T> {
 
         @Override
         void select(Request[] where, ArrayLayoutCallback callback) {
-//            System.out.println("B");
-
             final int end = start + size;
             opa:
             for (int i = start; i < end; i++) {
@@ -633,11 +700,51 @@ public final class FastSelect<T> {
             }
         }
 
+        @Override
+        public void init() {
+            for (final Column column : columns) {
+
+                if (column.type == long.class) {
+                    final LongData data = (LongData) column.data;
+                    final Range range = ranges.get(column.index);
+                    for (int i = start; i < size; i++) range.update(data.data[i]);
+
+                } else if (column.type == short[].class) {
+                    final MultiShortData data = (MultiShortData) column.data;
+                    for (int i = start; i < size; i++) {
+                        short[] v = (short[]) data.get(i);
+                        for (short v1 : v) setColumnBitSet(column, v1);
+                    }
+
+                } else if (column.type == byte[].class) {
+                    MultiByteData data = (MultiByteData) column.data;
+                    for (int i = start; i < size; i++) {
+                        byte[] v = (byte[]) data.get(i);
+                        for (byte v1 : v) setColumnBitSet(column, v1);
+                    }
+
+                } else if (column.type == int.class) {
+                    final IntData data = (IntData) column.data;
+                    final Range range = ranges.get(column.index);
+                    for (int i = start; i < size; i++) range.update(data.data[i]);
+
+                } else if (column.type == short.class) {
+                    final ShortData data = (ShortData) column.data;
+                    for (int i = start; i < size; i++) setColumnBitSet(column, data.data[i]);
+
+                } else if (column.type == byte.class) {
+                    final ByteData data = (ByteData) column.data;
+                    for (int i = start; i < size; i++) setColumnBitSet(column, data.data[i]);
+
+                }
+            }
+        }
+
         int free() {
             return getMaxSize() - size;
         }
 
-        private int getMaxSize() {
+        public int getMaxSize() {
             return blockSizes[blockSizes.length - 1];
         }
 

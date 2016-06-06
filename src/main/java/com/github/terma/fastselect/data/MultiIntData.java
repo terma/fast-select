@@ -16,34 +16,30 @@ limitations under the License.
 
 package com.github.terma.fastselect.data;
 
-/**
- * @see com.github.terma.fastselect.MultiShortRequest
- */
-@SuppressWarnings("WeakerAccess")
-public class MultiShortData implements Data {
+public class MultiIntData implements Data {
 
-    public final IntData index;
-    public final ShortData data;
+    public IntData index;
+    public IntData data;
 
-    public MultiShortData(final int inc) {
+    public MultiIntData(final int inc) {
         index = new IntData(inc);
-        data = new ShortData(inc);
+        data = new IntData(inc);
     }
 
-    public MultiShortData(MultiShortData data, byte[] needToCopy) {
+    public MultiIntData(MultiIntData data, byte[] needToCopy) {
         this.index = new IntData(data.inc());
-        this.data = new ShortData(data.inc());
+        this.data = new IntData(data.inc());
 
         for (int i = 0; i < needToCopy.length; i++) {
             if (needToCopy[i] == 1) {
-                add((short[]) data.get(i));
+                add((int[]) data.get(i));
             }
         }
     }
 
-    public void add(short[] values) {
+    public void add(int[] values) {
         index.add(data.size); // store index of first element of data
-        for (short v : values) data.add(v);
+        for (int v : values) data.add(v);
     }
 
     public int getDataStart(int position) {
@@ -58,7 +54,7 @@ public class MultiShortData implements Data {
     public Object get(int position) {
         int start = getDataStart(position);
         int end = getDataEnd(position);
-        short[] values = new short[end - start];
+        int[] values = new int[end - start];
         System.arraycopy(data.data, start, values, 0, values.length);
         return values;
     }
@@ -73,7 +69,6 @@ public class MultiShortData implements Data {
         index.compact();
         data.compact();
     }
-
 
     @Override
     public int size() {
@@ -90,7 +85,6 @@ public class MultiShortData implements Data {
         return OBJECT_HEADER_BYTES + 2 * REFERENCE_BYTES + index.mem() + data.mem();
     }
 
-
     @Override
     public int inc() {
         return index.inc();
@@ -98,7 +92,7 @@ public class MultiShortData implements Data {
 
     @Override
     public Data copy(byte[] needToCopy) {
-        return new MultiShortData(this, needToCopy);
+        return new MultiIntData(this, needToCopy);
     }
 
 }

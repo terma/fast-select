@@ -22,11 +22,26 @@ public class IntData implements Data {
 
     private final int inc;
 
-    public int[] data = new int[16];
-    public int size = 0;
+    public int[] data;
+    public int size;
 
     public IntData(int inc) {
         this.inc = inc;
+        this.data = new int[16];
+        this.size = 0;
+    }
+
+    public IntData(IntData data, byte[] needToCopy) {
+        this.inc = data.inc;
+        this.size = needToCopy.length;
+        this.data = new int[data.data.length];
+        int c = 0;
+        for (int i = 0; i < needToCopy.length; i++) {
+            if (needToCopy[i] == 1) {
+                this.data[c] = data.data[i];
+                c++;
+            }
+        }
     }
 
     public void allocate(int additionalSize) {
@@ -80,4 +95,10 @@ public class IntData implements Data {
     public int inc() {
         return inc;
     }
+
+    @Override
+    public Data copy(final byte[] needToCopy) {
+        return new IntData(this, needToCopy);
+    }
+
 }
