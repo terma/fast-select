@@ -26,6 +26,17 @@ public class MultiLongData implements Data {
         data = new LongData(inc);
     }
 
+    public MultiLongData(MultiLongData data, byte[] needToCopy) {
+        this.index = new IntData(data.inc());
+        this.data = new LongData(data.inc());
+
+        for (int i = 0; i < needToCopy.length; i++) {
+            if (needToCopy[i] == 1) {
+                add((long[]) data.get(i));
+            }
+        }
+    }
+
     public void add(long[] values) {
         index.add(data.size); // store index of first element of data
         for (long v : values) data.add(v);
@@ -77,6 +88,11 @@ public class MultiLongData implements Data {
     @Override
     public int inc() {
         return index.inc();
+    }
+
+    @Override
+    public Data copy(byte[] needToCopy) {
+        return new MultiLongData(this, needToCopy);
     }
 
 }

@@ -22,11 +22,26 @@ public class ShortData implements Data {
 
     private final int inc;
 
-    public short[] data = new short[16];
+    public short[] data;
     public int size = 0;
 
     public ShortData(int inc) {
         this.inc = inc;
+        this.data = new short[16];
+        this.size = 0;
+    }
+
+    public ShortData(ShortData data, byte[] needToCopy) {
+        this.inc = data.inc;
+        this.data = new short[data.data.length];
+        this.size = needToCopy.length;
+        int c = 0;
+        for (int i = 0; i < needToCopy.length; i++) {
+            if (needToCopy[i] == 1) {
+                this.data[c] = data.data[i];
+                c++;
+            }
+        }
     }
 
     public void add(short v) {
@@ -70,6 +85,11 @@ public class ShortData implements Data {
     @Override
     public int inc() {
         return inc;
+    }
+
+    @Override
+    public Data copy(byte[] needToCopy) {
+        return new ShortData(this, needToCopy);
     }
 
 }

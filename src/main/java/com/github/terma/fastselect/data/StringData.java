@@ -19,10 +19,15 @@ package com.github.terma.fastselect.data;
 public class StringData implements Data {
 
     private static final byte[] ZERO = new byte[0];
+
     private final MultiByteData data;
 
     public StringData(final int inc) {
         data = new MultiByteData(inc);
+    }
+
+    public StringData(StringData data, byte[] needToCopy) {
+        this.data = (MultiByteData) data.data.copy(needToCopy);
     }
 
     public void add(String v) {
@@ -68,5 +73,10 @@ public class StringData implements Data {
     @Override
     public int inc() {
         return data.inc();
+    }
+
+    @Override
+    public Data copy(byte[] needToCopy) {
+        return new StringData(this, needToCopy);
     }
 }

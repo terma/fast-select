@@ -47,4 +47,6 @@ public abstract class Block {
 
     abstract void select(Request[] where, ArrayLayoutLimitCallback callback);
 
+    public abstract void init();
+
 }

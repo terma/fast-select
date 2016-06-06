@@ -22,11 +22,26 @@ public class LongData implements Data {
 
     private final int inc;
 
-    public long[] data = new long[16];
+    public long[] data;
     public int size = 0;
 
     public LongData(int inc) {
         this.inc = inc;
+        this.data = new long[16];
+        this.size = 0;
+    }
+
+    public LongData(LongData data, byte[] needToCopy) {
+        this.inc = data.inc;
+        this.size = needToCopy.length;
+        this.data = new long[needToCopy.length];
+        int c = 0;
+        for (int i = 0; i < needToCopy.length; i++) {
+            if (needToCopy[i] == 1) {
+                this.data[c] = data.data[i];
+                c++;
+            }
+        }
     }
 
     public void add(long v) {
@@ -70,5 +85,10 @@ public class LongData implements Data {
     @Override
     public int inc() {
         return inc;
+    }
+
+    @Override
+    public Data copy(final byte[] needToCopy) {
+        return new LongData(this, needToCopy);
     }
 }
