@@ -54,4 +54,9 @@ public class BlockMock extends Block {
     void select(Request[] where, ArrayLayoutLimitCallback callback) {
 
     }
+
+    @Override
+    public void init() {
+
+    }
 }

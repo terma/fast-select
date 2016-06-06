@@ -29,6 +29,17 @@ public class MultiByteData implements Data {
         data = new ByteData(inc);
     }
 
+    public MultiByteData(MultiByteData data, byte[] needToCopy) {
+        this.index = new IntData(data.inc());
+        this.data = new ByteData(data.inc());
+
+        for (int i = 0; i < needToCopy.length; i++) {
+            if (needToCopy[i] == 1) {
+                add((byte[]) data.get(i));
+            }
+        }
+    }
+
     public void add(byte[] values) {
         index.add(data.size); // store index of first element of data
         for (byte v : values) data.add(v);
@@ -80,6 +91,11 @@ public class MultiByteData implements Data {
     @Override
     public int inc() {
         return index.inc();
+    }
+
+    @Override
+    public Data copy(byte[] needToCopy) {
+        return new MultiByteData(this, needToCopy);
     }
 
 }

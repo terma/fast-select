@@ -16,7 +16,7 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
-public class Range {
+public final class Range {
 
     public long min;
     public long max;
@@ -31,6 +31,16 @@ public class Range {
     public Range(long min, long max) {
         this.min = min;
         this.max = max;
+    }
+
+    public void update(long value) {
+        max = Math.max(max, value);
+        min = Math.min(min, value);
+    }
+
+    public void update(int value) {
+        max = Math.max(max, value);
+        min = Math.min(min, value);
     }
 
     @Override
