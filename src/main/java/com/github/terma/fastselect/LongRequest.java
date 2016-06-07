@@ -21,6 +21,11 @@ import com.github.terma.fastselect.data.LongData;
 import java.util.Arrays;
 import java.util.Map;
 
+/**
+ * SQL analog is <code>COLUMN_X in (A, B, ...)</code>
+ *
+ * @see LongData
+ */
 @SuppressWarnings("WeakerAccess")
 public class LongRequest extends ColumnRequest {
 

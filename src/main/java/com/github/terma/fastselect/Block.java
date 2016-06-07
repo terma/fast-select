@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
+/**
+ * Internal
+ */
 public abstract class Block {
 
     private final static long MIN_COLUMN_BIT = 0;

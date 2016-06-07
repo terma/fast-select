@@ -23,9 +23,9 @@ import java.util.Arrays;
 import java.util.Map;
 
 /**
- * For {code}int[]{code} data type. Storage implementation is {@link com.github.terma.fastselect.data.MultiIntData}
+ * SQL analog is <code>where COLUMN_X in (?, ?...)</code>
  * <p>
- * SQL analog is {code}where COLUMN_X in (?, ?...){code}
+ * For <code>int[]</code> data type. Storage implementation is {@link com.github.terma.fastselect.data.MultiIntData}
  */
 @SuppressWarnings("WeakerAccess")
 public class MultiIntRequest extends ColumnRequest {

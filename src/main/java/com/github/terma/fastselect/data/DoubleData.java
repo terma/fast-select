@@ -19,28 +19,28 @@ package com.github.terma.fastselect.data;
 import java.util.Arrays;
 
 /**
- * For small {@link Byte} type. Doesn't support Null.
+ * For Java small {@link Double}. Doesn't support <code>Null</code> value. In current version no way to filter
+ * by that column.
  *
- * @see com.github.terma.fastselect.ByteRequest
- * @see com.github.terma.fastselect.ByteBetweenRequest
+ * @see LongData
  */
-public class ByteData implements Data {
+public class DoubleData implements Data {
 
     private final int inc;
 
-    public byte[] data;
+    public double[] data;
     public int size;
 
-    public ByteData(int inc) {
-        this.size = 0;
+    public DoubleData(int inc) {
         this.inc = inc;
-        this.data = new byte[DEFAULT_SIZE];
+        this.data = new double[16];
+        this.size = 0;
     }
 
-    public ByteData(ByteData data, byte[] needToCopy) {
+    public DoubleData(DoubleData data, byte[] needToCopy) {
         this.inc = data.inc;
-        this.data = new byte[data.data.length];
         this.size = needToCopy.length;
+        this.data = new double[needToCopy.length];
         int c = 0;
         for (int i = 0; i < needToCopy.length; i++) {
             if (needToCopy[i] == 1) {
@@ -50,18 +50,7 @@ public class ByteData implements Data {
         }
     }
 
-    public void allocate(int additionalSize) {
-        size += additionalSize;
-        while (size > data.length) {
-            data = Arrays.copyOf(data, size + inc);
-        }
-    }
-
-    public void set(int index, byte v) {
-        data[index] = v;
-    }
-
-    public void add(byte v) {
+    public void add(double v) {
         if (size == data.length) {
             data = Arrays.copyOf(data, size + inc);
         }
@@ -76,7 +65,7 @@ public class ByteData implements Data {
 
     @Override
     public int compare(int position1, int position2) {
-        return data[position1] - data[position2];
+        return Double.compare(data[position1], data[position2]);
     }
 
     @Override
@@ -96,7 +85,7 @@ public class ByteData implements Data {
 
     @Override
     public long mem() {
-        return OBJECT_HEADER_BYTES + REFERENCE_BYTES + INT_BYTES + data.length;
+        return OBJECT_HEADER_BYTES + REFERENCE_BYTES + INT_BYTES + data.length * DOUBLE_BYTES;
     }
 
     @Override
@@ -106,7 +95,6 @@ public class ByteData implements Data {
 
     @Override
     public Data copy(final byte[] needToCopy) {
-        return new ByteData(this, needToCopy);
+        return new DoubleData(this, needToCopy);
     }
-
 }

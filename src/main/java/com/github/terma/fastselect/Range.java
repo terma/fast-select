@@ -16,6 +16,9 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
+/**
+ * Internal
+ */
 public final class Range {
 
     public long min;

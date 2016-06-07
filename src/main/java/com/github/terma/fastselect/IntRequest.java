@@ -21,6 +21,11 @@ import com.github.terma.fastselect.data.IntData;
 import java.util.Arrays;
 import java.util.Map;
 
+/**
+ * SQL analog is <code>COLUMN_X in (A, B, ...)</code>
+ *
+ * @see IntData
+ */
 public class IntRequest extends ColumnRequest {
 
     private final int[] values;

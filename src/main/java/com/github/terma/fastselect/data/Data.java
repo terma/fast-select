@@ -25,6 +25,7 @@ public interface Data {
     long SHORT_BYTES = 2;
     long INT_BYTES = 4;
     long LONG_BYTES = 8;
+    long DOUBLE_BYTES = 8;
 
     Object get(int position);
 

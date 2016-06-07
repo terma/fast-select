@@ -22,6 +22,11 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Map;
 
+/**
+ * SQL analog is <code>COLUMN_X in (A, B, ...)</code>
+ *
+ * @see ByteData
+ */
 public class ByteRequest extends ColumnRequest {
 
     private final int[] values;

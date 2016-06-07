@@ -21,7 +21,10 @@ import com.github.terma.fastselect.data.IntData;
 import java.util.Map;
 
 /**
+ * SQL analog is <code>COLUMN_X &gt;= MIN and COLUMN_X &lt;= MAX</code>
+ * <p></p>
  * Math's analog is "a to []". Include min and max.
+ * <p></p>
  * For equal select use {@link IntRequest}
  */
 @SuppressWarnings("WeakerAccess")

@@ -26,10 +26,10 @@ import java.util.*;
 
 /**
  * Compact in-memory storage with fast search.
- * <p>
+ * <p></p>
  * In Memory implementation for database table. Supports fast search by any combination of columns.
  * Internal storage has constant size for mem overhead.
- * <p>
+ * <p></p>
  * Storage: Column oriented based on array
  * For example for normal Java object you have 12-16 bytes on object header.
  * Plus fields alignment depends on JVM and hardware architectures. Could be 4-8 bytes alignment.
@@ -37,31 +37,70 @@ import java.util.*;
  * on field on x64 machine with SunJVM. <a href="http://shipilev.net/blog/2014/heapdump-is-a-lie/">Details about JVM object mem layout</a>
  * When you add new object class internally extract required fields from that object and add this to
  * particular column data. <a href="http://the-paper-trail.org/blog/columnar-storage/">Columnar Storage</a>
- * <p>
+ * <p></p>
  * As result you don't need to spend mem on millions of object headers and alignment.
  * The downside of that each time when you need to get data back as object some time need to be spend on
  * recreation of your object. Mem as well. You can use references field in data at least for current implementation.
- * <p>
- * Search:
+ * <p></p>
+ * <h3>Implementation</h3>
+ * <p></p>
+ * <h4>Architecture</h4>
+ * <pre>
+ *                Columns
+ *                0     n
+ *  Position 0 |----| |---| &lt; Block 0
+ *             | 11 | | 1 |     Start position: 0, size: 4
+ *             |  0 | | 2 |     Column 0 &gt; bloom filter: 0,0,0,0
+ *             | 44 | | 3 |     Column n &gt; range: [1,3]
+ *             | 44 | | 3 |
+ *             | 12 | | 0 | &lt; Block m
+ *             | 22 | | 0 |     Start position: 0, size: 1
+ *           m |----| |---|     ...
+ * </pre>
+ * <h4>Search Algorithm</h4>
+ * <pre>
+ *      Start
+ *       |
+ *      Take next block &lt;----------------------------------- --------
+ *       |                                                 |        |
+ *      Yes                                               No       No Blocks
+ *       |                                                 |        |
+ *   -&gt; Requested values present in range or bloom filter --        |
+ *   |  (depends on column type) &lt;-----                             |
+ *   |   |                            |                             |
+ *   |  Yes                          No                             |
+ *   |   |                            |                             |
+ *   -&gt; Take position j in block &lt;----------------                  |
+ *   |   |                                       |                  |
+ *   |  Yes                                      No                 |
+ *   |   |                                       |                  |
+ *   |  If data in position accepted by request --                  |
+ *   |   |                                                          |
+ *   |  Yes                                                         |
+ *   |   |                                                          |
+ *   |  Call Callback with position                                 |
+ *   |   |                                                          |
+ *   -- Goto next position in block or next block                   |
+ *                                                                  |
+ *                                                                 End
+ * </pre>
  * Fast Search based two step search algorithm (<a href="https://en.wikipedia.org/wiki/Bloom_filter">Bloom Filter</a>
  * + direct scan within block)
- * <p>
- * <h3>Implementation Points</h3>
- * <p>
+ * <p></p>
  * <h4>Marshalling and unmarshalling.</h4>
- * <p>
+ * <p></p>
  * Because storage uses non object layout. That's provide huge improvement for memory and performance.
  * Downside of that we need to extract field values from object on add and build new object when
  * return data. That's why this storage not good for selection big portion of data compare to original result set.
- * <p>
+ * <p></p>
  * We use {@link MethodHandle#invoke(Object...)} here to field values from object.
  * You could be surprised but it has same performance as normal reflect. Other alternative
  * which you can think will be faster {@link MethodHandle#invokeExact(Object...)} however it's not.
- * <p>
+ * <p></p>
  * More information about that:
  * <a href="https://gist.github.com/raphw/881e1745996f9d314ab0#file-result-field-txt">
  * https://gist.github.com/raphw/881e1745996f9d314ab0#file-result-field-txt</a>
- * <p>
+ * <p></p>
  * <h3>JMX</h3>
  * To see static of {@link FastSelect} you can use {@link com.github.terma.fastselect.jmx.FastSelectMXBeanImpl}
  *
@@ -289,12 +328,19 @@ public final class FastSelect<T> {
         return rootBlock.blockTouch(where);
     }
 
+    /**
+     * Count of items
+     *
+     * @return - count
+     */
     public int size() {
         return columns.iterator().next().data.size();
     }
 
     /**
-     * @return - size of memory for current instance with data in bytes
+     * Size in heap memory for current instance with data
+     *
+     * @return - size in bytes
      */
     public long mem() {
         long mem = 0;
@@ -374,9 +420,11 @@ public final class FastSelect<T> {
                 data = new ByteData(inc);
             } else if (type == String.class) {
                 data = new StringData(inc);
+            } else if (type == double.class) {
+                data = new DoubleData(inc);
             } else {
                 throw new IllegalArgumentException("Unsupportable column type: " + type
-                        + ". Support byte,short,int,long,byte[],short[],int[],long[]!");
+                        + ". Support byte,short,int,long,double,byte[],short[],int[],long[]!");
             }
         }
 
@@ -656,8 +704,15 @@ public final class FastSelect<T> {
                             data.add(v);
                         }
 
+                    } else if (column.type == double.class) {
+                        final DoubleData data = (DoubleData) column.data;
+                        for (int i = addFrom; i < addTo; i++) {
+                            double v = (double) methodHandle.invoke(dataToAdd.get(i));
+                            data.add(v);
+                        }
+
                     } else {
-                        throw new IllegalArgumentException("!");
+                        throw new IllegalArgumentException("Unsupported column type: " + column.type + "!");
                     }
                 }
             } catch (Throwable throwable) {

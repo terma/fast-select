@@ -16,8 +16,41 @@ limitations under the License.
 
 package com.github.terma.fastselect.callbacks;
 
+import com.github.terma.fastselect.FastSelect;
+
+/**
+ * <h3>Example of Callback</h3>
+ * Next example show how to get sum by specific column of filtered data
+ * <pre>
+ * class SumCallback implements ArrayLayoutCallback {
+ *     private final long[] values;
+ *     private long result;
+ *
+ *     public SumCallback(final FastSelect&lt;T&gt; fastSelect) {
+ *         this.values = ((LongData) fastSelect.getColumnsByNames().get("value").data).data;
+ *     }
+ *
+ *     public void data(int position) {
+ *         result += values[position];
+ *     }
+ *
+ *     public long getResult() {
+ *         return result;
+ *     }
+ * }
+ * </pre>
+ *
+ * @see FastSelect
+ * @see Callback
+ */
 public interface ArrayLayoutCallback {
 
+    /**
+     * During select in {@link com.github.terma.fastselect.FastSelect}
+     * this method will be called for each row which accept filter criteria.
+     *
+     * @param position from <code>0</code> to <code>{@link FastSelect#size()} - 1</code>
+     */
     void data(int position);
 
 }

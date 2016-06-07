@@ -22,9 +22,9 @@ import java.util.Arrays;
 import java.util.Map;
 
 /**
- * For {code}byte[]{code} data type. Storage implementation is {@link com.github.terma.fastselect.data.MultiByteData}
+ * SQL analog is <code>where COLUMN_X in (?, ?...)</code>
  * <p>
- * SQL analog is {code}where COLUMN_X in (?, ?...){code}
+ * For <code>byte[]</code> data type. Storage implementation is {@link com.github.terma.fastselect.data.MultiByteData}
  */
 @SuppressWarnings("WeakerAccess")
 public class MultiByteRequest extends ColumnRequest {

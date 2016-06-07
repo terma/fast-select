@@ -18,6 +18,9 @@ package com.github.terma.fastselect;
 
 import java.util.Map;
 
+/**
+ * Abstract class. Parent for all kind of filtering predicates.
+ */
 public abstract class Request {
 
     /**

@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 /**
- * SQL analog is {code}where CONDITION X or CONDITION Y{code}
+ * SQL analog is <code>where CONDITION X or CONDITION Y</code>
  */
 @SuppressWarnings("WeakerAccess")
 public class OrRequest extends Request {
