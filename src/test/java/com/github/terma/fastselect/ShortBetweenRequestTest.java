@@ -21,6 +21,9 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collections;
+import java.util.HashMap;
+
 public class ShortBetweenRequestTest {
 
     private ShortData data;
@@ -29,10 +32,12 @@ public class ShortBetweenRequestTest {
     @Before
     public void init() {
         request = new ShortBetweenRequest("x", (short) 1, (short) 10);
-        FastSelect.Column column = new FastSelect.Column("x", short.class, 1000);
+        final FastSelect.Column column = new FastSelect.Column("x", short.class, 1000);
         data = (ShortData) column.data;
         request.column = column;
-        request.prepare(null);
+        request.prepare(new HashMap<String, FastSelect.Column>() {{
+            put("x", column);
+        }});
     }
 
     @Test

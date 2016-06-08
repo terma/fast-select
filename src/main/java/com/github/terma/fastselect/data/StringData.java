@@ -43,7 +43,7 @@ public class StringData implements Data {
 
     @Override
     public int compare(int position1, int position2) {
-        throw new UnsupportedOperationException();
+        return ((String) get(position1)).compareTo((String) get(position2));
     }
 
     @Override

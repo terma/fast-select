@@ -51,6 +51,7 @@ public class LongBetweenRequest extends ColumnRequest {
 
     @Override
     public void prepare(Map<String, FastSelect.Column> columnByNames) {
+        super.prepare(columnByNames);
         // caching
         data = ((LongData) column.data).data;
     }

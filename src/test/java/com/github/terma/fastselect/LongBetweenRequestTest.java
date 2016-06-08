@@ -21,6 +21,8 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
+
 public class LongBetweenRequestTest {
 
     private LongData data;
@@ -29,10 +31,12 @@ public class LongBetweenRequestTest {
     @Before
     public void init() {
         request = new LongBetweenRequest("x", 1, 10);
-        FastSelect.Column column = new FastSelect.Column("x", long.class, 100);
+        final FastSelect.Column column = new FastSelect.Column("x", long.class, 100);
         data = (LongData) column.data;
         request.column = column;
-        request.prepare(null);
+        request.prepare(new HashMap<String, FastSelect.Column>() {{
+            put("x", column);
+        }});
     }
 
     @Test

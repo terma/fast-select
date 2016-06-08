@@ -19,6 +19,7 @@ package com.github.terma.fastselect;
 import junit.framework.Assert;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,21 +48,34 @@ public class FastSelectByteTest {
     }
 
     @Test
-    public void shouldSelectAndSortByShortColumn() {
-        FastSelect<TestLongShort> database = new FastSelectBuilder<>(TestLongShort.class).create();
+    public void selectByteByBetween() {
+        FastSelect<TestIntByte> database = new FastSelectBuilder<>(TestIntByte.class).blockSize(1).create();
         database.addAll(asList(
-                new TestLongShort(1, (short) 11),
-                new TestLongShort(1, (short) 4),
-                new TestLongShort(1, (short) 98)));
-
-        List result = database.selectAndSort(
-                new ColumnRequest[]{new LongRequest("long1", 1)}, "short1");
+                new TestIntByte(1, Byte.MIN_VALUE),
+                new TestIntByte(1, (byte) -11),
+                new TestIntByte(1, (byte) 0),
+                new TestIntByte(1, (byte) 11),
+                new TestIntByte(1, (byte) 5),
+                new TestIntByte(1, (byte) 4),
+                new TestIntByte(1, Byte.MAX_VALUE)));
 
         Assert.assertEquals(asList(
-                new TestLongShort(1, (short) 4),
-                new TestLongShort(1, (short) 11),
-                new TestLongShort(1, (short) 98)),
-                result);
+                new TestIntByte(1, Byte.MIN_VALUE),
+                new TestIntByte(1, (byte) -11),
+                new TestIntByte(1, (byte) 0)),
+                database.select(new ByteBetweenRequest("value2", Byte.MIN_VALUE, (byte) 0)));
+
+        Assert.assertEquals(asList(
+                new TestIntByte(1, (byte) 5),
+                new TestIntByte(1, (byte) 4)),
+                database.select(new ByteBetweenRequest("value2", (byte) 4, (byte) 5)));
+
+        Assert.assertEquals(Collections.singletonList(
+                new TestIntByte(1, (byte) 4)),
+                database.select(new ByteBetweenRequest("value2", (byte) 4, (byte) 4)));
+
+        Assert.assertEquals(Collections.emptyList(),
+                database.select(new ByteBetweenRequest("value2", (byte) 5, (byte) 4)));
     }
 
     @Test
@@ -97,9 +111,7 @@ public class FastSelectByteTest {
                 new TestIntByte(9, (byte) 91),
                 new TestIntByte(1000, (byte) 89)));
 
-        List result = database.select(new ColumnRequest[]{
-                new ByteRequest("value2", new int[]{0})
-        });
+        List result = database.select(new ByteRequest("value2", 0));
 
         Assert.assertEquals(singletonList(new TestIntByte(12, (byte) 0)), result);
     }
@@ -142,7 +154,7 @@ public class FastSelectByteTest {
 
         @Override
         public String toString() {
-            return "TestIntByte{" +
+            return "TestInt{" +
                     "value1=" + value1 +
                     ", value2=" + value2 +
                     '}';

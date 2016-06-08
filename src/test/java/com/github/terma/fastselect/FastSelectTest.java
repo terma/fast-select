@@ -655,7 +655,7 @@ public class FastSelectTest {
 
         @Override
         public String toString() {
-            return "TestIntByte{" +
+            return "TestInt{" +
                     "value1=" + value1 +
                     ", value2=" + value2 +
                     '}';

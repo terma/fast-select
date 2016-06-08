@@ -621,16 +621,14 @@ public final class FastSelect<T> {
             try {
                 for (final Column column : columns) {
                     final MethodHandle methodHandle = column.getter;
+                    final Range range = ranges.get(column.index);
 
                     if (column.type == long.class) {
                         final LongData data = (LongData) column.data;
-                        final Range range = ranges.get(column.index);
-
                         for (int i = addFrom; i < addTo; i++) {
                             long v = (long) methodHandle.invoke(dataToAdd.get(i));
                             data.add(v);
-                            range.max = Math.max(range.max, v);
-                            range.min = Math.min(range.min, v);
+                            range.update(v);
                         }
 
                     } else if (column.type == long[].class) {
@@ -667,16 +665,12 @@ public final class FastSelect<T> {
 
                     } else if (column.type == int.class) {
                         final IntData data = (IntData) column.data;
-                        final Range range = ranges.get(column.index);
-
                         data.allocate(additionalSize);
 
                         for (int i = addFrom, position = this.start + size; i < addTo; i++, position++) {
                             int v = (int) methodHandle.invoke(dataToAdd.get(i));
                             data.set(position, v);
-
-                            range.max = Math.max(range.max, v);
-                            range.min = Math.min(range.min, v);
+                            range.update(v);
                         }
 
                     } else if (column.type == short.class) {
@@ -685,6 +679,7 @@ public final class FastSelect<T> {
                             short v = (short) methodHandle.invoke(dataToAdd.get(i));
                             data.add(v);
                             setColumnBitSet(column, v);
+                            range.update(v);
                         }
 
                     } else if (column.type == byte.class) {
@@ -695,6 +690,7 @@ public final class FastSelect<T> {
                             byte v = (byte) methodHandle.invoke(dataToAdd.get(i));
                             data.set(position, v);
                             setColumnBitSet(column, v);
+                            range.update(v);
                         }
 
                     } else if (column.type == String.class) {

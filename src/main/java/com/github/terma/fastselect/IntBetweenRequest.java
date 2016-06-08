@@ -54,6 +54,7 @@ public class IntBetweenRequest extends ColumnRequest {
 
     @Override
     public void prepare(Map<String, FastSelect.Column> columnByNames) {
+        super.prepare(columnByNames);
         // caching
         data = ((IntData) column.data).data;
     }

@@ -56,6 +56,7 @@ public class ByteBetweenRequest extends ColumnRequest {
 
     @Override
     public void prepare(Map<String, FastSelect.Column> columnByNames) {
+        super.prepare(columnByNames);
         // caching
         data = ((ByteData) column.data).data;
     }
