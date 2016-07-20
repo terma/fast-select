@@ -16,6 +16,7 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -40,8 +41,11 @@ public class FastSelectBuilder<T> {
     private static List<FastSelect.Column> getColumnsFromDataClass(Class dataClass, int inc) {
         final List<FastSelect.Column> columns = new ArrayList<>();
         for (Field field : dataClass.getDeclaredFields()) {
-            if (!field.isSynthetic() && !Modifier.isStatic(field.getModifiers()))
-                columns.add(new FastSelect.Column(field.getName(), field.getType(), inc));
+            if (!field.isSynthetic() && !Modifier.isStatic(field.getModifiers())) {
+                Annotation[] annotations = field.getAnnotations();
+                columns.add(new FastSelect.Column(field.getName(), field.getType(),
+                        annotations.length > 0 ? annotations[0].annotationType() : null, inc));
+            }
         }
         return columns;
     }

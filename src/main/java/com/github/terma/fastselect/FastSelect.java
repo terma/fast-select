@@ -394,13 +394,15 @@ public final class FastSelect<T> {
         public final String name;
         public final Data data;
         final Class type;
+        final Class annotationType;
         MethodHandle getter;
         MethodHandle setter;
         int index;
 
-        public Column(final String name, final Class type, final int inc) {
+        public Column(final String name, final Class type, final Class annotationType, final int inc) {
             this.name = name;
             this.type = type;
+            this.annotationType = annotationType;
 
             if (type == long.class) {
                 data = new LongData(inc);
@@ -418,6 +420,8 @@ public final class FastSelect<T> {
                 data = new ShortData(inc);
             } else if (type == byte.class) {
                 data = new ByteData(inc);
+            } else if (type == String.class && annotationType == StringCompressedByte.class) {
+                data = new StringCompressedByteData(inc);
             } else if (type == String.class) {
                 data = new StringData(inc);
             } else if (type == double.class) {
@@ -428,9 +432,14 @@ public final class FastSelect<T> {
             }
         }
 
+        public Column(final String name, final Class type, final int inc) {
+            this(name, type, null, inc);
+        }
+
         public Column(final Column column, byte[] needToCopy) {
             this.name = column.name;
             this.type = column.type;
+            this.annotationType = column.annotationType;
             this.data = column.data.copy(needToCopy);
         }
 
@@ -691,6 +700,14 @@ public final class FastSelect<T> {
                             data.set(position, v);
                             setColumnBitSet(column, v);
                             range.update(v);
+                        }
+
+                    } else if (column.type == String.class && column.annotationType == StringCompressedByte.class) {
+                        final StringCompressedByteData data = (StringCompressedByteData) column.data;
+                        for (int i = addFrom; i < addTo; i++) {
+                            String v = (String) methodHandle.invoke(dataToAdd.get(i));
+                            byte position = data.add(v);
+                            setColumnBitSet(column, position);
                         }
 
                     } else if (column.type == String.class) {

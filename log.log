@@ -244,3 +244,7 @@ DemoBenchmark.groupByBsIdAndR                  1000  FastSelect   1000000  avgt 
 DemoBenchmark.groupByGAndR                     1000  FastSelect   1000000  avgt        10.376          ms/op
 DemoBenchmark.groupByGAndR_5_Threads           1000  FastSelect   1000000  avgt        22.491          ms/op
 DemoBenchmark.groupByGAndR_50_Threads          1000  FastSelect   1000000  avgt       205.508          ms/op
+
+### new compressed type of data
+Benchmark                                                         (volume)  Mode  Cnt  Score   Error  Units
+SelectByStringCompressedByteBenchmark.countFilterOneItemByString   1000000  avgt       3.779          ms/op

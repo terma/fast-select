@@ -1,0 +1,104 @@
+/*
+Copyright 2015-2016 Artem Stasiuk
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+ */
+
+package com.github.terma.fastselect.data;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Max possible distinct values {@link Byte#MAX_VALUE}
+ * <p>
+ * To use that type of data field should have type {@link String} and additionally
+ * marked by {@link StringCompressedByte}
+ *
+ * @see StringData
+ */
+public class StringCompressedByteData implements Data {
+
+    public final ByteData data;
+    private final Map<String, Byte> valueToPosition;
+    private final String[] values;
+
+    public StringCompressedByteData(final int inc) {
+        data = new ByteData(inc);
+        values = new String[Byte.MAX_VALUE];
+        valueToPosition = new HashMap<>();
+    }
+
+    public StringCompressedByteData(StringCompressedByteData data, byte[] needToCopy) {
+        this.data = (ByteData) data.data.copy(needToCopy);
+        this.values = data.values;
+        this.valueToPosition = data.valueToPosition;
+    }
+
+    public Map<String, Byte> getValueToPosition() {
+        return valueToPosition;
+    }
+
+    public byte add(String v) {
+        Byte position = valueToPosition.get(v);
+        if (position == null) {
+            if (valueToPosition.size() >= Byte.MAX_VALUE)
+                throw new IllegalArgumentException("Too many (" + Byte.MAX_VALUE + ") distinct values!");
+            position = (byte) valueToPosition.size();
+            valueToPosition.put(v, position);
+            values[position] = v;
+        }
+        data.add(position);
+        return position;
+    }
+
+    @Override
+    public Object get(int position) {
+        return values[data.data[position]];
+    }
+
+    @Override
+    public int compare(int position1, int position2) {
+        return values[data.data[position1]].compareTo(values[data.data[position2]]);
+    }
+
+    @Override
+    public void compact() {
+        data.compact();
+    }
+
+    @Override
+    public int size() {
+        return data.size();
+    }
+
+    @Override
+    public int allocatedSize() {
+        return data.allocatedSize();
+    }
+
+    @Override
+    public long mem() {
+        return data.mem();
+    }
+
+    @Override
+    public int inc() {
+        return data.inc();
+    }
+
+    @Override
+    public Data copy(byte[] needToCopy) {
+        return new StringCompressedByteData(this, needToCopy);
+    }
+}
