@@ -16,6 +16,9 @@ limitations under the License.
 
 package com.github.terma.fastselect.data;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.Arrays;
 
 /**
@@ -67,6 +70,15 @@ public class ByteData implements Data {
         }
         data[size] = v;
         size++;
+    }
+
+    @Override
+    public void load(FileChannel fileChannel, int size) throws IOException {
+        this.size = size;
+        this.data = new byte[size];
+        ByteBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, fileChannel.position(), size);
+        buffer.get(data);
+        fileChannel.position(fileChannel.position() + buffer.position());
     }
 
     @Override

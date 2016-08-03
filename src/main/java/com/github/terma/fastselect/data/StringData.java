@@ -16,6 +16,8 @@ limitations under the License.
 
 package com.github.terma.fastselect.data;
 
+import java.nio.channels.FileChannel;
+
 public class StringData implements Data {
 
     private static final byte[] ZERO = new byte[0];
@@ -33,6 +35,11 @@ public class StringData implements Data {
     public void add(String v) {
         final byte[] bytes = v == null ? ZERO : v.getBytes();
         data.add(bytes);
+    }
+
+    @Override
+    public void load(FileChannel fileChannel, int size) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

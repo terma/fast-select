@@ -21,7 +21,10 @@ import com.github.terma.fastselect.data.*;
 import com.github.terma.fastselect.utils.MethodHandlerRepository;
 
 import javax.annotation.concurrent.ThreadSafe;
+import java.io.IOException;
 import java.lang.invoke.MethodHandle;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.*;
 
 /**
@@ -103,6 +106,18 @@ import java.util.*;
  * <p></p>
  * <h3>JMX</h3>
  * To see static of {@link FastSelect} you can use {@link com.github.terma.fastselect.jmx.FastSelectMXBeanImpl}
+ * <p>
+ * <h3>Restore from file</h3>
+ * <p>
+ * File format:
+ * <pre>
+ * format-version (int)
+ * size (int)
+ * data 0 (type specific format)
+ * ...
+ * data n
+ * EOF
+ * </pre>
  *
  * @author Artem Stasiuk
  * @see FastSelectBuilder
@@ -159,6 +174,23 @@ public final class FastSelect<T> {
 
     public void addAll(final List<T> data) {
         rootBlock.add(data, 0, -1);
+    }
+
+    /**
+     * Beta version
+     *
+     * @param fileChannel - fc
+     * @throws IOException
+     */
+    public void load(final FileChannel fileChannel) throws IOException {
+        ByteBuffer sizeBuffer = ByteBuffer.allocate((int) Data.INT_BYTES);
+        fileChannel.read(sizeBuffer);
+        sizeBuffer.flip();
+        int size = sizeBuffer.getInt();
+        for (Column column : columns) {
+            column.data.load(fileChannel, size);
+        }
+        rootBlock.init();
     }
 
     /**

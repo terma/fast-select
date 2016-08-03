@@ -16,6 +16,9 @@ limitations under the License.
 
 package com.github.terma.fastselect.data;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,6 +63,39 @@ public class StringCompressedByteData implements Data {
         }
         data.add(position);
         return position;
+    }
+
+    /**
+     * <pre>
+     *  dictionary-size: int
+     *  dictionary-string-0-size: int
+     *  dictionary-string-0-data: byte[]
+     *  ...
+     *  dictionary-string-N-size: int
+     *  dictionary-string-N-data: byte[]
+     *  byte data: ByteData
+     * </pre>
+     *
+     * @param fileChannel - fc
+     * @param size        - count of elements in data (not bytes)
+     */
+    @Override
+    public void load(FileChannel fileChannel, int size) throws IOException {
+        ByteBuffer dicSizeBuffer = ByteBuffer.allocate((int) INT_BYTES);
+        fileChannel.read(dicSizeBuffer);
+        dicSizeBuffer.position(0);
+        int dictionarySize = dicSizeBuffer.getInt();
+        for (int i = 0; i < dictionarySize; i++) {
+            ByteBuffer stringSizeBuffer = ByteBuffer.allocate((int) INT_BYTES);
+            fileChannel.read(stringSizeBuffer);
+            stringSizeBuffer.position(0);
+            int stringSize = stringSizeBuffer.getInt();
+            ByteBuffer strinbBuffer = ByteBuffer.allocate(stringSize);
+            fileChannel.read(strinbBuffer);
+            values[i] = new String(strinbBuffer.array());
+            valueToPosition.put(values[i], (byte) i);
+        }
+        data.load(fileChannel, size);
     }
 
     @Override

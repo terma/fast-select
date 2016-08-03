@@ -19,6 +19,13 @@ package com.github.terma.fastselect.data;
 import junit.framework.Assert;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+
 public class ByteDataTest {
 
     @Test
@@ -54,6 +61,18 @@ public class ByteDataTest {
     @Test
     public void provideInc() {
         Assert.assertEquals(33, new ByteData(33).inc());
+    }
+
+    @Test
+    public void load() throws IOException {
+        ByteData data = new ByteData(100);
+        File f = Files.createTempFile("a", "b").toFile();
+        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
+        fc.write(ByteBuffer.wrap(new byte[]{0, 1, 2, 3, 4}));
+        data.load(fc, 5);
+        f.delete();
+
+        Assert.assertEquals(data.size(), 5);
     }
 
 }

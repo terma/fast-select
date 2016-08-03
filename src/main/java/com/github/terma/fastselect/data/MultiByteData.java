@@ -16,6 +16,8 @@ limitations under the License.
 
 package com.github.terma.fastselect.data;
 
+import java.nio.channels.FileChannel;
+
 /**
  * @see com.github.terma.fastselect.MultiByteRequest
  */
@@ -51,6 +53,11 @@ public class MultiByteData implements Data {
 
     public int getDataEnd(int position) {
         return index.size == position + 1 ? data.size : index.data[position + 1];
+    }
+
+    @Override
+    public void load(FileChannel fileChannel, int size) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

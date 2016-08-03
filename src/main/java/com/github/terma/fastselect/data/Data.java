@@ -16,6 +16,9 @@ limitations under the License.
 
 package com.github.terma.fastselect.data;
 
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+
 public interface Data {
 
     int DEFAULT_SIZE = 16;
@@ -26,6 +29,8 @@ public interface Data {
     long INT_BYTES = 4;
     long LONG_BYTES = 8;
     long DOUBLE_BYTES = 8;
+
+    void load(FileChannel fileChannel, int size) throws IOException;
 
     Object get(int position);
 
