@@ -454,6 +454,8 @@ public final class FastSelect<T> {
                 data = new ByteData(inc);
             } else if (type == String.class && annotationType == StringCompressedByte.class) {
                 data = new StringCompressedByteData(inc);
+            } else if (type == String.class && annotationType == StringCompressedShort.class) {
+                data = new StringCompressedShortData(inc);
             } else if (type == String.class) {
                 data = new StringData(inc);
             } else if (type == double.class) {
@@ -740,6 +742,13 @@ public final class FastSelect<T> {
                             String v = (String) methodHandle.invoke(dataToAdd.get(i));
                             byte position = data.add(v);
                             setColumnBitSet(column, position);
+                        }
+
+                    } else if (column.type == String.class && column.annotationType == StringCompressedShort.class) {
+                        final StringCompressedShortData data = (StringCompressedShortData) column.data;
+                        for (int i = addFrom; i < addTo; i++) {
+                            String v = (String) methodHandle.invoke(dataToAdd.get(i));
+                            data.add(v);
                         }
 
                     } else if (column.type == String.class) {

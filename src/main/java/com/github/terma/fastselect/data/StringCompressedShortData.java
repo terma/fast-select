@@ -23,42 +23,42 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Max possible distinct values {@link Byte#MAX_VALUE}
+ * Max possible distinct values {@link Short#MAX_VALUE}
  * <p>
  * To use that type of data field should have type {@link String} and additionally
- * marked by {@link StringCompressedByte}
+ * marked by {@link StringCompressedShort}
  *
- * @see StringCompressedShortData
+ * @see StringCompressedByteData
  * @see StringData
  */
-public class StringCompressedByteData implements Data {
+public class StringCompressedShortData implements Data {
 
-    public final ByteData data;
-    private final Map<String, Byte> valueToPosition;
+    public final ShortData data;
+    private final Map<String, Short> valueToPosition;
     private final String[] values;
 
-    public StringCompressedByteData(final int inc) {
-        data = new ByteData(inc);
-        values = new String[Byte.MAX_VALUE];
+    public StringCompressedShortData(final int inc) {
+        data = new ShortData(inc);
+        values = new String[Short.MAX_VALUE];
         valueToPosition = new HashMap<>();
     }
 
-    public StringCompressedByteData(StringCompressedByteData data, byte[] needToCopy) {
-        this.data = (ByteData) data.data.copy(needToCopy);
+    public StringCompressedShortData(StringCompressedShortData data, byte[] needToCopy) {
+        this.data = (ShortData) data.data.copy(needToCopy);
         this.values = data.values;
         this.valueToPosition = data.valueToPosition;
     }
 
-    public Map<String, Byte> getValueToPosition() {
+    public Map<String, Short> getValueToPosition() {
         return valueToPosition;
     }
 
-    public byte add(String v) {
-        Byte position = valueToPosition.get(v);
+    public short add(String v) {
+        Short position = valueToPosition.get(v);
         if (position == null) {
-            if (valueToPosition.size() >= Byte.MAX_VALUE)
-                throw new IllegalArgumentException("Too many (" + Byte.MAX_VALUE + ") distinct values!");
-            position = (byte) valueToPosition.size();
+            if (valueToPosition.size() >= Short.MAX_VALUE)
+                throw new IllegalArgumentException("Too many (" + Short.MAX_VALUE + ") distinct values!");
+            position = (short) valueToPosition.size();
             valueToPosition.put(v, position);
             values[position] = v;
         }
@@ -91,10 +91,10 @@ public class StringCompressedByteData implements Data {
             fileChannel.read(stringSizeBuffer);
             stringSizeBuffer.position(0);
             int stringSize = stringSizeBuffer.getInt();
-            ByteBuffer strinbBuffer = ByteBuffer.allocate(stringSize);
-            fileChannel.read(strinbBuffer);
-            values[i] = new String(strinbBuffer.array());
-            valueToPosition.put(values[i], (byte) i);
+            ByteBuffer stringBuffer = ByteBuffer.allocate(stringSize);
+            fileChannel.read(stringBuffer);
+            values[i] = new String(stringBuffer.array());
+            valueToPosition.put(values[i], (short) i);
         }
         data.load(fileChannel, size);
     }
@@ -136,6 +136,6 @@ public class StringCompressedByteData implements Data {
 
     @Override
     public Data copy(byte[] needToCopy) {
-        return new StringCompressedByteData(this, needToCopy);
+        return new StringCompressedShortData(this, needToCopy);
     }
 }
