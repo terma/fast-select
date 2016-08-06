@@ -206,6 +206,13 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.roaringbitmap</groupId>
+            <artifactId>RoaringBitmap</artifactId>
+            <version>[0.6,)</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- test db -->
 
         <dependency>
