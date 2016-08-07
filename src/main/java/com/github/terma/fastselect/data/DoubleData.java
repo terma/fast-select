@@ -16,6 +16,7 @@ limitations under the License.
 
 package com.github.terma.fastselect.data;
 
+import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
 
@@ -57,6 +58,11 @@ public class DoubleData implements Data {
         }
         data[size] = v;
         size++;
+    }
+
+    @Override
+    public void save(FileChannel fileChannel) throws IOException {
+        throw new UnsupportedOperationException();
     }
 
     @Override

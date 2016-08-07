@@ -30,13 +30,14 @@ import java.util.Arrays;
 import java.util.Objects;
 
 @SuppressWarnings("WeakerAccess")
-public class FastSelectLoadTest {
+public class FastSelectSaveLoadTest {
 
     @Test
     public void loadFromEmpty() throws IOException {
         FastSelect<TestLongShort> fastSelect = new FastSelectBuilder<>(TestLongShort.class).create();
         File f = Files.createTempFile("a", "b").toFile();
         FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
+        fc.write((ByteBuffer) ByteBuffer.allocate((int) Data.INT_BYTES).putInt(Data.STORAGE_FORMAT_VERSION).flip());
         fc.write((ByteBuffer) ByteBuffer.allocate((int) Data.INT_BYTES).putInt(0).flip());
         fc.position(0);
         fastSelect.load(fc);
@@ -45,11 +46,23 @@ public class FastSelectLoadTest {
         Assert.assertEquals(0, fastSelect.size());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void loadOfUnexpectedFormatVersionThrowException() throws IOException {
+        FastSelect<TestLongShort> fastSelect = new FastSelectBuilder<>(TestLongShort.class).create();
+        File f = Files.createTempFile("a", "b").toFile();
+        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
+        fc.write((ByteBuffer) ByteBuffer.allocate((int) Data.INT_BYTES).putInt(-1).flip());
+        fc.write((ByteBuffer) ByteBuffer.allocate((int) Data.INT_BYTES).putInt(0).flip());
+        fc.position(0);
+        fastSelect.load(fc);
+    }
+
     @Test
     public void load() throws IOException {
         FastSelect<TestLongShort> fastSelect = new FastSelectBuilder<>(TestLongShort.class).blockSize(1).create();
         File f = Files.createTempFile("a", "b").toFile();
         FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
+        fc.write((ByteBuffer) ByteBuffer.allocate((int) Data.INT_BYTES).putInt(Data.STORAGE_FORMAT_VERSION).flip());
         fc.write((ByteBuffer) ByteBuffer.allocate((int) Data.INT_BYTES).putInt(2).flip());
 
         fc.write((ByteBuffer) ByteBuffer.allocate(1024).putLong(Long.MAX_VALUE).putLong(0).flip());
@@ -65,6 +78,32 @@ public class FastSelectLoadTest {
                         new TestLongShort(Long.MAX_VALUE, Short.MAX_VALUE),
                         new TestLongShort(0, Short.MIN_VALUE)),
                 fastSelect.select()
+        );
+    }
+
+    @Test
+    public void saveAndLoad() throws IOException {
+        FastSelect<TestLongShort> fastSelect = new FastSelectBuilder<>(TestLongShort.class).blockSize(1).create();
+        fastSelect.addAll(Arrays.asList(new TestLongShort(0, (short) 0), new TestLongShort(Long.MAX_VALUE, Short.MIN_VALUE)));
+
+        File f = Files.createTempFile("a", "b").toFile();
+        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
+
+        fastSelect.save(fc);
+
+        fc.position(0);
+        FastSelect<TestLongShort> fastSelect1 = new FastSelectBuilder<>(TestLongShort.class).blockSize(1).create();
+        fastSelect1.load(fc);
+
+        fc.close();
+        f.delete();
+
+        Assert.assertEquals(2, fastSelect1.size());
+        Assert.assertEquals(
+                Arrays.asList(
+                        new TestLongShort(0, (short) 0),
+                        new TestLongShort(Long.MAX_VALUE, Short.MIN_VALUE)),
+                fastSelect1.select()
         );
     }
 

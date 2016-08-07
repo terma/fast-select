@@ -16,6 +16,7 @@ limitations under the License.
 
 package com.github.terma.fastselect.data;
 
+import java.io.IOException;
 import java.nio.channels.FileChannel;
 
 /**
@@ -54,6 +55,11 @@ public class MultiShortData implements Data {
 
     public int getDataEnd(int position) {
         return index.size == position + 1 ? data.size : index.data[position + 1];
+    }
+
+    @Override
+    public void save(FileChannel fileChannel) throws IOException {
+        throw new UnsupportedOperationException();
     }
 
     @Override

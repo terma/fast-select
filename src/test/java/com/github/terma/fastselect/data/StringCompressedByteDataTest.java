@@ -54,4 +54,28 @@ public class StringCompressedByteDataTest {
         Assert.assertEquals("XY", data.get(1));
     }
 
+    @Test
+    public void saveLoad() throws IOException {
+        File f = Files.createTempFile("a", "b").toFile();
+        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
+
+        StringCompressedByteData data = new StringCompressedByteData(100);
+        data.add("ABACA");
+        data.add("XY");
+        data.add("");
+        data.add(null);
+        data.save(fc);
+        fc.position(0);
+
+        StringCompressedByteData data1 = new StringCompressedByteData(100);
+        data1.load(fc, 4);
+        f.delete();
+
+        Assert.assertEquals(data1.size(), 4);
+        Assert.assertEquals("ABACA", data1.get(0));
+        Assert.assertEquals("XY", data1.get(1));
+        Assert.assertEquals("", data1.get(2));
+        Assert.assertEquals(null, data1.get(3));
+    }
+
 }

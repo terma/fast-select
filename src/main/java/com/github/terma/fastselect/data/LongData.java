@@ -57,6 +57,13 @@ public class LongData implements Data {
     }
 
     @Override
+    public void save(FileChannel fileChannel) throws IOException {
+        LongBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, fileChannel.position(), LONG_BYTES * size).asLongBuffer();
+        buffer.put(data, 0, size);
+        fileChannel.position(fileChannel.position() + LONG_BYTES * buffer.position());
+    }
+
+    @Override
     public void load(FileChannel fileChannel, int size) throws IOException {
         this.size = size;
         this.data = new long[size];

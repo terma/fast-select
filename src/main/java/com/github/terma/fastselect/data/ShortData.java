@@ -56,6 +56,13 @@ public class ShortData implements Data {
     }
 
     @Override
+    public void save(FileChannel fileChannel) throws IOException {
+        ShortBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, fileChannel.position(), SHORT_BYTES * size).asShortBuffer();
+        buffer.put(data, 0, size);
+        fileChannel.position(fileChannel.position() + SHORT_BYTES * buffer.position());
+    }
+
+    @Override
     public void load(FileChannel fileChannel, int size) throws IOException {
         this.size = size;
         this.data = new short[size];

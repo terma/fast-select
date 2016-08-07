@@ -67,6 +67,26 @@ public class StringCompressedByteData implements Data {
     }
 
     /**
+     * @param fileChannel - fc
+     * @throws IOException
+     * @see StringCompressedByteData#load(FileChannel, int)
+     */
+    @Override
+    public void save(final FileChannel fileChannel) throws IOException {
+        fileChannel.write((ByteBuffer) ByteBuffer.allocate((int) INT_BYTES).putInt(values.length).flip());
+        for (String string : values) {
+            if (string == null) {
+                fileChannel.write((ByteBuffer) ByteBuffer.allocate((int) INT_BYTES).putInt(-1).flip());
+            } else {
+                final byte[] d = string.getBytes();
+                fileChannel.write((ByteBuffer) ByteBuffer.allocate((int) INT_BYTES).putInt(d.length).flip());
+                fileChannel.write(ByteBuffer.wrap(d));
+            }
+        }
+        data.save(fileChannel);
+    }
+
+    /**
      * <pre>
      *  dictionary-size: int
      *  dictionary-string-0-size: int
@@ -90,10 +110,14 @@ public class StringCompressedByteData implements Data {
             ByteBuffer stringSizeBuffer = ByteBuffer.allocate((int) INT_BYTES);
             fileChannel.read(stringSizeBuffer);
             stringSizeBuffer.position(0);
-            int stringSize = stringSizeBuffer.getInt();
-            ByteBuffer strinbBuffer = ByteBuffer.allocate(stringSize);
-            fileChannel.read(strinbBuffer);
-            values[i] = new String(strinbBuffer.array());
+            final int stringSize = stringSizeBuffer.getInt();
+            if (stringSize == -1) {
+                values[i] = null;
+            } else {
+                ByteBuffer stringBuffer = ByteBuffer.allocate(stringSize);
+                fileChannel.read(stringBuffer);
+                values[i] = new String(stringBuffer.array());
+            }
             valueToPosition.put(values[i], (byte) i);
         }
         data.load(fileChannel, size);

@@ -182,7 +182,24 @@ public final class FastSelect<T> {
      * @param fileChannel - fc
      * @throws IOException
      */
+    public void save(final FileChannel fileChannel) throws IOException {
+        fileChannel.write((ByteBuffer) ByteBuffer.allocate((int) Data.INT_BYTES).putInt(Data.STORAGE_FORMAT_VERSION).flip());
+        fileChannel.write((ByteBuffer) ByteBuffer.allocate((int) Data.INT_BYTES).putInt(size()).flip());
+        for (Column column : columns) {
+            column.data.save(fileChannel);
+        }
+        rootBlock.init();
+    }
+
     public void load(final FileChannel fileChannel) throws IOException {
+        ByteBuffer formatVersionBuffer = ByteBuffer.allocate((int) Data.INT_BYTES);
+        fileChannel.read(formatVersionBuffer);
+        formatVersionBuffer.flip();
+        final int version = formatVersionBuffer.getInt();
+        if (version != Data.STORAGE_FORMAT_VERSION)
+            throw new IllegalArgumentException("Unsupported format version: " + version
+                    + ", expected: " + Data.STORAGE_FORMAT_VERSION);
+
         ByteBuffer sizeBuffer = ByteBuffer.allocate((int) Data.INT_BYTES);
         fileChannel.read(sizeBuffer);
         sizeBuffer.flip();

@@ -65,6 +65,13 @@ public class IntData implements Data {
     }
 
     @Override
+    public void save(FileChannel fileChannel) throws IOException {
+        IntBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, fileChannel.position(), INT_BYTES * size).asIntBuffer();
+        buffer.put(data, 0, size);
+        fileChannel.position(fileChannel.position() + INT_BYTES * buffer.position());
+    }
+
+    @Override
     public void load(FileChannel fileChannel, int size) throws IOException {
         this.size = size;
         this.data = new int[size];

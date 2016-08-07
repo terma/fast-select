@@ -73,6 +73,13 @@ public class ByteData implements Data {
     }
 
     @Override
+    public void save(FileChannel fileChannel) throws IOException {
+        ByteBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, fileChannel.position(), size);
+        buffer.put(data, 0, size);
+        fileChannel.position(fileChannel.position() + buffer.position());
+    }
+
+    @Override
     public void load(FileChannel fileChannel, int size) throws IOException {
         this.size = size;
         this.data = new byte[size];

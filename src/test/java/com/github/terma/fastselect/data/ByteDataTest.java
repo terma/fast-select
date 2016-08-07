@@ -75,4 +75,28 @@ public class ByteDataTest {
         Assert.assertEquals(data.size(), 5);
     }
 
+    @Test
+    public void saveAndLoad() throws IOException {
+        File f = Files.createTempFile("a", "b").toFile();
+        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
+
+        ByteData data = new ByteData(100);
+        data.add((byte) -1);
+        data.add((byte) 2);
+        data.add((byte) 0);
+        data.add(Byte.MIN_VALUE);
+        data.add(Byte.MAX_VALUE);
+        data.save(fc);
+
+        fc.position(0);
+        ByteData data1 = new ByteData(100);
+        data1.load(fc, 5);
+
+        f.delete();
+
+        Assert.assertEquals(data1.size(), 5);
+        Assert.assertEquals(Byte.MIN_VALUE, data1.get(3));
+        Assert.assertEquals(Byte.MAX_VALUE, data1.get(4));
+    }
+
 }

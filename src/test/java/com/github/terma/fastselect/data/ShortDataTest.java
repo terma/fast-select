@@ -79,4 +79,28 @@ public class ShortDataTest {
         Assert.assertEquals(data.size(), 5);
     }
 
+    @Test
+    public void saveAndLoad() throws IOException {
+        File f = Files.createTempFile("a", "b").toFile();
+        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
+
+        ShortData data = new ShortData(100);
+        data.add((byte) -1);
+        data.add((byte) 2);
+        data.add((byte) 0);
+        data.add(Short.MIN_VALUE);
+        data.add(Short.MAX_VALUE);
+        data.save(fc);
+
+        fc.position(0);
+        ShortData data1 = new ShortData(100);
+        data1.load(fc, 5);
+
+        f.delete();
+
+        Assert.assertEquals(data1.size(), 5);
+        Assert.assertEquals(Short.MIN_VALUE, data1.get(3));
+        Assert.assertEquals(Short.MAX_VALUE, data1.get(4));
+    }
+
 }

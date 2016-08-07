@@ -21,6 +21,8 @@ import java.nio.channels.FileChannel;
 
 public interface Data {
 
+    int STORAGE_FORMAT_VERSION = 1;
+
     int DEFAULT_SIZE = 16;
 
     long OBJECT_HEADER_BYTES = 16;
@@ -29,6 +31,8 @@ public interface Data {
     long INT_BYTES = 4;
     long LONG_BYTES = 8;
     long DOUBLE_BYTES = 8;
+
+    void save(FileChannel fileChannel) throws IOException;
 
     void load(FileChannel fileChannel, int size) throws IOException;
 
