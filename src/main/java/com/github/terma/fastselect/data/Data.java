@@ -17,20 +17,30 @@ limitations under the License.
 package com.github.terma.fastselect.data;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
 public interface Data {
 
+    int STORAGE_FORMAT_VERSION = 1;
+
     int DEFAULT_SIZE = 16;
 
-    long OBJECT_HEADER_BYTES = 16;
-    long REFERENCE_BYTES = 8;
-    long SHORT_BYTES = 2;
-    long INT_BYTES = 4;
-    long LONG_BYTES = 8;
-    long DOUBLE_BYTES = 8;
+    int OBJECT_HEADER_BYTES = 16;
+    int REFERENCE_BYTES = 8;
+    int SHORT_BYTES = 2;
+    int INT_BYTES = 4;
+    int LONG_BYTES = 8;
+    int DOUBLE_BYTES = 8;
 
-    void load(FileChannel fileChannel, int size) throws IOException;
+    /**
+     * @return - amount of bytes which column data will take in {@link FileChannel}
+     */
+    int getDiskSpace();
+
+    void save(ByteBuffer buffer) throws IOException;
+
+    void load(String dataClass, ByteBuffer buffer, int size) throws IOException;
 
     Object get(int position);
 
@@ -43,7 +53,7 @@ public interface Data {
     int allocatedSize();
 
     /**
-     * Approximate size of Data structure in memory.
+     * Approximate size of Data structure in heap memory.
      *
      * @return - size in bytes
      */

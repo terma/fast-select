@@ -79,4 +79,25 @@ public class LongDataTest {
         Assert.assertEquals(data.size(), 5);
     }
 
+    @Test
+    public void saveAndLoad() throws IOException {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(10000);
+
+        LongData data = new LongData(100);
+        data.add((byte) -1);
+        data.add((byte) 2);
+        data.add((byte) 0);
+        data.add(Long.MIN_VALUE);
+        data.add(Long.MAX_VALUE);
+        data.save(byteBuffer);
+
+        byteBuffer.flip();
+        LongData data1 = new LongData(100);
+        data1.load("", byteBuffer, 5);
+
+        Assert.assertEquals(data1.size(), 5);
+        Assert.assertEquals(Long.MIN_VALUE, data1.get(3));
+        Assert.assertEquals(Long.MAX_VALUE, data1.get(4));
+    }
+
 }

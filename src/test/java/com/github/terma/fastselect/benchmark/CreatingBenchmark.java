@@ -58,10 +58,10 @@ public class CreatingBenchmark {
 
         final Player player = playerFactory.createPlayer();
 
-        System.out.println("Check play:");
-        System.out.println(player.playGroupByGAndR());
-        System.out.println(player.playGroupByBsIdAndR());
-        System.out.println(player.playDetailsByGAndRAndSorting());
+//        System.out.println("Check play:");
+//        System.out.println(player.playGroupByGAndR());
+//        System.out.println(player.playGroupByBsIdAndR());
+//        System.out.println(player.playDetailsByGAndRAndSorting());
         return player.playGroupByGAndR();
     }
 

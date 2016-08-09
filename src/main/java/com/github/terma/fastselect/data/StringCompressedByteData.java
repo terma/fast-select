@@ -16,9 +16,10 @@ limitations under the License.
 
 package com.github.terma.fastselect.data;
 
+import com.github.terma.fastselect.utils.IOUtils;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,6 +67,29 @@ public class StringCompressedByteData implements Data {
         return position;
     }
 
+    @Override
+    public int getDiskSpace() {
+        int space = Data.INT_BYTES;
+        for (String string : values) {
+            space += IOUtils.getStringBytesSize(string);
+        }
+        return space + data.getDiskSpace();
+    }
+
+    /**
+     * @param buffer - b
+     * @throws IOException
+     * @see StringCompressedByteData#load(String, ByteBuffer, int)
+     */
+    @Override
+    public void save(final ByteBuffer buffer) throws IOException {
+        buffer.putInt(values.length);
+        for (String string : values) {
+            IOUtils.writeString(buffer, string);
+        }
+        data.save(buffer);
+    }
+
     /**
      * <pre>
      *  dictionary-size: int
@@ -77,26 +101,17 @@ public class StringCompressedByteData implements Data {
      *  byte data: ByteData
      * </pre>
      *
-     * @param fileChannel - fc
-     * @param size        - count of elements in data (not bytes)
+     * @param buffer - b
+     * @param size   - count of elements in data (not bytes)
      */
     @Override
-    public void load(FileChannel fileChannel, int size) throws IOException {
-        ByteBuffer dicSizeBuffer = ByteBuffer.allocate((int) INT_BYTES);
-        fileChannel.read(dicSizeBuffer);
-        dicSizeBuffer.position(0);
-        int dictionarySize = dicSizeBuffer.getInt();
+    public void load(String dataClass, ByteBuffer buffer, int size) throws IOException {
+        int dictionarySize = buffer.getInt();
         for (int i = 0; i < dictionarySize; i++) {
-            ByteBuffer stringSizeBuffer = ByteBuffer.allocate((int) INT_BYTES);
-            fileChannel.read(stringSizeBuffer);
-            stringSizeBuffer.position(0);
-            int stringSize = stringSizeBuffer.getInt();
-            ByteBuffer strinbBuffer = ByteBuffer.allocate(stringSize);
-            fileChannel.read(strinbBuffer);
-            values[i] = new String(strinbBuffer.array());
+            values[i] = IOUtils.readString(buffer);
             valueToPosition.put(values[i], (byte) i);
         }
-        data.load(fileChannel, size);
+        data.load("", buffer, size);
     }
 
     @Override

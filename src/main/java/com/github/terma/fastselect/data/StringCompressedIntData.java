@@ -20,48 +20,51 @@ import com.github.terma.fastselect.utils.IOUtils;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
- * Max possible distinct values {@link Short#MAX_VALUE}
+ * Max possible distinct values {@link Integer#MAX_VALUE}
  * <p>
  * To use that type of data field should have type {@link String} and additionally
- * marked by {@link StringCompressedShort}
+ * marked by {@link StringCompressedInt}
  *
  * @see StringCompressedByteData
+ * @see StringCompressedShortData
  * @see StringData
  */
-public class StringCompressedShortData implements Data {
+public class StringCompressedIntData implements Data {
 
-    public final ShortData data;
-    private final Map<String, Short> valueToPosition;
-    private final String[] values;
+    public final IntData data;
+    private final Map<String, Integer> valueToPosition;
+    private final List<String> values;
 
-    public StringCompressedShortData(final int inc) {
-        data = new ShortData(inc);
-        values = new String[Short.MAX_VALUE];
+    public StringCompressedIntData(final int inc) {
+        data = new IntData(inc);
+        values = new ArrayList<>();
         valueToPosition = new HashMap<>();
     }
 
-    public StringCompressedShortData(StringCompressedShortData data, byte[] needToCopy) {
-        this.data = (ShortData) data.data.copy(needToCopy);
+    public StringCompressedIntData(StringCompressedIntData data, byte[] needToCopy) {
+        this.data = (IntData) data.data.copy(needToCopy);
         this.values = data.values;
         this.valueToPosition = data.valueToPosition;
     }
 
-    public Map<String, Short> getValueToPosition() {
+    public Map<String, Integer> getValueToPosition() {
         return valueToPosition;
     }
 
-    public short add(String v) {
-        Short position = valueToPosition.get(v);
+    public int add(String v) {
+        Integer position = valueToPosition.get(v);
         if (position == null) {
             if (valueToPosition.size() >= Short.MAX_VALUE)
                 throw new IllegalArgumentException("Too many (" + Short.MAX_VALUE + ") distinct values!");
-            position = (short) valueToPosition.size();
+            position = valueToPosition.size();
             valueToPosition.put(v, position);
-            values[position] = v;
+            values.add(v);
         }
         data.add(position);
         return position;
@@ -79,7 +82,7 @@ public class StringCompressedShortData implements Data {
     @Override
     public void save(final ByteBuffer buffer) throws IOException {
         // todo remove duplication with other compressed data
-        buffer.putInt(values.length);
+        buffer.putInt(values.size());
         for (String string : values) {
             IOUtils.writeString(buffer, string);
         }
@@ -104,20 +107,20 @@ public class StringCompressedShortData implements Data {
     public void load(String dataClass, ByteBuffer buffer, int size) throws IOException {
         int dictionarySize = buffer.getInt();
         for (int i = 0; i < dictionarySize; i++) {
-            values[i] = IOUtils.readString(buffer);
-            valueToPosition.put(values[i], (short) i);
+            values.add(IOUtils.readString(buffer));
+            valueToPosition.put(values.get(i), i);
         }
         data.load("", buffer, size);
     }
 
     @Override
     public Object get(int position) {
-        return values[data.data[position]];
+        return values.get(data.data[position]);
     }
 
     @Override
     public int compare(int position1, int position2) {
-        return values[data.data[position1]].compareTo(values[data.data[position2]]);
+        return values.get(data.data[position1]).compareTo(values.get(data.data[position2]));
     }
 
     @Override
@@ -147,6 +150,6 @@ public class StringCompressedShortData implements Data {
 
     @Override
     public Data copy(byte[] needToCopy) {
-        return new StringCompressedShortData(this, needToCopy);
+        return new StringCompressedIntData(this, needToCopy);
     }
 }

@@ -19,39 +19,31 @@ package com.github.terma.fastselect.data;
 import junit.framework.Assert;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.file.Files;
 
 public class StringCompressedByteDataTest {
 
     @Test
-    public void load() throws IOException {
+    public void saveLoad() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(1000);
+
         StringCompressedByteData data = new StringCompressedByteData(100);
-        File f = Files.createTempFile("a", "b").toFile();
-        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
-        fc.write((ByteBuffer) ByteBuffer.allocate((int) Data.INT_BYTES).putInt(2).flip());
+        data.add("ABACA");
+        data.add("XY");
+        data.add("");
+        data.add(null);
+        data.save(buffer);
+        buffer.flip();
 
-        byte[] string1 = "ABACA".getBytes();
-        fc.write((ByteBuffer) ByteBuffer.allocate((int) Data.INT_BYTES).putInt(string1.length).flip());
-        fc.write(ByteBuffer.wrap(string1));
+        StringCompressedByteData data1 = new StringCompressedByteData(100);
+        data1.load("", buffer, 4);
 
-        byte[] string2 = "XY".getBytes();
-        fc.write((ByteBuffer) ByteBuffer.allocate((int) Data.INT_BYTES).putInt(string2.length).flip());
-        fc.write(ByteBuffer.wrap(string2));
-
-        fc.write(ByteBuffer.wrap(new byte[]{0, 1, 0, 1, 0}));
-
-        fc.position(0);
-        data.load(fc, 5);
-        f.delete();
-
-        Assert.assertEquals(data.size(), 5);
-        Assert.assertEquals("ABACA", data.get(0));
-        Assert.assertEquals("XY", data.get(1));
+        Assert.assertEquals(data1.size(), 4);
+        Assert.assertEquals("ABACA", data1.get(0));
+        Assert.assertEquals("XY", data1.get(1));
+        Assert.assertEquals("", data1.get(2));
+        Assert.assertEquals(null, data1.get(3));
     }
 
 }

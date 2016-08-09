@@ -57,7 +57,7 @@ public class SpecialRandomTest {
 
         int first = result.get(0);
         int firstInNextPortion = result.get(2);
-        Assert.assertTrue(firstInNextPortion > first + portion);
+        Assert.assertTrue(firstInNextPortion >= first + portion);
     }
 
     @Test(expected = IllegalArgumentException.class)
