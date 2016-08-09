@@ -77,8 +77,7 @@ public class ByteDataTest {
 
     @Test
     public void saveAndLoad() throws IOException {
-        File f = Files.createTempFile("a", "b").toFile();
-        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
+        ByteBuffer buffer = ByteBuffer.allocate(1000);
 
         ByteData data = new ByteData(100);
         data.add((byte) -1);
@@ -86,13 +85,11 @@ public class ByteDataTest {
         data.add((byte) 0);
         data.add(Byte.MIN_VALUE);
         data.add(Byte.MAX_VALUE);
-        data.save(fc);
+        data.save(buffer);
 
-        fc.position(0);
+        buffer.flip();
         ByteData data1 = new ByteData(100);
-        data1.load(fc, 5);
-
-        f.delete();
+        data1.load("", buffer, 5);
 
         Assert.assertEquals(data1.size(), 5);
         Assert.assertEquals(Byte.MIN_VALUE, data1.get(3));

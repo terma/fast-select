@@ -17,7 +17,7 @@ limitations under the License.
 package com.github.terma.fastselect.data;
 
 import java.io.IOException;
-import java.nio.channels.FileChannel;
+import java.nio.ByteBuffer;
 
 public class MultiIntData implements Data {
 
@@ -54,12 +54,17 @@ public class MultiIntData implements Data {
     }
 
     @Override
-    public void save(FileChannel fileChannel) throws IOException {
+    public int getDiskSpace() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void load(FileChannel fileChannel, int size) {
+    public void save(final ByteBuffer buffer) throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void load(String dataClass, ByteBuffer buffer, int size) throws IOException {
         throw new UnsupportedOperationException();
     }
 

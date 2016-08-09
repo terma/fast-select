@@ -18,6 +18,7 @@ package com.github.terma.fastselect;
 
 import com.github.terma.fastselect.callbacks.*;
 import com.github.terma.fastselect.data.*;
+import com.github.terma.fastselect.utils.IOUtils;
 import com.github.terma.fastselect.utils.MethodHandlerRepository;
 
 import javax.annotation.concurrent.ThreadSafe;
@@ -107,17 +108,33 @@ import java.util.*;
  * <h3>JMX</h3>
  * To see static of {@link FastSelect} you can use {@link com.github.terma.fastselect.jmx.FastSelectMXBeanImpl}
  * <p>
- * <h3>Restore from file</h3>
+ * <h3>Save / Load from file</h3>
+ * FastSelect support save and load from {@link FileChannel}
  * <p>
- * File format:
+ * Binary file format:
  * <pre>
+ * # header
  * format-version (int)
- * size (int)
+ * row-count (int)
+ * columns-count (int)
+ *
+ * # columns meta info
+ * column-0-data-class-size (int)
+ * column-0-data-class (byte[])
+ * column-0-name-size (int)
+ * column-0-name (byte[])
+ * column-0-data-file-position (long)
+ * column-0-data-byte-size (int)
+ * ...
+ * column-M
+ *
+ * # columns data
  * data 0 (type specific format)
  * ...
  * data n
  * EOF
  * </pre>
+ * To find details about specific column (data) format please check implementation of {@link Data}
  *
  * @author Artem Stasiuk
  * @see FastSelectBuilder
@@ -178,34 +195,77 @@ public final class FastSelect<T> {
 
     /**
      * Beta version
+     * <p>
+     * Format described in javadoc for class
      *
      * @param fileChannel - fc
      * @throws IOException
      */
     public void save(final FileChannel fileChannel) throws IOException {
-        fileChannel.write((ByteBuffer) ByteBuffer.allocate((int) Data.INT_BYTES).putInt(Data.STORAGE_FORMAT_VERSION).flip());
-        fileChannel.write((ByteBuffer) ByteBuffer.allocate((int) Data.INT_BYTES).putInt(size()).flip());
+        IOUtils.writeInt(fileChannel, Data.STORAGE_FORMAT_VERSION);
+        IOUtils.writeInt(fileChannel, size());
+        IOUtils.writeInt(fileChannel, columns.size());
+
+        // estimate data position
+        long headerEnd = fileChannel.position();
         for (Column column : columns) {
-            column.data.save(fileChannel);
+            headerEnd += IOUtils.getStringBytesSize(column.data.getClass().getName());
+            headerEnd += IOUtils.getStringBytesSize(column.name);
+            headerEnd += Data.LONG_BYTES;
+            headerEnd += Data.INT_BYTES;
+        }
+
+        // write columns meta
+        long nextDataPosition = headerEnd;
+        for (Column column : columns) {
+            IOUtils.writeString(fileChannel, column.data.getClass().getName());
+            IOUtils.writeString(fileChannel, column.name);
+            IOUtils.writeLong(fileChannel, nextDataPosition);
+            final int diskSpace = column.data.getDiskSpace();
+            IOUtils.writeInt(fileChannel, diskSpace);
+            nextDataPosition += diskSpace;
+        }
+
+        // write data
+        nextDataPosition = headerEnd;
+        for (Column column : columns) {
+            final int diskSpace = column.data.getDiskSpace();
+            final ByteBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, nextDataPosition, diskSpace);
+            column.data.save(buffer);
+            nextDataPosition += diskSpace;
         }
         rootBlock.init();
     }
 
+    /**
+     * Beta version
+     * <p>
+     * Format described in javadoc for class
+     *
+     * @param fileChannel - fc
+     * @throws IOException
+     */
     public void load(final FileChannel fileChannel) throws IOException {
-        ByteBuffer formatVersionBuffer = ByteBuffer.allocate((int) Data.INT_BYTES);
-        fileChannel.read(formatVersionBuffer);
-        formatVersionBuffer.flip();
-        final int version = formatVersionBuffer.getInt();
-        if (version != Data.STORAGE_FORMAT_VERSION)
-            throw new IllegalArgumentException("Unsupported format version: " + version
-                    + ", expected: " + Data.STORAGE_FORMAT_VERSION);
+        if (fileChannel.size() > 0) {
+            final int version = IOUtils.readInt(fileChannel);
+            if (version != Data.STORAGE_FORMAT_VERSION)
+                throw new IllegalArgumentException("Unsupported format version: " + version
+                        + ", expected: " + Data.STORAGE_FORMAT_VERSION);
 
-        ByteBuffer sizeBuffer = ByteBuffer.allocate((int) Data.INT_BYTES);
-        fileChannel.read(sizeBuffer);
-        sizeBuffer.flip();
-        int size = sizeBuffer.getInt();
-        for (Column column : columns) {
-            column.data.load(fileChannel, size);
+            final int size = IOUtils.readInt(fileChannel);
+            final int columnCount = IOUtils.readInt(fileChannel);
+
+            for (int i = 0; i < columnCount; i++) {
+                final String dataClass = IOUtils.readString(fileChannel);
+                final String columnName = IOUtils.readString(fileChannel);
+                final long position = IOUtils.readLong(fileChannel);
+                final int bytesSize = IOUtils.readInt(fileChannel);
+                final ByteBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, position, bytesSize);
+                Column column = columnsByNames.get(columnName);
+                if (column != null) {
+                    column.data.load(dataClass, buffer, size);
+                }
+            }
         }
         rootBlock.init();
     }
@@ -473,6 +533,8 @@ public final class FastSelect<T> {
                 data = new StringCompressedByteData(inc);
             } else if (type == String.class && annotationType == StringCompressedShort.class) {
                 data = new StringCompressedShortData(inc);
+            } else if (type == String.class && annotationType == StringCompressedInt.class) {
+                data = new StringCompressedIntData(inc);
             } else if (type == String.class) {
                 data = new StringData(inc);
             } else if (type == double.class) {
@@ -763,6 +825,13 @@ public final class FastSelect<T> {
 
                     } else if (column.type == String.class && column.annotationType == StringCompressedShort.class) {
                         final StringCompressedShortData data = (StringCompressedShortData) column.data;
+                        for (int i = addFrom; i < addTo; i++) {
+                            String v = (String) methodHandle.invoke(dataToAdd.get(i));
+                            data.add(v);
+                        }
+
+                    } else if (column.type == String.class && column.annotationType == StringCompressedInt.class) {
+                        final StringCompressedIntData data = (StringCompressedIntData) column.data;
                         for (int i = addFrom; i < addTo; i++) {
                             String v = (String) methodHandle.invoke(dataToAdd.get(i));
                             data.add(v);

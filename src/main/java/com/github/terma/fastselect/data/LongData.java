@@ -57,13 +57,16 @@ public class LongData implements Data {
     }
 
     @Override
-    public void save(FileChannel fileChannel) throws IOException {
-        LongBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, fileChannel.position(), LONG_BYTES * size).asLongBuffer();
-        buffer.put(data, 0, size);
-        fileChannel.position(fileChannel.position() + LONG_BYTES * buffer.position());
+    public int getDiskSpace() {
+        return Data.LONG_BYTES * size;
     }
 
     @Override
+    public void save(final ByteBuffer buffer) throws IOException {
+        buffer.asLongBuffer().put(data, 0, size);
+        buffer.position(buffer.position() + Data.LONG_BYTES * size);
+    }
+
     public void load(FileChannel fileChannel, int size) throws IOException {
         this.size = size;
         this.data = new long[size];
@@ -71,6 +74,13 @@ public class LongData implements Data {
         LongBuffer longBuffer = buffer.asLongBuffer();
         longBuffer.get(data);
         fileChannel.position(fileChannel.position() + LONG_BYTES * longBuffer.position());
+    }
+
+    @Override
+    public void load(String dataClass, ByteBuffer buffer, int size) throws IOException {
+        this.size = size;
+        this.data = new long[size];
+        buffer.asLongBuffer().get(data);
     }
 
     @Override

@@ -81,8 +81,7 @@ public class LongDataTest {
 
     @Test
     public void saveAndLoad() throws IOException {
-        File f = Files.createTempFile("a", "b").toFile();
-        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
+        ByteBuffer byteBuffer = ByteBuffer.allocate(10000);
 
         LongData data = new LongData(100);
         data.add((byte) -1);
@@ -90,13 +89,11 @@ public class LongDataTest {
         data.add((byte) 0);
         data.add(Long.MIN_VALUE);
         data.add(Long.MAX_VALUE);
-        data.save(fc);
+        data.save(byteBuffer);
 
-        fc.position(0);
+        byteBuffer.flip();
         LongData data1 = new LongData(100);
-        data1.load(fc, 5);
-
-        f.delete();
+        data1.load("", byteBuffer, 5);
 
         Assert.assertEquals(data1.size(), 5);
         Assert.assertEquals(Long.MIN_VALUE, data1.get(3));

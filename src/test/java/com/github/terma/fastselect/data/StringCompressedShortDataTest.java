@@ -19,59 +19,25 @@ package com.github.terma.fastselect.data;
 import junit.framework.Assert;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.file.Files;
 
 public class StringCompressedShortDataTest {
 
     @Test
-    public void load() throws IOException {
-        StringCompressedShortData data = new StringCompressedShortData(100);
-        File f = Files.createTempFile("a", "b").toFile();
-        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
-        fc.write((ByteBuffer) ByteBuffer.allocate((int) Data.INT_BYTES).putInt(2).flip());
-
-        byte[] string1 = "ABACA".getBytes();
-        fc.write((ByteBuffer) ByteBuffer.allocate((int) Data.INT_BYTES).putInt(string1.length).flip());
-        fc.write(ByteBuffer.wrap(string1));
-
-        byte[] string2 = "XY".getBytes();
-        fc.write((ByteBuffer) ByteBuffer.allocate((int) Data.INT_BYTES).putInt(string2.length).flip());
-        fc.write(ByteBuffer.wrap(string2));
-
-        fc.write((ByteBuffer) ByteBuffer.allocate(100)
-                .putShort((short) 0).putShort((short) 1).putShort((short) 1)
-                .putShort((short) 1).putShort((short) 1).flip());
-
-        fc.position(0);
-        data.load(fc, 5);
-        f.delete();
-
-        Assert.assertEquals(data.size(), 5);
-        Assert.assertEquals("ABACA", data.get(0));
-        Assert.assertEquals("XY", data.get(1));
-    }
-
-    @Test
     public void saveLoad() throws IOException {
-        File f = Files.createTempFile("a", "b").toFile();
-        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
+        ByteBuffer buffer = ByteBuffer.allocate(1024 * 1024);
 
         StringCompressedShortData data = new StringCompressedShortData(100);
         data.add("ABACA");
         data.add("XY");
         data.add("");
         data.add(null);
-        data.save(fc);
-        fc.position(0);
+        data.save(buffer);
+        buffer.flip();
 
         StringCompressedShortData data1 = new StringCompressedShortData(100);
-        data1.load(fc, 4);
-        f.delete();
+        data1.load("", buffer, 4);
 
         Assert.assertEquals(data1.size(), 4);
         Assert.assertEquals("ABACA", data1.get(0));
