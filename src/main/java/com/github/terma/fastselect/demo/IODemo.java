@@ -38,7 +38,7 @@ public class IODemo {
         final long start = System.currentTimeMillis();
         final FileChannel fc = new RandomAccessFile(file, "r").getChannel();
 
-        ByteBuffer sizeBuffer = ByteBuffer.allocate((int) Data.INT_BYTES);
+        ByteBuffer sizeBuffer = ByteBuffer.allocate(Data.INT_BYTES);
         fc.read(sizeBuffer);
         sizeBuffer.flip();
         final int size = sizeBuffer.getInt();

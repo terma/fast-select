@@ -20,6 +20,7 @@ import com.github.terma.fastselect.callbacks.*;
 import com.github.terma.fastselect.data.*;
 import com.github.terma.fastselect.utils.IOUtils;
 import com.github.terma.fastselect.utils.MethodHandlerRepository;
+import com.github.terma.fastselect.utils.ThreadUtils;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
@@ -27,6 +28,10 @@ import java.lang.invoke.MethodHandle;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Compact in-memory storage with fast search.
@@ -242,10 +247,11 @@ public final class FastSelect<T> {
      * <p>
      * Format described in javadoc for class
      *
-     * @param fileChannel - fc
+     * @param fileChannel  - fc
+     * @param threadCounts - for parallel load
      * @throws IOException
      */
-    public void load(final FileChannel fileChannel) throws IOException {
+    public void load(final FileChannel fileChannel, final int threadCounts) throws IOException {
         if (fileChannel.size() > 0) {
             final int version = IOUtils.readInt(fileChannel);
             if (version != Data.STORAGE_FORMAT_VERSION)
@@ -255,17 +261,26 @@ public final class FastSelect<T> {
             final int size = IOUtils.readInt(fileChannel);
             final int columnCount = IOUtils.readInt(fileChannel);
 
+            final ExecutorService executorService = Executors.newFixedThreadPool(threadCounts);
+            final List<Future<Object>> futures = new ArrayList<>();
             for (int i = 0; i < columnCount; i++) {
                 final String dataClass = IOUtils.readString(fileChannel);
                 final String columnName = IOUtils.readString(fileChannel);
                 final long position = IOUtils.readLong(fileChannel);
                 final int bytesSize = IOUtils.readInt(fileChannel);
-                final ByteBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, position, bytesSize);
-                Column column = columnsByNames.get(columnName);
-                if (column != null) {
-                    column.data.load(dataClass, buffer, size);
-                }
+
+                futures.add(executorService.submit(new Callable<Object>() {
+                    @Override
+                    public Object call() throws Exception {
+                        final ByteBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, position, bytesSize);
+                        Column column = columnsByNames.get(columnName);
+                        if (column != null) column.data.load(dataClass, buffer, size);
+                        return null;
+                    }
+                }));
             }
+            ThreadUtils.getAll(futures);
+            executorService.shutdown();
         }
         rootBlock.init();
     }

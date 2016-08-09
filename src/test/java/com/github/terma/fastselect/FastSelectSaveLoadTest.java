@@ -40,7 +40,7 @@ public class FastSelectSaveLoadTest {
         File f = Files.createTempFile("a", "b").toFile();
         FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
         fc.position(0);
-        fastSelect.load(fc);
+        fastSelect.load(fc, 1);
         fc.close();
 
         Assert.assertEquals(0, fastSelect.size());
@@ -55,7 +55,7 @@ public class FastSelectSaveLoadTest {
         writeInt(fc, 0);
         writeInt(fc, 0);
         fc.position(0);
-        fastSelect.load(fc);
+        fastSelect.load(fc, 1);
         fc.close();
 
         Assert.assertEquals(0, fastSelect.size());
@@ -83,7 +83,7 @@ public class FastSelectSaveLoadTest {
         writeInt(fc, 0);
 
         fc.position(0);
-        fastSelect.load(fc);
+        fastSelect.load(fc, 1);
         fc.close();
 
         Assert.assertEquals(0, fastSelect.size());
@@ -97,7 +97,7 @@ public class FastSelectSaveLoadTest {
         fc.write((ByteBuffer) ByteBuffer.allocate(Data.INT_BYTES).putInt(-1).flip());
         fc.write((ByteBuffer) ByteBuffer.allocate(Data.INT_BYTES).putInt(0).flip());
         fc.position(0);
-        fastSelect.load(fc);
+        fastSelect.load(fc, 1);
     }
 
     @Test
@@ -126,7 +126,7 @@ public class FastSelectSaveLoadTest {
         fc.write((ByteBuffer) ByteBuffer.allocate(1024).putShort(Short.MAX_VALUE).putShort(Short.MIN_VALUE).flip());
 
         fc.position(0);
-        fastSelect.load(fc);
+        fastSelect.load(fc, 1);
         fc.close();
 
         Assert.assertEquals(2, fastSelect.size());
@@ -150,7 +150,34 @@ public class FastSelectSaveLoadTest {
 
         fc.position(0);
         FastSelect<TestLongShort> fastSelect1 = new FastSelectBuilder<>(TestLongShort.class).blockSize(1).create();
-        fastSelect1.load(fc);
+        fastSelect1.load(fc, 1);
+
+        fc.close();
+        //noinspection ResultOfMethodCallIgnored
+        f.delete();
+
+        Assert.assertEquals(2, fastSelect1.size());
+        Assert.assertEquals(
+                Arrays.asList(
+                        new TestLongShort(0, (short) 0),
+                        new TestLongShort(Long.MAX_VALUE, Short.MIN_VALUE)),
+                fastSelect1.select()
+        );
+    }
+
+    @Test
+    public void parallelLoad() throws IOException {
+        FastSelect<TestLongShort> fastSelect = new FastSelectBuilder<>(TestLongShort.class).blockSize(1).create();
+        fastSelect.addAll(Arrays.asList(new TestLongShort(0, (short) 0), new TestLongShort(Long.MAX_VALUE, Short.MIN_VALUE)));
+
+        File f = Files.createTempFile("a", "b").toFile();
+        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
+
+        fastSelect.save(fc);
+
+        fc.position(0);
+        FastSelect<TestLongShort> fastSelect1 = new FastSelectBuilder<>(TestLongShort.class).blockSize(1).create();
+        fastSelect1.load(fc, 5);
 
         fc.close();
         //noinspection ResultOfMethodCallIgnored
@@ -177,7 +204,7 @@ public class FastSelectSaveLoadTest {
 
         fc.position(0);
         FastSelect<TestIntByte> fastSelect1 = new FastSelectBuilder<>(TestIntByte.class).blockSize(1).create();
-        fastSelect1.load(fc);
+        fastSelect1.load(fc, 1);
 
         fc.close();
         //noinspection ResultOfMethodCallIgnored
@@ -205,7 +232,7 @@ public class FastSelectSaveLoadTest {
 
         fc.position(0);
         FastSelect<TestCompressedString> fastSelect1 = new FastSelectBuilder<>(TestCompressedString.class).blockSize(1).create();
-        fastSelect1.load(fc);
+        fastSelect1.load(fc, 1);
 
         fc.close();
         //noinspection ResultOfMethodCallIgnored
