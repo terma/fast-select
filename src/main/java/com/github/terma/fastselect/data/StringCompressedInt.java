@@ -6,7 +6,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @see com.github.terma.fastselect.StringCompressedIntNoCaseLikeRequest
  * @see StringCompressedIntData
  */
 @Target(ElementType.FIELD)
