@@ -16,8 +16,8 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
-import com.github.terma.fastselect.data.StringCompressedShort;
-import com.github.terma.fastselect.data.StringCompressedShortData;
+import com.github.terma.fastselect.data.StringCompressedInt;
+import com.github.terma.fastselect.data.StringCompressedIntData;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -30,7 +30,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
 @SuppressWarnings("WeakerAccess")
-public class FastSelectStringCompressedShortTest {
+public class FastSelectStringCompressedIntTest {
 
     @Test
     public void shouldSelectAndSortByColumn() {
@@ -88,22 +88,22 @@ public class FastSelectStringCompressedShortTest {
 
         Assert.assertEquals(
                 Collections.emptyList(),
-                database.select(new StringCompressedShortNoCaseLikeRequest("stringValue", "RaR")));
+                database.select(new StringCompressedIntNoCaseLikeRequest("stringValue", "RaR")));
 
         Assert.assertEquals(
                 Collections.singletonList(new TestString("ArM")),
-                database.select(new StringCompressedShortNoCaseLikeRequest("stringValue", "ArM")));
+                database.select(new StringCompressedIntNoCaseLikeRequest("stringValue", "ArM")));
 
         Assert.assertEquals(
                 asList(new TestString("aRa"), new TestString("ArM")),
-                database.select(new StringCompressedShortNoCaseLikeRequest("stringValue", "ar")));
+                database.select(new StringCompressedIntNoCaseLikeRequest("stringValue", "ar")));
     }
 
     @Test
     public void shouldSupportIntAmountOfDiffValues() {
         FastSelect<TestString> database = new FastSelectBuilder<>(TestString.class).create();
         List<TestString> t = new ArrayList<>();
-        for (int i = 0; i < Short.MAX_VALUE; i++) t.add(new TestString("A" + i));
+        for (int i = 0; i < Short.MAX_VALUE * 2; i++) t.add(new TestString("A" + i));
         database.addAll(t);
 
         Assert.assertEquals(t, database.select());
@@ -128,7 +128,7 @@ public class FastSelectStringCompressedShortTest {
     public void shouldCreateProperData() {
         FastSelect<TestString> database = new FastSelectBuilder<>(TestString.class).create();
 
-        Assert.assertEquals(StringCompressedShortData.class,
+        Assert.assertEquals(StringCompressedIntData.class,
                 database.getColumns().get(0).data.getClass());
     }
 
@@ -149,7 +149,7 @@ public class FastSelectStringCompressedShortTest {
 
     public static class TestString {
 
-        @StringCompressedShort
+        @StringCompressedInt
         public String stringValue;
 
         // empty constructor for database to be able restore object

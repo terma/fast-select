@@ -60,8 +60,8 @@ public class StringCompressedIntData implements Data {
     public int add(String v) {
         Integer position = valueToPosition.get(v);
         if (position == null) {
-            if (valueToPosition.size() >= Short.MAX_VALUE)
-                throw new IllegalArgumentException("Too many (" + Short.MAX_VALUE + ") distinct values!");
+            if (valueToPosition.size() >= Integer.MAX_VALUE)
+                throw new IllegalArgumentException("Too many (" + Integer.MAX_VALUE + ") distinct values!");
             position = valueToPosition.size();
             valueToPosition.put(v, position);
             values.add(v);

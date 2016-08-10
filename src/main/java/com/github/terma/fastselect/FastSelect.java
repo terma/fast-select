@@ -842,14 +842,16 @@ public final class FastSelect<T> {
                         final StringCompressedShortData data = (StringCompressedShortData) column.data;
                         for (int i = addFrom; i < addTo; i++) {
                             String v = (String) methodHandle.invoke(dataToAdd.get(i));
-                            data.add(v);
+                            short position = data.add(v);
+                            setColumnBitSet(column, position);
                         }
 
                     } else if (column.type == String.class && column.annotationType == StringCompressedInt.class) {
                         final StringCompressedIntData data = (StringCompressedIntData) column.data;
                         for (int i = addFrom; i < addTo; i++) {
                             String v = (String) methodHandle.invoke(dataToAdd.get(i));
-                            data.add(v);
+                            int position = data.add(v);
+                            range.update(position);
                         }
 
                     } else if (column.type == String.class) {
