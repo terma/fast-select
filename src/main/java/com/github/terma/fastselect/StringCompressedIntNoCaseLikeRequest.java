@@ -64,7 +64,7 @@ public class StringCompressedIntNoCaseLikeRequest extends ColumnRequest {
         addresses = new ArrayList<>();
         Map<String, Integer> valueToPosition = ((StringCompressedIntData) column.data).getValueToPosition();
         for (Map.Entry<String, Integer> vp : valueToPosition.entrySet()) {
-            if (vp.getKey().toLowerCase().contains(like)) {
+            if (like.isEmpty() && vp.getKey() == null || vp.getKey() != null && vp.getKey().toLowerCase().contains(like)) {
                 addresses.add(vp.getValue());
             }
         }
@@ -74,7 +74,7 @@ public class StringCompressedIntNoCaseLikeRequest extends ColumnRequest {
 
     @Override
     public String toString() {
-        return "StringCompressedByteNoCaseLikeRequest {name: " + name + ", like: " + like + '}';
+        return "StringCompressedIntNoCaseLikeRequest {name: " + name + ", like: " + like + '}';
     }
 
 }

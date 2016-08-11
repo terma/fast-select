@@ -30,7 +30,7 @@ import java.util.Map;
 @SuppressWarnings("WeakerAccess")
 public class StringCompressedByteNoCaseLikeRequest extends ColumnRequest {
 
-    private final String like;
+    private final String[] likes;
 
     private byte[] data;
 
@@ -40,11 +40,10 @@ public class StringCompressedByteNoCaseLikeRequest extends ColumnRequest {
      */
     private byte[] plainSet = new byte[Byte.MAX_VALUE];
 
-    public StringCompressedByteNoCaseLikeRequest(String name, String like) {
+    public StringCompressedByteNoCaseLikeRequest(String name, String... l) {
         super(name);
-
-        if (like == null) throw new IllegalArgumentException("Can't search null string!");
-        this.like = like.toLowerCase();
+        likes = new String[l.length];
+        for (int i = 0; i < likes.length; i++) likes[i] = l[i].toLowerCase();
     }
 
     @Override
@@ -58,7 +57,7 @@ public class StringCompressedByteNoCaseLikeRequest extends ColumnRequest {
     }
 
     @Override
-    public boolean checkValue(int position) {
+    public boolean checkValue(final int position) {
         byte v = data[position];
         return plainSet[v] >= 0;
     }
@@ -74,16 +73,18 @@ public class StringCompressedByteNoCaseLikeRequest extends ColumnRequest {
 
         Map<String, Byte> valueToPosition = ((StringCompressedByteData) column.data).getValueToPosition();
         for (Map.Entry<String, Byte> vp : valueToPosition.entrySet()) {
-            if (vp.getKey().toLowerCase().contains(like)) {
-                // set real position in dictionary if item should be find
-                plainSet[vp.getValue()] = vp.getValue();
+            for (String like : likes) {
+                if (like.isEmpty() && vp.getKey() == null || vp.getKey() != null && vp.getKey().toLowerCase().contains(like)) {
+                    // set real position in dictionary if item should be find
+                    plainSet[vp.getValue()] = vp.getValue();
+                }
             }
         }
     }
 
     @Override
     public String toString() {
-        return "StringCompressedByteNoCaseLikeRequest {name: " + name + ", like: " + like + '}';
+        return "StringCompressedByteNoCaseLikeRequest {name: " + name + ", likes: " + Arrays.toString(likes) + '}';
     }
 
 }

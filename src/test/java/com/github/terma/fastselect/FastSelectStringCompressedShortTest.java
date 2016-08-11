@@ -100,6 +100,36 @@ public class FastSelectStringCompressedShortTest {
     }
 
     @Test
+    public void shouldSelectIfOneOfValueIsNull() {
+        FastSelect<TestString> database = new FastSelectBuilder<>(TestString.class).blockSize(1).create();
+        database.addAll(asList(new TestString(null), new TestString("aRa")));
+
+        Assert.assertEquals(
+                asList(new TestString("aRa")),
+                database.select(new StringCompressedShortNoCaseLikeRequest("stringValue", "ar")));
+    }
+
+    @Test
+    public void shouldSelectNullByEmpty() {
+        FastSelect<TestString> database = new FastSelectBuilder<>(TestString.class).blockSize(1).create();
+        database.addAll(Collections.singletonList(new TestString(null)));
+
+        Assert.assertEquals(
+                Collections.singletonList(new TestString(null)),
+                database.select(new StringCompressedShortNoCaseLikeRequest("stringValue", "")));
+    }
+
+    @Test
+    public void shouldSelectAllByEmpty() {
+        FastSelect<TestString> database = new FastSelectBuilder<>(TestString.class).blockSize(1).create();
+        database.addAll(asList(new TestString(null), new TestString(""), new TestString("A")));
+
+        Assert.assertEquals(
+                asList(new TestString(null), new TestString(""), new TestString("A")),
+                database.select(new StringCompressedShortNoCaseLikeRequest("stringValue", "")));
+    }
+
+    @Test
     public void shouldSupportIntAmountOfDiffValues() {
         FastSelect<TestString> database = new FastSelectBuilder<>(TestString.class).create();
         List<TestString> t = new ArrayList<>();

@@ -61,7 +61,7 @@ public class StringCompressedShortNoCaseLikeRequest extends ColumnRequest {
         plainSet = new BitSet();
         Map<String, Short> valueToPosition = ((StringCompressedShortData) column.data).getValueToPosition();
         for (Map.Entry<String, Short> vp : valueToPosition.entrySet()) {
-            if (vp.getKey().toLowerCase().contains(like)) {
+            if (like.isEmpty() && vp.getKey() == null || vp.getKey() != null && vp.getKey().toLowerCase().contains(like)) {
                 plainSet.set(vp.getValue());
             }
         }
@@ -69,7 +69,7 @@ public class StringCompressedShortNoCaseLikeRequest extends ColumnRequest {
 
     @Override
     public String toString() {
-        return "StringCompressedByteNoCaseLikeRequest {name: " + name + ", like: " + like + '}';
+        return "StringCompressedShortNoCaseLikeRequest {name: " + name + ", like: " + like + '}';
     }
 
 }

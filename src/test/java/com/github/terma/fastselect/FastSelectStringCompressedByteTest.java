@@ -98,6 +98,48 @@ public class FastSelectStringCompressedByteTest {
     }
 
     @Test
+    public void shouldSelectIfOneOfValueIsNull() {
+        FastSelect<TestString> database = new FastSelectBuilder<>(TestString.class).blockSize(1).create();
+        database.addAll(asList(
+                new TestString(null),
+                new TestString("aRa")));
+
+        Assert.assertEquals(
+                Collections.singletonList(new TestString("aRa")),
+                database.select(new StringCompressedByteNoCaseLikeRequest("stringValue", "ar")));
+    }
+
+    @Test
+    public void shouldSelectNullByEmpty() {
+        FastSelect<TestString> database = new FastSelectBuilder<>(TestString.class).blockSize(1).create();
+        database.addAll(Collections.singletonList(new TestString(null)));
+
+        Assert.assertEquals(
+                Collections.singletonList(new TestString(null)),
+                database.select(new StringCompressedByteNoCaseLikeRequest("stringValue", "")));
+    }
+
+    @Test
+    public void shouldSelectAllByEmpty() {
+        FastSelect<TestString> database = new FastSelectBuilder<>(TestString.class).blockSize(1).create();
+        database.addAll(asList(new TestString(null), new TestString(""), new TestString("A")));
+
+        Assert.assertEquals(
+                asList(new TestString(null), new TestString(""), new TestString("A")),
+                database.select(new StringCompressedByteNoCaseLikeRequest("stringValue", "")));
+    }
+
+    @Test
+    public void shouldSelectByMultipleAsOr() {
+        FastSelect<TestString> database = new FastSelectBuilder<>(TestString.class).blockSize(1).create();
+        database.addAll(asList(new TestString("Zorro"), new TestString("Dora"), new TestString("Ara")));
+
+        Assert.assertEquals(
+                asList(new TestString("Zorro"), new TestString("Dora")),
+                database.select(new StringCompressedByteNoCaseLikeRequest("stringValue", "oR", "rr")));
+    }
+
+    @Test
     public void shouldCorrectlyRestoreField() {
         FastSelect<TestString> database = new FastSelectBuilder<>(TestString.class).create();
         database.addAll(asList(
