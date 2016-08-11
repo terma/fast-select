@@ -914,23 +914,25 @@ public final class FastSelect<T> {
 
         @Override
         public void init() {
+            final int end = start + size;
+
             for (final Column column : columns) {
 
                 if (column.type == long.class) {
                     final LongData data = (LongData) column.data;
                     final Range range = ranges.get(column.index);
-                    for (int i = start; i < size; i++) range.update(data.data[i]);
+                    for (int i = start; i < end; i++) range.update(data.data[i]);
 
                 } else if (column.type == short[].class) {
                     final MultiShortData data = (MultiShortData) column.data;
-                    for (int i = start; i < size; i++) {
+                    for (int i = start; i < end; i++) {
                         short[] v = (short[]) data.get(i);
                         for (short v1 : v) setColumnBitSet(column, v1);
                     }
 
                 } else if (column.type == byte[].class) {
                     MultiByteData data = (MultiByteData) column.data;
-                    for (int i = start; i < size; i++) {
+                    for (int i = start; i < end; i++) {
                         byte[] v = (byte[]) data.get(i);
                         for (byte v1 : v) setColumnBitSet(column, v1);
                     }
@@ -938,15 +940,28 @@ public final class FastSelect<T> {
                 } else if (column.type == int.class) {
                     final IntData data = (IntData) column.data;
                     final Range range = ranges.get(column.index);
-                    for (int i = start; i < size; i++) range.update(data.data[i]);
+                    for (int i = start; i < end; i++) range.update(data.data[i]);
 
                 } else if (column.type == short.class) {
                     final ShortData data = (ShortData) column.data;
-                    for (int i = start; i < size; i++) setColumnBitSet(column, data.data[i]);
+                    for (int i = start; i < end; i++) setColumnBitSet(column, data.data[i]);
 
                 } else if (column.type == byte.class) {
                     final ByteData data = (ByteData) column.data;
-                    for (int i = start; i < size; i++) setColumnBitSet(column, data.data[i]);
+                    for (int i = start; i < end; i++) setColumnBitSet(column, data.data[i]);
+
+                } else if (column.type == String.class && column.annotationType == StringCompressedByte.class) {
+                    final byte[] data = ((StringCompressedByteData) column.data).data.data;
+                    for (int i = start; i < end; i++) setColumnBitSet(column, data[i]);
+
+                } else if (column.type == String.class && column.annotationType == StringCompressedShort.class) {
+                    final short[] data = ((StringCompressedShortData) column.data).data.data;
+                    for (int i = start; i < end; i++) setColumnBitSet(column, data[i]);
+
+                } else if (column.type == String.class && column.annotationType == StringCompressedInt.class) {
+                    final int[] data = ((StringCompressedIntData) column.data).data.data;
+                    final Range range = ranges.get(column.index);
+                    for (int i = start; i < end; i++) range.update(data[i]);
 
                 }
             }

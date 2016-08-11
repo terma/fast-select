@@ -27,6 +27,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Objects;
 
 import static com.github.terma.fastselect.utils.IOUtils.*;
@@ -244,6 +245,41 @@ public class FastSelectSaveLoadTest {
                         new TestCompressedString(null, null, null),
                         new TestCompressedString("A", "BB", "ZZZ")),
                 fastSelect1.select()
+        );
+    }
+
+    @Test
+    public void selectCompressedStringAfterSaveLoad() throws IOException {
+        FastSelect<TestCompressedString> fastSelect = new FastSelectBuilder<>(TestCompressedString.class).blockSize(1).create();
+        fastSelect.addAll(Arrays.asList(new TestCompressedString(null, null, null),
+                new TestCompressedString("A", "BB", "ZZZ")));
+
+        File f = Files.createTempFile("a", "b").toFile();
+        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
+
+        fastSelect.save(fc);
+
+        fc.position(0);
+        FastSelect<TestCompressedString> fastSelect1 = new FastSelectBuilder<>(TestCompressedString.class).blockSize(1).create();
+        fastSelect1.load(fc, 1);
+
+        fc.close();
+        //noinspection ResultOfMethodCallIgnored
+        f.delete();
+
+        Assert.assertEquals(
+                Collections.singletonList(new TestCompressedString("A", "BB", "ZZZ")),
+                fastSelect1.select(new StringCompressedByteNoCaseLikeRequest("string1", "a"))
+        );
+
+        Assert.assertEquals(
+                Collections.singletonList(new TestCompressedString("A", "BB", "ZZZ")),
+                fastSelect1.select(new StringCompressedShortNoCaseLikeRequest("string2", "b"))
+        );
+
+        Assert.assertEquals(
+                Collections.singletonList(new TestCompressedString("A", "BB", "ZZZ")),
+                fastSelect1.select(new StringCompressedIntNoCaseLikeRequest("string3", "z"))
         );
     }
 
