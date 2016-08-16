@@ -283,6 +283,57 @@ public class FastSelectSaveLoadTest {
         );
     }
 
+    @Test
+    public void selectStringAfterSaveLoad() throws IOException {
+        FastSelect<TestString> fastSelect = new FastSelectBuilder<>(TestString.class).blockSize(1).create();
+        fastSelect.addAll(Arrays.asList(new TestString(null), new TestString("A")));
+
+        File f = Files.createTempFile("a", "b").toFile();
+        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
+
+        fastSelect.save(fc);
+
+        fc.position(0);
+        FastSelect<TestString> fastSelect1 = new FastSelectBuilder<>(TestString.class).blockSize(1).create();
+        fastSelect1.load(fc, 1);
+
+        fc.close();
+        //noinspection ResultOfMethodCallIgnored
+        f.delete();
+
+        Assert.assertEquals(
+                Collections.singletonList(new TestString("A")),
+                fastSelect1.select(new StringNoCaseLikeRequest("string1", "a"))
+        );
+    }
+
+    @Test
+    public void selectMultiByteAfterSaveLoad() throws IOException {
+        FastSelect<TestMultiByte> fastSelect = new FastSelectBuilder<>(TestMultiByte.class).blockSize(1).create();
+        fastSelect.addAll(Arrays.asList(
+                new TestMultiByte(new byte[]{Byte.MAX_VALUE, Byte.MIN_VALUE}),
+                new TestMultiByte(new byte[]{}),
+                new TestMultiByte(new byte[]{0})));
+
+        File f = Files.createTempFile("a", "b").toFile();
+        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
+
+        fastSelect.save(fc);
+
+        fc.position(0);
+        FastSelect<TestMultiByte> fastSelect1 = new FastSelectBuilder<>(TestMultiByte.class).blockSize(1).create();
+        fastSelect1.load(fc, 1);
+
+        fc.close();
+        //noinspection ResultOfMethodCallIgnored
+        f.delete();
+
+        Assert.assertEquals(
+                Collections.singletonList(new TestMultiByte(new byte[]{Byte.MAX_VALUE, Byte.MIN_VALUE})),
+                fastSelect1.select(new MultiByteRequest("multiByte", Byte.MAX_VALUE))
+        );
+    }
+
     public static class TestLongShort {
         public long long1;
         public short short1;
@@ -365,6 +416,73 @@ public class FastSelectSaveLoadTest {
             result = 31 * result + (string2 != null ? string2.hashCode() : 0);
             result = 31 * result + (string3 != null ? string3.hashCode() : 0);
             return result;
+        }
+    }
+
+    public static class TestMultiByte {
+        public byte[] multiByte;
+
+        public TestMultiByte() {
+        }
+
+        public TestMultiByte(byte[] multiByte) {
+            this.multiByte = multiByte;
+        }
+
+        @Override
+        public String toString() {
+            return "TestMultiByte{" + "multiByte=" + Arrays.toString(multiByte) + '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            TestMultiByte that = (TestMultiByte) o;
+
+            return Arrays.equals(multiByte, that.multiByte);
+
+        }
+
+        @Override
+        public int hashCode() {
+            return Arrays.hashCode(multiByte);
+        }
+
+
+    }
+
+    @SuppressWarnings("unused")
+    public static class TestString {
+        public String string1;
+
+        public TestString() {
+        }
+
+        public TestString(String string1) {
+            this.string1 = string1;
+        }
+
+        @Override
+        public String toString() {
+            return "TestString{" + "string1='" + string1 + '\'' + '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            TestString that = (TestString) o;
+
+            return string1 != null ? string1.equals(that.string1) : that.string1 == null;
+
+        }
+
+        @Override
+        public int hashCode() {
+            return string1 != null ? string1.hashCode() : 0;
         }
     }
 
