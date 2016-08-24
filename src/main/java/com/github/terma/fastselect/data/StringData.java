@@ -40,17 +40,17 @@ public class StringData implements Data {
 
     @Override
     public int getDiskSpace() {
-        throw new UnsupportedOperationException();
+        return data.getDiskSpace();
     }
 
     @Override
     public void save(ByteBuffer buffer) throws IOException {
-        throw new UnsupportedOperationException();
+        data.save(buffer);
     }
 
     @Override
     public void load(String dataClass, ByteBuffer buffer, int size) throws IOException {
-        throw new UnsupportedOperationException();
+        data.load(MultiByteData.class.getName(), buffer, size);
     }
 
     @Override

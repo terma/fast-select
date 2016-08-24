@@ -49,7 +49,7 @@ public class SaveLoadDemo {
 
     private static void createFile(final File file, final int size) throws IOException {
         System.out.println(new Date() + " creating file...");
-        if (!file.delete()) {
+        if (file.exists() && !file.delete()) {
             System.out.println("Can't remove file: " + file);
             System.exit(2);
         }

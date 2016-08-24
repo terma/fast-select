@@ -89,6 +89,7 @@ public class IntData implements Data {
         this.size = size;
         this.data = new int[size];
         buffer.asIntBuffer().get(data);
+        buffer.position(Data.INT_BYTES * size);
     }
 
     @Override
