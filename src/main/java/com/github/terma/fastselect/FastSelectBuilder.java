@@ -38,7 +38,8 @@ public class FastSelectBuilder<T> {
         this.dataClass = dataClass;
     }
 
-    private static List<FastSelect.Column> getColumnsFromDataClass(Class dataClass, int inc) {
+    // todo find better place for static shared method
+    public static List<FastSelect.Column> getColumnsFromDataClass(Class dataClass, int inc) {
         final List<FastSelect.Column> columns = new ArrayList<>();
         for (Field field : dataClass.getDeclaredFields()) {
             if (!field.isSynthetic() && !Modifier.isStatic(field.getModifiers())) {

@@ -203,43 +203,15 @@ public final class FastSelect<T> {
      * <p>
      * Format described in javadoc for class
      *
-     * @param fileChannel - fc
+     * @param fileChannel - fileChannel
      * @throws IOException
+     * @see Saver
      */
     public void save(final FileChannel fileChannel) throws IOException {
-        IOUtils.writeInt(fileChannel, Data.STORAGE_FORMAT_VERSION);
-        IOUtils.writeInt(fileChannel, size());
-        IOUtils.writeInt(fileChannel, columns.size());
-
-        // estimate data position
-        long headerEnd = fileChannel.position();
-        for (Column column : columns) {
-            headerEnd += IOUtils.getStringBytesSize(column.data.getClass().getName());
-            headerEnd += IOUtils.getStringBytesSize(column.name);
-            headerEnd += Data.LONG_BYTES;
-            headerEnd += Data.INT_BYTES;
+        try (Saver saver = new Saver(columns, size(), fileChannel)) {
+            for (Column column : columns) saver.saveData(column.data);
+            saver.save();
         }
-
-        // write columns meta
-        long nextDataPosition = headerEnd;
-        for (Column column : columns) {
-            IOUtils.writeString(fileChannel, column.data.getClass().getName());
-            IOUtils.writeString(fileChannel, column.name);
-            IOUtils.writeLong(fileChannel, nextDataPosition);
-            final int diskSpace = column.data.getDiskSpace();
-            IOUtils.writeInt(fileChannel, diskSpace);
-            nextDataPosition += diskSpace;
-        }
-
-        // write data
-        nextDataPosition = headerEnd;
-        for (Column column : columns) {
-            final int diskSpace = column.data.getDiskSpace();
-            final ByteBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, nextDataPosition, diskSpace);
-            column.data.save(buffer);
-            nextDataPosition += diskSpace;
-        }
-        rootBlock.init();
     }
 
     /**
