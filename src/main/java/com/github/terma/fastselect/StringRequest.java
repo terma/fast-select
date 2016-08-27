@@ -16,9 +16,10 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
+import com.github.terma.fastselect.data.MultiByteData;
 import com.github.terma.fastselect.data.StringData;
 
-import java.util.Arrays;
+import java.util.Map;
 
 /**
  * SQL analog <code>where STRING_FIELD = '???'</code>
@@ -28,6 +29,9 @@ public class StringRequest extends ColumnRequest {
 
     private final byte[] bytes;
 
+    private MultiByteData data;
+    private byte[] byteData;
+
     public StringRequest(String name, String value) {
         super(name);
         bytes = value.getBytes();
@@ -35,9 +39,20 @@ public class StringRequest extends ColumnRequest {
 
     @Override
     public boolean checkValue(int position) {
-        StringData data = (StringData) column.data;
-        byte[] value = data.getRaw(position);
-        return Arrays.equals(bytes, value);
+        int start = data.getDataStart(position);
+        int end = data.getDataEnd(position);
+        int l = end - start;
+        if (l != bytes.length) return false;
+        for (int i = 0; i < l; i++)
+            if (bytes[i] != byteData[start + i]) return false;
+        return true;
+    }
+
+    @Override
+    public void prepare(Map<String, FastSelect.Column> columnByNames) {
+        super.prepare(columnByNames);
+        data = ((StringData) column.data).getData();
+        byteData = data.data.data;
     }
 
     @Override

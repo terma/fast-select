@@ -97,4 +97,9 @@ public class StringData implements Data {
     public Data copy(byte[] needToCopy) {
         return new StringData(this, needToCopy);
     }
+
+    public MultiByteData getData() {
+        return data;
+    }
+
 }

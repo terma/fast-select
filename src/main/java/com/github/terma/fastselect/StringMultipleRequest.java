@@ -16,11 +16,11 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
+import com.github.terma.fastselect.data.MultiByteData;
 import com.github.terma.fastselect.data.StringData;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * SQL analog <code>where STRING_FIELD in ('', ''...)</code>
@@ -31,23 +31,45 @@ import java.util.Set;
 @SuppressWarnings("WeakerAccess")
 public class StringMultipleRequest extends ColumnRequest {
 
-    private final Set<String> values;
+    private final byte[][] valuesBytes;
+
+    private MultiByteData data;
+    private byte[] byteData;
 
     public StringMultipleRequest(String name, String... values) {
         super(name);
-        this.values = new HashSet<>(Arrays.asList(values));
+        valuesBytes = new byte[values.length][];
+        for (int i = 0; i < values.length; i++) valuesBytes[i] = values[i].getBytes();
     }
 
     @Override
     public boolean checkValue(int position) {
-        StringData data = (StringData) column.data;
-        String value = (String) data.get(position);
-        return values.contains(value);
+        int start = data.getDataStart(position);
+        int end = data.getDataEnd(position);
+        int l = end - start;
+
+        values:
+        for (final byte[] bytes : valuesBytes) {
+            if (l != bytes.length) continue;
+            for (int j = 0; j < l; j++)
+                if (bytes[j] != byteData[start + j]) continue values;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void prepare(Map<String, FastSelect.Column> columnByNames) {
+        super.prepare(columnByNames);
+        data = ((StringData) column.data).getData();
+        byteData = data.data.data;
     }
 
     @Override
     public String toString() {
-        return "StringMultipleRequest {name: '" + name + "', in: " + values + "}";
+        String[] strings = new String[valuesBytes.length];
+        for (int i = 0; i < valuesBytes.length; i++) strings[i] = new String(valuesBytes[i]);
+        return "StringMultipleRequest {name: '" + name + "', in: " + Arrays.toString(strings) + "}";
     }
 
 }
