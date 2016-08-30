@@ -69,10 +69,10 @@ import java.util.concurrent.TimeUnit;
  * ### using block meta data (set of bytes) for string
  * SelectByStringBenchmark.byMultipleString    10000000  avgt    5   118.639 ±   1.775  ms/op
  * SelectByStringBenchmark.byNoCaseLikeString  10000000  avgt    5  2998.899 ± 168.395  ms/op
- * SelectByStringBenchmark.byString            10000000  avgt    5    14.196 ±   1.122  ms/op
+ * SelectByStringBenchmark.byString            10000000  avgt    5    14.196 ±   1.122  ms/op -85%
  *
  * ### using block meta data for multi string
- * SelectByStringBenchmark.byMultipleString    10000000  avgt    5    18.413 ±   0.833  ms/op
+ * SelectByStringBenchmark.byMultipleString    10000000  avgt    5    18.413 ±   0.833  ms/op -85%
  * SelectByStringBenchmark.byNoCaseLikeString  10000000  avgt    5  2867.359 ± 189.627  ms/op
  * SelectByStringBenchmark.byString            10000000  avgt    5    13.625 ±   6.596  ms/op
  * </pre>
