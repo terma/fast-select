@@ -19,6 +19,7 @@ package com.github.terma.fastselect;
 import com.github.terma.fastselect.data.MultiByteData;
 import com.github.terma.fastselect.data.StringData;
 
+import java.util.BitSet;
 import java.util.Map;
 
 /**
@@ -35,6 +36,14 @@ public class StringRequest extends ColumnRequest {
     public StringRequest(String name, String value) {
         super(name);
         bytes = value.getBytes();
+    }
+
+    @Override
+    public boolean checkBlock(final Block block) {
+        BitSet bitSet = block.columnBitSets.get(column.index);
+        boolean p = true;
+        for (final byte value : bytes) p = p & bitSet.get(value);
+        return p;
     }
 
     @Override

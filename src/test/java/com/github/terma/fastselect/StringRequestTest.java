@@ -21,6 +21,7 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,8 +41,25 @@ public class StringRequestTest {
     }
 
     @Test
-    public void checkBlockAlwaysTrue() {
-        Assert.assertTrue(request.checkBlock(null));
+    public void checkBlockFalseWhenAtLeastOneByteNotPresent() {
+        Block block = new BlockMock();
+        block.columnBitSets.add(new BitSet());
+        for (byte b : "amo".getBytes()) block.columnBitSets.get(0).set(b);
+
+        request = new StringRequest("x", "Roma");
+        request.prepare(columnsByNames);
+        Assert.assertFalse(request.checkBlock(block));
+    }
+
+    @Test
+    public void checkBlockTrueWhenAllBytesPresent() {
+        Block block = new BlockMock();
+        block.columnBitSets.add(new BitSet());
+        for (byte b : "amoR".getBytes()) block.columnBitSets.get(0).set(b);
+
+        request = new StringRequest("x", "Roma");
+        request.prepare(columnsByNames);
+        Assert.assertTrue(request.checkBlock(block));
     }
 
     @Test

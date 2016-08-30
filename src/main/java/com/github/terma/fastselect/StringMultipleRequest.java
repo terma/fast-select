@@ -20,6 +20,7 @@ import com.github.terma.fastselect.data.MultiByteData;
 import com.github.terma.fastselect.data.StringData;
 
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Map;
 
 /**
@@ -40,6 +41,18 @@ public class StringMultipleRequest extends ColumnRequest {
         super(name);
         valuesBytes = new byte[values.length][];
         for (int i = 0; i < values.length; i++) valuesBytes[i] = values[i].getBytes();
+    }
+
+    @Override
+    public boolean checkBlock(final Block block) {
+        BitSet bitSet = block.columnBitSets.get(column.index);
+//        boolean p = true;
+        for (byte[] bytes : valuesBytes) {
+            boolean p = true;
+            for (final byte value : bytes) p = p & bitSet.get(value);
+            if (p) return true;
+        }
+        return false;
     }
 
     @Override

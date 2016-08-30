@@ -18,6 +18,8 @@ package com.github.terma.fastselect;
 
 import com.github.terma.fastselect.data.StringData;
 
+import java.util.Map;
+
 /**
  * SQL analog <code>where lowerCase(STRING_FIELD) like lowerCase('%SUBSTRING%')</code>
  * <p>
@@ -31,6 +33,8 @@ public class StringNoCaseLikeRequest extends ColumnRequest {
 
     private final String like;
 
+    private StringData data;
+
     public StringNoCaseLikeRequest(String name, String like) {
         super(name);
 
@@ -39,10 +43,15 @@ public class StringNoCaseLikeRequest extends ColumnRequest {
     }
 
     @Override
-    public  boolean checkValue(int position) {
-        StringData data = (StringData) column.data;
-        String value = (String) data.get(position);
+    public  boolean checkValue(final int position) {
+        final String value = (String) data.get(position);
         return value.toLowerCase().contains(like);
+    }
+
+    @Override
+    public void prepare(final Map<String, FastSelect.Column> columnByNames) {
+        super.prepare(columnByNames);
+        data = (StringData) column.data;
     }
 
     @Override

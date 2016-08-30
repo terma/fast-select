@@ -33,9 +33,10 @@ public class StringData implements Data {
         this.data = (MultiByteData) data.data.copy(needToCopy);
     }
 
-    public void add(String v) {
+    public byte[] add(String v) {
         final byte[] bytes = v == null ? ZERO : v.getBytes();
         data.add(bytes);
+        return bytes;
     }
 
     @Override
