@@ -75,6 +75,19 @@ import java.util.concurrent.TimeUnit;
  * SelectByStringBenchmark.byMultipleString    10000000  avgt    5    18.413 ±   0.833  ms/op -85%
  * SelectByStringBenchmark.byNoCaseLikeString  10000000  avgt    5  2867.359 ± 189.627  ms/op
  * SelectByStringBenchmark.byString            10000000  avgt    5    13.625 ±   6.596  ms/op
+ *
+ * ### fast no case like for latin no case
+ * Benchmark                                        (volume)  Mode  Cnt     Score     Error  Units
+ * SelectByStringBenchmark.byMultipleString         10000000  avgt    5    18.496 ±   1.188  ms/op
+ * SelectByStringBenchmark.byNoCaseLikeString       10000000  avgt    5  2868.618 ± 247.770  ms/op
+ * SelectByStringBenchmark.byLatinNoCaseLikeString  10000000  avgt    5   662.078 ±  24.220  ms/op -77%
+ * SelectByStringBenchmark.byString                 10000000  avgt    5    13.197 ±   6.609  ms/op
+ *
+ * ### use block meta info for latin no case
+ * SelectByStringBenchmark.byLatinNoCaseLikeString  10000000  avgt    5    96.600 ±   4.065  ms/op -75%
+ * SelectByStringBenchmark.byMultipleString         10000000  avgt    5    18.097 ±   1.792  ms/op
+ * SelectByStringBenchmark.byNoCaseLikeString       10000000  avgt    5  2851.732 ± 154.023  ms/op
+ * SelectByStringBenchmark.byString                 10000000  avgt    5    12.916 ±   6.011  ms/op
  * </pre>
  */
 @Fork(value = 1, jvmArgs = "-Xmx6g")
@@ -119,21 +132,25 @@ public class SelectByStringBenchmark {
         System.out.println("Result by multi string: " + byMultipleString());
         System.out.println("Blocks by multi string: " + fastSelect.blockTouch(createMultipleStringRequest()));
         System.out.println("Result by no case like string: " + byNoCaseLikeString());
+        System.out.println("Result by latin no case like string: " + byLatinNoCaseLikeString());
     }
 
-    private ColumnRequest[] createStringRequest() {
+    private Request[] createStringRequest() {
         return new ColumnRequest[]{new StringRequest("value2", "UNIQUE string B501")};
-//        return new ColumnRequest[]{new StringRequest("value2", "UNIQUE string ")};
     }
 
-    private ColumnRequest[] createMultipleStringRequest() {
-//        return new ColumnRequest[]{new StringMultipleRequest("value2", "UNIQUE string " + volume / 2, "UNIQUE string 10")};
+    private Request[] createMultipleStringRequest() {
         return new ColumnRequest[]{new StringMultipleRequest("value2", "UNIQUE string B501", "UNIQUE string A10")};
     }
 
-    private ColumnRequest[] createNoCaseLikeString() {
+    private Request[] createNoCaseLikeString() {
         return new ColumnRequest[]{new StringNoCaseLikeRequest("value2", "strIng B501")};
-//        return new ColumnRequest[]{new StringNoCaseLikeRequest("value2", "strIng " + volume / 2)};
+//        return new Request[]{StringNoCaseLikeRequest.create("value2", "strIng B501")};
+    }
+
+    private Request[] createLatinNoCaseLikeString() {
+//        return new ColumnRequest[]{new StringNoCaseLikeRequest("value2", "strIng B501")};
+        return new Request[]{StringNoCaseLikeRequest.create("value2", "strIng B501")};
     }
 
     @Benchmark
@@ -154,6 +171,13 @@ public class SelectByStringBenchmark {
     public Object byNoCaseLikeString() {
         CounterCallback counter = new CounterCallback();
         fastSelect.select(createNoCaseLikeString(), counter);
+        return counter.getCount();
+    }
+
+    @Benchmark
+    public Object byLatinNoCaseLikeString() {
+        CounterCallback counter = new CounterCallback();
+        fastSelect.select(createLatinNoCaseLikeString(), counter);
         return counter.getCount();
     }
 

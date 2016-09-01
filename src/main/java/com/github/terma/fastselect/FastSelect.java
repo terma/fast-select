@@ -419,7 +419,7 @@ public final class FastSelect<T> {
         return copy;
     }
 
-    public int blockTouch(final ColumnRequest[] where) {
+    public int blockTouch(final Request[] where) {
         prepareRequest(where);
         return rootBlock.blockTouch(where);
     }

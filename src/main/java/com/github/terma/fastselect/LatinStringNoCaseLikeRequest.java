@@ -18,24 +18,28 @@ package com.github.terma.fastselect;
 
 import com.github.terma.fastselect.data.MultiByteData;
 import com.github.terma.fastselect.data.StringData;
+import com.github.terma.fastselect.utils.Utf8Utils;
 
 import java.util.BitSet;
 import java.util.Map;
 
 /**
- * SQL analog <code>where STRING_FIELD = '???'</code>
- * Exact select. For like or case insensitive use {@link StringLikeRequest} and {@link StringNoCaseLikeRequest}
+ * Not part of public API. Special class for fast search in case of only latin characters in like.
+ * Please use {@link StringNoCaseLikeRequest#create(String, String)} to create proper request.
  */
-public class StringRequest extends ColumnRequest {
+@SuppressWarnings("WeakerAccess")
+class LatinStringNoCaseLikeRequest extends ColumnRequest {
 
-    private final byte[] bytes;
+    private final byte[] likeBytes;
 
     private MultiByteData data;
     private byte[] byteData;
 
-    public StringRequest(String name, String value) {
+    public LatinStringNoCaseLikeRequest(final String name, final byte[] likeBytes) {
         super(name);
-        bytes = value.getBytes();
+        if (likeBytes == null) throw new IllegalArgumentException("Can't search null string!");
+        this.likeBytes = likeBytes;
+        Utf8Utils.latinToLowerCase(this.likeBytes);
     }
 
     @Override
@@ -43,19 +47,16 @@ public class StringRequest extends ColumnRequest {
         BitSet bitSet = block.columnBitSets.get(column.index);
         boolean p = true;
         // todo handle case when byte is negative for non latin utf8 codes
-        for (final byte value : bytes) p = p & bitSet.get(value);
+        for (final byte value : likeBytes)
+            p = p & (bitSet.get(Utf8Utils.latinToLowerCase(value)) | bitSet.get(Utf8Utils.latinToUpperCase(value)));
         return p;
     }
 
     @Override
-    public boolean checkValue(int position) {
-        int start = data.getDataStart(position);
-        int end = data.getDataEnd(position);
-        int l = end - start;
-        if (l != bytes.length) return false;
-        for (int i = 0; i < l; i++)
-            if (bytes[i] != byteData[start + i]) return false;
-        return true;
+    public boolean checkValue(final int position) {
+        final int start = data.getDataStart(position);
+        final int end = data.getDataEnd(position);
+        return Utf8Utils.latinBytesContains(byteData, start, end, likeBytes);
     }
 
     @Override
@@ -67,7 +68,7 @@ public class StringRequest extends ColumnRequest {
 
     @Override
     public String toString() {
-        return name + " = '" + new String(bytes) + "'";
+        return "LatinStringNoCaseLikeRequest {name: " + name + ", like: " + new String(likeBytes) + '}';
     }
 
 }
