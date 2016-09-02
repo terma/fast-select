@@ -3,42 +3,42 @@
 
 # fast-select 
 
-* (Overview)[#overview]
-* (Use Cases)[#use-cases]
-* (How To Use)[#how-to-use]
-* (Arhitecture)[#arhitecture]
-* (Performance)[#performance]
-* (Memory)[#memory]
+* [Overview](#overview)
+* [Use Cases](#use-cases)
+* [How To Use](#how-to-use)
+* [Arhitecture](#arhitecture)
+* [Performance](#performance)
+* [Memory](#memory)
 
 ## Overview
 
+TBD
+
 ## Use Cases
+
+TBD
 
 ## How To Use
 
-### Create Data Class
+Create Data Class. That class will represent you model. ```fast-select``` supports: ```byte, short, int, long, double, String, byte[], short[], int[], long[]```
 
 ```java
-public class Data {
-    public byte a;
-    public byte b;
+public class People {
+    public byte age;
+    public String name;
 }
 ```
-
-### Build storage
-
+When you have model. Let's try to populate storage with data:
 ```java
-FastSelect<Data> database = new FastSelect<>(Data.class);
-
+FastSelect<People> database = new FastSelectBuilder<>(People.class).create();
 // add your data
-database.addAll(new ArrayList<Data>(...)); 
+database.addAll(new ArrayList<People>(...)); 
 ```
-### Create filter criteria 
+You have storage which we can start to query. For example we want to find people from 16 to 32:
 ```java
-AbstractRequest[] where = new AbstractRequest[] {new IntRequest("a", new int[]{12, 3})};
+List<People> relativeYoungPeople = fastSelect.select(new ByteBetweenRequest("age", 16, 32));
 ```
-
-### Get count with grouping
+That's too simple and silly. If you have list of 10000 people and you want to provide user simple search by age. Probably you don't need to use ```fast-select```. Real case when you have 16M of People and 100 concurrent users want to search them by any possible attribute for People and result should.
 ```java
 MultiGroupCountCallback callback = new MultiGroupCountCallback(fastSelect.getColumnsByNames().get("a"));
 database.select(where, callback);
@@ -54,7 +54,9 @@ callback.getResult();
 
 More use cases you can find in javadoc ```callbacks``` package
 
-## Arhutecture
+## Arhitecture
+
+TBD
 
 ## Performance
 
@@ -71,9 +73,6 @@ In-memory storage with low latency access for online analytic with huge volume o
 * [Javadoc](http://terma.github.io/fast-select/)
 
 ## Memory
-
-
-## Memory Usage
 
 Dataset 7 columns: 5 bytes and 2 shorts
 
