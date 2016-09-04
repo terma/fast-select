@@ -30,29 +30,51 @@ You want to fitler or sort date by any columns. Column count more than 1
 
 ## How To Use
 
-Create Data Class. That class will represent you model. ```fast-select``` supports: ```byte, short, int, long, double, String, byte[], short[], int[], long[]```
+### Create Data Model
 
+You need to create class which will represent you model:
 ```java
 public class People {
     public byte age;
     public String name;
 }
 ```
-When you have model. Let's try to populate storage with data:
+```fast-select``` supports: ```byte, short, int, long, double, String, byte[], short[], int[], long[]```
+
+### Add data
 ```java
 FastSelect<People> database = new FastSelectBuilder<>(People.class).create();
-// add your data
+// add your data, you can call that method multiple times
 database.addAll(new ArrayList<People>(...)); 
 ```
-You have storage which we can start to query. For example we want to find people from 16 to 32:
+### Select all data
+```java
+List<People> people = fastSelect.select();
+```
+### Filter data
+For example you want to select people with age between 16 and 32:
 ```java
 List<People> relativeYoungPeople = fastSelect.select(new ByteBetweenRequest("age", 16, 32));
 ```
-That's too simple and silly. If you have list of 10000 people and you want to provide user simple search by age. Probably you don't need to use ```fast-select```. Real case when you have 16M of People and 100 concurrent users want to search them by any possible attribute for People and result should.
+
+### Filter data by multiple criteria
+Means ```AND```
 ```java
-MultiGroupCountCallback callback = new MultiGroupCountCallback(fastSelect.getColumnsByNames().get("a"));
-database.select(where, callback);
-callback.getCounters(); // your result here grouped by field 'a'
+List<People> relativeYoungPeople = fastSelect.select(
+    new ByteBetweenRequest("age", 16, 32),
+    new StringNoCaseLikeRequest("name", "an")
+  );
+```
+
+### Filter data by at least one criteria
+Means ```OR```
+```java
+List<People> relativeYoungPeople = fastSelect.select(
+    new OrRequest(
+      new ByteBetweenRequest("age", 16, 32),
+      new StringNoCaseLikeRequest("name", "an")
+    )  
+  );
 ```
 
 ### Select with sorting
