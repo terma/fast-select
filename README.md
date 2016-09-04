@@ -16,6 +16,16 @@ TBD
 
 ## Use Cases
 
+### Where FastSelect will not help
+
+Lookup data by one key. ```HashMap``` will be faster.
+
+I need to query online data which updates each 1 sec! ```FastSelect``` can't help here as to query it you need to create it. Means spend some time and see old data.
+
+I want to query data but in same time want to update it frequently. Data in ```FastSelect``` is snapshot you can't update it. So take in account time on cache creation. If you able to create cache in 1 min but users agree only with 30 sec delay. Cache is not your option. Opposite case: In one of production use case for ```FastSelect``` user happy to see online data with 5 min delay. While cache creation time is 30 sec.
+
+### Where FastSelect helps
+
 TBD
 
 ## How To Use
