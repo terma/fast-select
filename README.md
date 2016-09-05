@@ -4,7 +4,7 @@
 # fast-select 
 
 * [Overview](#overview)
-* [Use Cases](#use-cases)
+* [Where To Use](#where-to-use)
 * [How To Use](#how-to-use)
 * [Arhitecture](#arhitecture)
 * [Performance](#performance)
@@ -14,19 +14,9 @@
 
 TBD
 
-## Use Cases
+## Where To Use
 
-### Where FastSelect will not help
-
-Lookup data by one key. ```HashMap``` will be faster.
-
-I need to query online data which updates each 1 sec! ```FastSelect``` can't help here as to query it you need to create it. Means spend some time and see old data.
-
-I want to query data but in same time want to update it frequently. Data in ```FastSelect``` is snapshot you can't update it. So take in account time on cache creation. If you able to create cache in 1 min but users agree only with 30 sec delay.
-
-### Where FastSelect helps
-
-You want to fitler or sort date by any columns. Column count more than 1
+```FastSelect``` provides very compact storage with extremelly fast filtering by any dimension.
 
 ## How To Use
 
@@ -77,10 +67,10 @@ List<People> relativeYoungPeople = fastSelect.select(
   );
 ```
 
-### Select with sorting
+### Filter and sorting
 ```java
 ListLimitCallback<DemoData> callback = new ListLimitCallback<>(25);
-fastSelect.selectAndSort(where, callback, "a");
+fastSelect.selectAndSort(new Request[] {new ByteBetweenRequest("age", 16, 32)}, callback, "a");
 callback.getResult();
 ```
 
