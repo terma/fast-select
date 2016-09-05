@@ -12,7 +12,7 @@
 
 ## Overview
 
-TBD
+Hi. ```FastSelect``` is extremelly compact in-memory storage with ultra fast access by any filtering criteria but read only access. 
 
 ## Where To Use
 
