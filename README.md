@@ -60,14 +60,14 @@ public class Data {
 ### Build storage
 
 ```java
-FastSelect<Data> database = new FastSelect<>(Data.class);
+FastSelect<Data> database = new FastSelectBuilder<>(Data.class).create();
 
 // add your data
 database.addAll(new ArrayList<Data>(...)); 
 ```
 ### Create filter criteria 
 ```java
-AbstractRequest[] where = new AbstractRequest[] {new IntRequest("a", new int[]{12, 3})};
+Request[] where = new Request[] {new IntRequest("a", new int[]{12, 3})};
 ```
 
 ### Get count with grouping
