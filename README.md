@@ -3,9 +3,7 @@
 
 ## Fast-Select 
 
-In-memory storage with low latency quering with huge volume of concurrent users and rare updates under Apache 2.0 license.
-
-You can image ```FastSelect``` as single table in Java heap. Table is column oriented.
+Extremely compact in-memory storage (table) with ultra fast quering under Apache 2.0 license.
 
 * In-memory (java heap) column orineted storage aka [HOLAP](https://en.wikipedia.org/wiki/HOLAP)
 * Almost read only (you able to add data. Updating and delete subject of future releases)
