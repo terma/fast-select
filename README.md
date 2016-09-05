@@ -12,7 +12,9 @@
 
 ## Overview
 
-Hi. ```FastSelect``` is extremelly compact in-memory storage with ultra fast access by any filtering criteria but read only access. 
+Hi. ```FastSelect``` is extremelly compact in-memory storage with ultra fast access by any filtering criteria under Apache 2.0 license.
+
+For example you have list of ```10 000 000``` customers. ```FastSelect``` can find all customers for which name contains  ```cH``` (ignore case) in ```100 msec``` on my MacAir
 
 ## Where To Use
 
@@ -82,8 +84,6 @@ TBD
 
 ## Performance
 
-In-memory storage with low latency access for online analytic with huge volume of concurrent users and rare updates.
-
 * In-memory (embedded) column orineted storage aka [HOLAP](https://en.wikipedia.org/wiki/HOLAP)
 * Almost read only (you able to add data. Updating and delete subject of future releases)
 * Zero Java Object overhead (only data what you want to store)
@@ -93,8 +93,6 @@ In-memory storage with low latency access for online analytic with huge volume o
 * Small lib ```~53 kb```
 * Free open source under Apache 2.0 license.
 * [Javadoc](http://terma.github.io/fast-select/)
-
-## Memory
 
 Dataset 7 columns: 5 bytes and 2 shorts
 
@@ -116,3 +114,5 @@ Dataset 7 columns: 5 bytes and 2 shorts
 |group 2 columns and where (10k + 6)         |        1000  |FastSelect |  1000000 | avgt   |      22.685    |      ms/op|
 |group 2 columns and where (11 + 6 con)             |          |        H2 |  1000000 | avgt  |      281.696     |     ms/op|
 |group 2 columns and where (11 + 6 con)            |        1000  |FastSelect |  1000000  |avgt |        11.773      |    ms/op|
+
+## Memory
