@@ -17,7 +17,7 @@ Extremely compact in-memory storage (table) with ultra fast quering under Apache
 
 ## Memory Usage
 
-Dataset 7 columns: 5 bytes and 2 shorts
+Dataset 7 columns: ```5 bytes``` and ```2 shorts```
 
 | Dataset       | Heap | 
 | -------------:|---:|
