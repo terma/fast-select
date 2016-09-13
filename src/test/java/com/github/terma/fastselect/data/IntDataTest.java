@@ -19,12 +19,8 @@ package com.github.terma.fastselect.data;
 import junit.framework.Assert;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.file.Files;
 
 public class IntDataTest {
 
@@ -65,16 +61,13 @@ public class IntDataTest {
 
     @Test
     public void load() throws IOException {
-        IntData data = new IntData(100);
-        File f = Files.createTempFile("a", "b").toFile();
-        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
-        int[] t = new int[]{0, 1, 2, 3, 4};
-        ByteBuffer b = fc.map(FileChannel.MapMode.READ_WRITE, 0, Data.INT_BYTES * t.length);
-        for (int l : t) b.putInt(l);
-        fc.force(true);
+        ByteBuffer buffer = ByteBuffer.allocate(1000);
 
-        data.load(fc, 5);
-        f.delete();
+        IntData data = new IntData(100);
+        int[] t = new int[]{0, 1, 2, 3, 4};
+        for (int l : t) buffer.putInt(l);
+
+        data.load("", buffer, 5);
 
         Assert.assertEquals(data.size(), 5);
     }

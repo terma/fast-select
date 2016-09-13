@@ -19,12 +19,8 @@ package com.github.terma.fastselect.data;
 import junit.framework.Assert;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.file.Files;
 
 public class ShortDataTest {
 
@@ -65,16 +61,12 @@ public class ShortDataTest {
 
     @Test
     public void load() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(1000);
         ShortData data = new ShortData(100);
-        File f = Files.createTempFile("a", "b").toFile();
-        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
         short[] t = new short[]{0, 1, 2, 3, 4};
-        ByteBuffer b = fc.map(FileChannel.MapMode.READ_WRITE, 0, Data.SHORT_BYTES * t.length);
-        for (short l : t) b.putShort(l);
-        fc.force(true);
+        for (short l : t) buffer.putShort(l);
 
-        data.load(fc, 5);
-        f.delete();
+        data.load("", buffer, 5);
 
         Assert.assertEquals(data.size(), 5);
     }

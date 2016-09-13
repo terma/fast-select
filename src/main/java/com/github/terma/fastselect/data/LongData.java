@@ -18,8 +18,6 @@ package com.github.terma.fastselect.data;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.LongBuffer;
-import java.nio.channels.FileChannel;
 import java.util.Arrays;
 
 public class LongData implements Data {
@@ -65,15 +63,6 @@ public class LongData implements Data {
     public void save(final ByteBuffer buffer) throws IOException {
         buffer.asLongBuffer().put(data, 0, size);
         buffer.position(buffer.position() + Data.LONG_BYTES * size);
-    }
-
-    public void load(FileChannel fileChannel, int size) throws IOException {
-        this.size = size;
-        this.data = new long[size];
-        ByteBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, fileChannel.position(), LONG_BYTES * size);
-        LongBuffer longBuffer = buffer.asLongBuffer();
-        longBuffer.get(data);
-        fileChannel.position(fileChannel.position() + LONG_BYTES * longBuffer.position());
     }
 
     @Override
