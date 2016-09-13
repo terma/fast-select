@@ -22,11 +22,11 @@ import java.util.Map;
 
 /**
  * SQL analog is <code>COLUMN_X &gt;= MIN and COLUMN_X &lt;= MAX</code>
- * <p></p>
+ * <p>
  * Math's analog is "a to []". Include min and max.
- * <p></p>
+ * <p>
  * For equal select use {@link ByteRequest}
- * <p></p>
+ * <p>
  * Good for {@link ByteData}
  */
 @SuppressWarnings("WeakerAccess")

@@ -18,6 +18,9 @@ package com.github.terma.fastselect;
 
 import java.util.Map;
 
+/**
+ * Abstract base class for any requests which works with only one column.
+ */
 public abstract class ColumnRequest extends Request {
 
     public final String name;

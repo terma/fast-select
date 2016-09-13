@@ -22,9 +22,9 @@ import java.util.Arrays;
 import java.util.Map;
 
 /**
- * For <code>short[]</code> data type. Storage implementation is {@link MultiShortData}
- * <p>
  * SQL analog is {code}where COLUMN_X in (?, ?...){code}
+ * <p>
+ * For <code>short[]</code> data type. Storage implementation is {@link MultiShortData}
  */
 @SuppressWarnings("WeakerAccess")
 public class MultiShortRequest extends ColumnRequest {

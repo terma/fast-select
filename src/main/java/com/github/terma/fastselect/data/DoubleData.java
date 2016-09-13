@@ -18,6 +18,8 @@ package com.github.terma.fastselect.data;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
+import java.nio.channels.FileChannel;
 import java.util.Arrays;
 
 /**
@@ -62,17 +64,29 @@ public class DoubleData implements Data {
 
     @Override
     public int getDiskSpace() {
-        throw new UnsupportedOperationException();
+        return DOUBLE_BYTES * size;
     }
 
     @Override
     public void save(final ByteBuffer buffer) throws IOException {
-        throw new UnsupportedOperationException();
+        buffer.asDoubleBuffer().put(data, 0, size);
+        buffer.position(buffer.position() + DOUBLE_BYTES * size);
+    }
+
+    public void load(FileChannel fileChannel, int size) throws IOException {
+        this.size = size;
+        this.data = new double[size];
+        ByteBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, fileChannel.position(), DOUBLE_BYTES * size);
+        DoubleBuffer doubleBuffer = buffer.asDoubleBuffer();
+        doubleBuffer.get(data);
+        fileChannel.position(fileChannel.position() + DOUBLE_BYTES * doubleBuffer.position());
     }
 
     @Override
     public void load(String dataClass, ByteBuffer buffer, int size) throws IOException {
-        throw new UnsupportedOperationException();
+        this.size = size;
+        this.data = new double[size];
+        buffer.asDoubleBuffer().get(data);
     }
 
     @Override
