@@ -46,6 +46,13 @@ public interface Data {
 
     int compare(int position1, int position2);
 
+    /**
+     * Init data with default value for requested size.
+     *
+     * @param size - requested size
+     */
+    void init(int size);
+
     void compact();
 
     int size();

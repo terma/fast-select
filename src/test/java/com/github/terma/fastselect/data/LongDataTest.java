@@ -34,6 +34,30 @@ public class LongDataTest {
     }
 
     @Test
+    public void initWillResizeDataAndFillByZero() {
+        LongData data = new LongData(100);
+        data.init(100);
+
+        Assert.assertEquals(100, data.size());
+        Assert.assertEquals(100, data.allocatedSize());
+        for (int i = 0; i < 100; i++) Assert.assertEquals((long) 0, data.get(i));
+    }
+
+    @Test
+    public void initWithZeroIsOk() {
+        LongData data = new LongData(100);
+        data.init(0);
+
+        Assert.assertEquals(0, data.size());
+        Assert.assertEquals(0, data.allocatedSize());
+    }
+
+    @Test(expected = NegativeArraySizeException.class)
+    public void initWithNegativeSizeThrowException() {
+        new LongData(100).init(-1);
+    }
+
+    @Test
     public void supportCompact() {
         LongData data = new LongData(100);
         for (long i = 0; i < 17; i++) data.add(i);

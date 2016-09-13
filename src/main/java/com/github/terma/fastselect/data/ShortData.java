@@ -83,6 +83,12 @@ public class ShortData implements Data {
     }
 
     @Override
+    public void init(int size) {
+        this.data = new short[size];
+        this.size = size;
+    }
+
+    @Override
     public void compact() {
         data = Arrays.copyOf(data, size);
     }

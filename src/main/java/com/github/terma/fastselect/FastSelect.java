@@ -229,10 +229,12 @@ public final class FastSelect<T> {
             final int columnCount = IOUtils.readInt(fileChannel);
 
             final ExecutorService executorService = Executors.newFixedThreadPool(threadCounts);
+            final Set<String> loadedColumns = new HashSet<>();
             final List<Future<Object>> futures = new ArrayList<>();
             for (int i = 0; i < columnCount; i++) {
                 final String dataClass = IOUtils.readString(fileChannel);
                 final String columnName = IOUtils.readString(fileChannel);
+                loadedColumns.add(columnName);
                 final long position = IOUtils.readLong(fileChannel);
                 final int bytesSize = IOUtils.readInt(fileChannel);
 
@@ -248,6 +250,10 @@ public final class FastSelect<T> {
             }
             ThreadUtils.getAll(futures);
             executorService.shutdown();
+
+            for (Column column : columns) {
+                if (!loadedColumns.contains(column.name)) column.data.init(size);
+            }
         }
         rootBlock.init();
     }

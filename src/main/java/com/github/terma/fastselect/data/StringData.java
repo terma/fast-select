@@ -65,6 +65,11 @@ public class StringData implements Data {
     }
 
     @Override
+    public void init(int size) {
+        data.init(size);
+    }
+
+    @Override
     public void compact() {
         data.compact();
     }

@@ -83,6 +83,11 @@ public class MultiLongData implements Data {
     }
 
     @Override
+    public void init(int size) {
+        index.init(size);
+    }
+
+    @Override
     public void compact() {
         index.compact();
         data.compact();

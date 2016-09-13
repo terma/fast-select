@@ -34,6 +34,30 @@ public class ByteDataTest {
     }
 
     @Test
+    public void initWillResizeDataAndFillByZero() {
+        Data data = new ByteData(100);
+        data.init(100);
+
+        Assert.assertEquals(100, data.size());
+        Assert.assertEquals(100, data.allocatedSize());
+        for (int i = 0; i < 100; i++) Assert.assertEquals((byte) 0, data.get(i));
+    }
+
+    @Test
+    public void initWithZeroIsOk() {
+        Data data = new ByteData(100);
+        data.init(0);
+
+        Assert.assertEquals(0, data.size());
+        Assert.assertEquals(0, data.allocatedSize());
+    }
+
+    @Test(expected = NegativeArraySizeException.class)
+    public void initWithNegativeSizeThrowException() {
+        new ByteData(100).init(-1);
+    }
+
+    @Test
     public void supportCompact() {
         ByteData data = new ByteData(100);
         for (byte i = 0; i < 17; i++) data.add(i);

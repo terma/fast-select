@@ -31,6 +31,30 @@ public class MultiByteDataTest {
     }
 
     @Test
+    public void initWillResizeDataAndFillByZero() {
+        Data data = new MultiByteData(100);
+        data.init(100);
+
+        Assert.assertEquals(100, data.size());
+        Assert.assertEquals(100, data.allocatedSize());
+        for (int i = 0; i < 100; i++) Assert.assertArrayEquals(new byte[0], (byte[]) data.get(i));
+    }
+
+    @Test
+    public void initWithZeroIsOk() {
+        Data data = new MultiByteData(100);
+        data.init(0);
+
+        Assert.assertEquals(0, data.size());
+        Assert.assertEquals(0, data.allocatedSize());
+    }
+
+    @Test(expected = NegativeArraySizeException.class)
+    public void initWithNegativeSizeThrowException() {
+        new MultiByteData(100).init(-1);
+    }
+
+    @Test
     public void supportCompact() {
         MultiByteData data = new MultiByteData(100);
         for (byte i = 0; i < 17; i++) data.add(new byte[]{i});
@@ -47,7 +71,7 @@ public class MultiByteDataTest {
         MultiByteData data = new MultiByteData(100);
         Assert.assertEquals(168, data.mem());
 
-        for (byte i = 0; i < 50; i++) data.add(new byte[] {i});
+        for (byte i = 0; i < 50; i++) data.add(new byte[]{i});
         Assert.assertEquals(668, data.mem());
     }
 

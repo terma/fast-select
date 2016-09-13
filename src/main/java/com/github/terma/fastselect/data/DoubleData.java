@@ -35,7 +35,7 @@ public class DoubleData implements Data {
 
     public DoubleData(int inc) {
         this.inc = inc;
-        this.data = new double[16];
+        this.data = new double[Data.DEFAULT_SIZE];
         this.size = 0;
     }
 
@@ -86,6 +86,12 @@ public class DoubleData implements Data {
     @Override
     public int compare(int position1, int position2) {
         return Double.compare(data[position1], data[position2]);
+    }
+
+    @Override
+    public void init(int size) {
+        this.data = new double[size];
+        this.size = size;
     }
 
     @Override

@@ -124,6 +124,13 @@ public class StringCompressedIntData implements Data {
     }
 
     @Override
+    public void init(int size) {
+        data.init(size);
+        values.add(null);
+        valueToPosition.put(null, 0);
+    }
+
+    @Override
     public void compact() {
         data.compact();
     }
