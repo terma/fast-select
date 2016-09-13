@@ -25,6 +25,31 @@ import java.nio.ByteBuffer;
 public class StringCompressedIntDataTest {
 
     @Test
+    public void initWillResizeDataAndFillByZero() {
+        Data data = new StringCompressedIntData(100);
+        data.init(100);
+
+        Assert.assertEquals(100, data.size());
+        Assert.assertEquals(100, data.allocatedSize());
+        for (int i = 0; i < 100; i++) Assert.assertNull(data.get(i));
+    }
+
+    @Test
+    public void initWithZeroIsOk() {
+        Data data = new StringCompressedIntData(100);
+        data.init(0);
+
+        Assert.assertEquals(0, data.size());
+        Assert.assertEquals(0, data.allocatedSize());
+    }
+
+    @Test(expected = NegativeArraySizeException.class)
+    public void initWithNegativeSizeThrowException() {
+        new StringCompressedIntData(100).init(-1);
+    }
+
+
+    @Test
     public void supportALotOfUniqueValues() {
         int inc = Short.MAX_VALUE * 2;
         StringCompressedIntData data = new StringCompressedIntData(inc);

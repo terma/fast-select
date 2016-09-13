@@ -25,6 +25,30 @@ import java.nio.ByteBuffer;
 public class StringCompressedByteDataTest {
 
     @Test
+    public void initWillResizeDataAndFillByZero() {
+        Data data = new StringCompressedByteData(100);
+        data.init(100);
+
+        Assert.assertEquals(100, data.size());
+        Assert.assertEquals(100, data.allocatedSize());
+        for (int i = 0; i < 100; i++) Assert.assertNull(data.get(i));
+    }
+
+    @Test
+    public void initWithZeroIsOk() {
+        Data data = new StringCompressedByteData(100);
+        data.init(0);
+
+        Assert.assertEquals(0, data.size());
+        Assert.assertEquals(0, data.allocatedSize());
+    }
+
+    @Test(expected = NegativeArraySizeException.class)
+    public void initWithNegativeSizeThrowException() {
+        new StringCompressedByteData(100).init(-1);
+    }
+
+    @Test
     public void saveLoad() throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(1000);
 
