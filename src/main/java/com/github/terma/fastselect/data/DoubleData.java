@@ -62,17 +62,20 @@ public class DoubleData implements Data {
 
     @Override
     public int getDiskSpace() {
-        throw new UnsupportedOperationException();
+        return DOUBLE_BYTES * size;
     }
 
     @Override
     public void save(final ByteBuffer buffer) throws IOException {
-        throw new UnsupportedOperationException();
+        buffer.asDoubleBuffer().put(data, 0, size);
+        buffer.position(buffer.position() + DOUBLE_BYTES * size);
     }
 
     @Override
     public void load(String dataClass, ByteBuffer buffer, int size) throws IOException {
-        throw new UnsupportedOperationException();
+        this.size = size;
+        this.data = new double[size];
+        buffer.asDoubleBuffer().get(data);
     }
 
     @Override

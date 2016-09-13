@@ -18,8 +18,6 @@ package com.github.terma.fastselect.data;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-import java.nio.channels.FileChannel;
 import java.util.Arrays;
 
 public class IntData implements Data {
@@ -74,14 +72,6 @@ public class IntData implements Data {
     public void save(final ByteBuffer buffer) throws IOException {
         buffer.asIntBuffer().put(data, 0, size);
         buffer.position(buffer.position() + Data.INT_BYTES * size);
-    }
-
-    public void load(FileChannel fileChannel, int size) throws IOException {
-        this.size = size;
-        this.data = new int[size];
-        IntBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, fileChannel.position(), INT_BYTES * size).asIntBuffer();
-        buffer.get(data);
-        fileChannel.position(fileChannel.position() + INT_BYTES * buffer.position());
     }
 
     @Override

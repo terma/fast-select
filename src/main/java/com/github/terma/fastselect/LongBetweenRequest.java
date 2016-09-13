@@ -21,8 +21,11 @@ import com.github.terma.fastselect.data.LongData;
 import java.util.Map;
 
 /**
+ * SQL analog is <code>COLUMN_X &gt;= MIN and COLUMN_X &lt;= MAX</code>
+ * <p>
  * Math's analog is "a to []". Include min and max.
- * For equal select use {@link IntRequest}
+ * <p>
+ * For equal select use {@link LongRequest}
  */
 @SuppressWarnings("WeakerAccess")
 public class LongBetweenRequest extends ColumnRequest {

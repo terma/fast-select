@@ -28,7 +28,6 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Objects;
 
 import static com.github.terma.fastselect.utils.IOUtils.*;
 
@@ -37,7 +36,7 @@ public class FastSelectSaveLoadTest {
 
     @Test
     public void loadFromEmpty() throws IOException {
-        FastSelect<TestLongShort> fastSelect = new FastSelectBuilder<>(TestLongShort.class).create();
+        FastSelect<TestDoubleLongShort> fastSelect = new FastSelectBuilder<>(TestDoubleLongShort.class).create();
         File f = Files.createTempFile("a", "b").toFile();
         FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
         fc.position(0);
@@ -49,7 +48,7 @@ public class FastSelectSaveLoadTest {
 
     @Test
     public void loadWhenZeroItems() throws IOException {
-        FastSelect<TestLongShort> fastSelect = new FastSelectBuilder<>(TestLongShort.class).create();
+        FastSelect<TestDoubleLongShort> fastSelect = new FastSelectBuilder<>(TestDoubleLongShort.class).create();
         File f = Files.createTempFile("a", "b").toFile();
         FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
         writeInt(fc, Data.STORAGE_FORMAT_VERSION);
@@ -64,7 +63,7 @@ public class FastSelectSaveLoadTest {
 
     @Test
     public void loadWhenZeroItemsButColumnsPresent() throws IOException {
-        FastSelect<TestLongShort> fastSelect = new FastSelectBuilder<>(TestLongShort.class).create();
+        FastSelect<TestDoubleLongShort> fastSelect = new FastSelectBuilder<>(TestDoubleLongShort.class).create();
         File f = Files.createTempFile("a", "b").toFile();
         FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
 
@@ -92,7 +91,7 @@ public class FastSelectSaveLoadTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void loadOfUnexpectedFormatVersionThrowException() throws IOException {
-        FastSelect<TestLongShort> fastSelect = new FastSelectBuilder<>(TestLongShort.class).create();
+        FastSelect<TestDoubleLongShort> fastSelect = new FastSelectBuilder<>(TestDoubleLongShort.class).create();
         File f = Files.createTempFile("a", "b").toFile();
         FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
         fc.write((ByteBuffer) ByteBuffer.allocate(Data.INT_BYTES).putInt(-1).flip());
@@ -103,26 +102,32 @@ public class FastSelectSaveLoadTest {
 
     @Test
     public void load() throws IOException {
-        FastSelect<TestLongShort> fastSelect = new FastSelectBuilder<>(TestLongShort.class).blockSize(1).create();
+        FastSelect<TestDoubleLongShort> fastSelect = new FastSelectBuilder<>(TestDoubleLongShort.class).blockSize(1).create();
         File f = Files.createTempFile("a", "b").toFile();
         FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
 
         int headerEnd = 4 + 4 + 4
+                + getStringBytesSize(DoubleData.class.getName()) + getStringBytesSize("doubleValue") + 8 + 4
                 + getStringBytesSize(LongData.class.getName()) + getStringBytesSize("long1") + 8 + 4
                 + getStringBytesSize(ShortData.class.getName()) + getStringBytesSize("short1") + 8 + 4;
 
         writeInt(fc, Data.STORAGE_FORMAT_VERSION);
         writeInt(fc, 2); // records
-        writeInt(fc, 2); // columns
+        writeInt(fc, 3); // columns
+        writeString(fc, DoubleData.class.getName());
+        writeString(fc, "doubleValue");
+        writeLong(fc, headerEnd);
+        writeInt(fc, Data.DOUBLE_BYTES * 2);
         writeString(fc, LongData.class.getName());
         writeString(fc, "long1");
-        writeLong(fc, headerEnd);
+        writeLong(fc, headerEnd + Data.DOUBLE_BYTES * 2);
         writeInt(fc, Data.LONG_BYTES * 2);
         writeString(fc, ShortData.class.getName());
         writeString(fc, "short1");
-        writeLong(fc, headerEnd + Data.LONG_BYTES * 2);
+        writeLong(fc, headerEnd + DoubleData.DOUBLE_BYTES * 2 + Data.LONG_BYTES * 2);
         writeInt(fc, Data.SHORT_BYTES * 2);
 
+        fc.write((ByteBuffer) ByteBuffer.allocate(1024).putDouble(Double.MAX_VALUE).putDouble(0).flip());
         fc.write((ByteBuffer) ByteBuffer.allocate(1024).putLong(Long.MAX_VALUE).putLong(0).flip());
         fc.write((ByteBuffer) ByteBuffer.allocate(1024).putShort(Short.MAX_VALUE).putShort(Short.MIN_VALUE).flip());
 
@@ -133,16 +138,18 @@ public class FastSelectSaveLoadTest {
         Assert.assertEquals(2, fastSelect.size());
         Assert.assertEquals(
                 Arrays.asList(
-                        new TestLongShort(Long.MAX_VALUE, Short.MAX_VALUE),
-                        new TestLongShort(0, Short.MIN_VALUE)),
+                        new TestDoubleLongShort(Double.MAX_VALUE, Long.MAX_VALUE, Short.MAX_VALUE),
+                        new TestDoubleLongShort(0.0, 0, Short.MIN_VALUE)),
                 fastSelect.select()
         );
     }
 
     @Test
-    public void saveAndLoadLongShort() throws IOException {
-        FastSelect<TestLongShort> fastSelect = new FastSelectBuilder<>(TestLongShort.class).blockSize(1).create();
-        fastSelect.addAll(Arrays.asList(new TestLongShort(0, (short) 0), new TestLongShort(Long.MAX_VALUE, Short.MIN_VALUE)));
+    public void saveAndLoadDoubleLongShort() throws IOException {
+        FastSelect<TestDoubleLongShort> fastSelect = new FastSelectBuilder<>(TestDoubleLongShort.class).blockSize(1).create();
+        fastSelect.addAll(Arrays.asList(
+                new TestDoubleLongShort(1.23, 0, (short) 0),
+                new TestDoubleLongShort(Double.MAX_VALUE, Long.MAX_VALUE, Short.MIN_VALUE)));
 
         File f = Files.createTempFile("a", "b").toFile();
         FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
@@ -150,7 +157,7 @@ public class FastSelectSaveLoadTest {
         fastSelect.save(fc);
 
         fc.position(0);
-        FastSelect<TestLongShort> fastSelect1 = new FastSelectBuilder<>(TestLongShort.class).blockSize(1).create();
+        FastSelect<TestDoubleLongShort> fastSelect1 = new FastSelectBuilder<>(TestDoubleLongShort.class).blockSize(1).create();
         fastSelect1.load(fc, 1);
 
         fc.close();
@@ -160,16 +167,18 @@ public class FastSelectSaveLoadTest {
         Assert.assertEquals(2, fastSelect1.size());
         Assert.assertEquals(
                 Arrays.asList(
-                        new TestLongShort(0, (short) 0),
-                        new TestLongShort(Long.MAX_VALUE, Short.MIN_VALUE)),
+                        new TestDoubleLongShort(1.23, 0, (short) 0),
+                        new TestDoubleLongShort(Double.MAX_VALUE, Long.MAX_VALUE, Short.MIN_VALUE)),
                 fastSelect1.select()
         );
     }
 
     @Test
     public void parallelLoad() throws IOException {
-        FastSelect<TestLongShort> fastSelect = new FastSelectBuilder<>(TestLongShort.class).blockSize(1).create();
-        fastSelect.addAll(Arrays.asList(new TestLongShort(0, (short) 0), new TestLongShort(Long.MAX_VALUE, Short.MIN_VALUE)));
+        FastSelect<TestDoubleLongShort> fastSelect = new FastSelectBuilder<>(TestDoubleLongShort.class).blockSize(1).create();
+        fastSelect.addAll(Arrays.asList(
+                new TestDoubleLongShort(1.1, 0, (short) 0),
+                new TestDoubleLongShort(1.1, Long.MAX_VALUE, Short.MIN_VALUE)));
 
         File f = Files.createTempFile("a", "b").toFile();
         FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
@@ -177,7 +186,7 @@ public class FastSelectSaveLoadTest {
         fastSelect.save(fc);
 
         fc.position(0);
-        FastSelect<TestLongShort> fastSelect1 = new FastSelectBuilder<>(TestLongShort.class).blockSize(1).create();
+        FastSelect<TestDoubleLongShort> fastSelect1 = new FastSelectBuilder<>(TestDoubleLongShort.class).blockSize(1).create();
         fastSelect1.load(fc, 5);
 
         fc.close();
@@ -187,8 +196,8 @@ public class FastSelectSaveLoadTest {
         Assert.assertEquals(2, fastSelect1.size());
         Assert.assertEquals(
                 Arrays.asList(
-                        new TestLongShort(0, (short) 0),
-                        new TestLongShort(Long.MAX_VALUE, Short.MIN_VALUE)),
+                        new TestDoubleLongShort(1.1, 0, (short) 0),
+                        new TestDoubleLongShort(1.1, Long.MAX_VALUE, Short.MIN_VALUE)),
                 fastSelect1.select()
         );
     }
@@ -334,38 +343,51 @@ public class FastSelectSaveLoadTest {
         );
     }
 
-    public static class TestLongShort {
+    public static class TestDoubleLongShort {
+        public double doubleValue;
         public long long1;
         public short short1;
 
         // empty constructor for database to be able restore object
         @SuppressWarnings("unused")
-        public TestLongShort() {
-            this(0, (byte) 0);
+        public TestDoubleLongShort() {
+            this(0, 0, (short) 0);
         }
 
-        TestLongShort(long long1, short short1) {
+        TestDoubleLongShort(double doubleValue, long long1, short short1) {
             this.long1 = long1;
             this.short1 = short1;
+            this.doubleValue = doubleValue;
         }
 
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            TestLongShort that = (TestLongShort) o;
-            return long1 == that.long1 &&
-                    short1 == that.short1;
+
+            TestDoubleLongShort that = (TestDoubleLongShort) o;
+
+            if (Double.compare(that.doubleValue, doubleValue) != 0) return false;
+            if (long1 != that.long1) return false;
+            return short1 == that.short1;
+
         }
 
         @Override
         public String toString() {
-            return "TestLongShort {long1: " + long1 + ", short1: " + short1 + '}';
+            return "TestDoubleLongShort{" + "doubleValue=" + doubleValue +
+                    ", long1=" + long1 + ", short1=" + short1 + '}';
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(long1, short1);
+            int result;
+            long temp;
+            temp = Double.doubleToLongBits(doubleValue);
+            result = (int) (temp ^ (temp >>> 32));
+            result = 31 * result + (int) (long1 ^ (long1 >>> 32));
+            result = 31 * result + (int) short1;
+            return result;
         }
 
     }

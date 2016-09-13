@@ -19,6 +19,7 @@ package com.github.terma.fastselect;
 import junit.framework.Assert;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -27,77 +28,102 @@ import static java.util.Collections.singletonList;
 @SuppressWarnings("WeakerAccess")
 public class FastSelectDoubleTest {
 
-    // todo add support selecting by double
+    @Test
+    public void shouldCorrectlyRestoreDoubleField() {
+        FastSelect<DoubleData> database = new FastSelectBuilder<>(DoubleData.class).create();
+        database.addAll(asList(
+                new DoubleData(Math.PI),
+                new DoubleData(-1.01333132),
+                new DoubleData(0),
+                new DoubleData(Double.MIN_VALUE),
+                new DoubleData(Double.MAX_VALUE)));
+
+        List result = database.select();
+
+        Assert.assertEquals(asList(
+                new DoubleData(Math.PI),
+                new DoubleData(-1.01333132),
+                new DoubleData(0),
+                new DoubleData(Double.MIN_VALUE),
+                new DoubleData(Double.MAX_VALUE)),
+                result);
+    }
+
+    @Test
+    public void selectByBetween() {
+        FastSelect<DoubleData> database = new FastSelectBuilder<>(DoubleData.class).blockSize(1).create();
+        database.addAll(asList(
+                new DoubleData(-Double.MAX_VALUE),
+                new DoubleData(-11),
+                new DoubleData(0),
+                new DoubleData(11),
+                new DoubleData(5),
+                new DoubleData(4),
+                new DoubleData(Double.MAX_VALUE)));
+
+        Assert.assertEquals(asList(
+                new DoubleData(-Double.MAX_VALUE),
+                new DoubleData(-11),
+                new DoubleData(0)),
+                database.select(new DoubleBetweenRequest("doubleValue", -Double.MAX_VALUE, 0)));
+
+        Assert.assertEquals(asList(
+                new DoubleData(5),
+                new DoubleData(4)),
+                database.select(new DoubleBetweenRequest("doubleValue", 4, 5)));
+
+        Assert.assertEquals(Collections.singletonList(
+                new DoubleData(4)),
+                database.select(new DoubleBetweenRequest("doubleValue", 4, 4)));
+
+        Assert.assertEquals(Collections.emptyList(),
+                database.select(new DoubleBetweenRequest("doubleValue", 5, 4)));
+    }
 
     @Test
     public void supportSortingByDouble() {
-        FastSelect<DoubleIntData> database = new FastSelectBuilder<>(DoubleIntData.class).create();
+        FastSelect<DoubleData> database = new FastSelectBuilder<>(DoubleData.class).create();
         database.addAll(asList(
-                new DoubleIntData(1.0, 11),
-                new DoubleIntData(90.12, 4),
-                new DoubleIntData(90.00001, 98)));
+                new DoubleData(1.0),
+                new DoubleData(90.12),
+                new DoubleData(90.00001)));
 
         List result = database.selectAndSort(new Request[0], "doubleValue");
 
         Assert.assertEquals(asList(
-                new DoubleIntData(1.0, 11),
-                new DoubleIntData(90.00001, 98),
-                new DoubleIntData(90.12, 4)),
+                new DoubleData(1.0),
+                new DoubleData(90.00001),
+                new DoubleData(90.12)),
                 result);
     }
 
     @Test
     public void shouldSupportAddMultipleTimes() {
-        FastSelect<DoubleIntData> database = new FastSelectBuilder<>(DoubleIntData.class).blockSize(1).create();
-        database.addAll(singletonList(new DoubleIntData(-1, 0)));
-        database.addAll(singletonList(new DoubleIntData(1, 12)));
-        database.addAll(singletonList(new DoubleIntData(0, 0)));
-
-        List result = database.select(new IntRequest("intValue", new int[]{12}));
-
-        Assert.assertEquals(singletonList(new DoubleIntData(1, 12)), result);
-    }
-
-    @Test
-    public void shouldCorrectlyRestoreDoubleField() {
-        FastSelect<DoubleIntData> database = new FastSelectBuilder<>(DoubleIntData.class).create();
-        database.addAll(asList(
-                new DoubleIntData(Math.PI, 12),
-                new DoubleIntData(-1.01333132, 12),
-                new DoubleIntData(0, 12),
-                new DoubleIntData(Double.MIN_VALUE, 12),
-                new DoubleIntData(Double.MAX_VALUE, 12)));
+        FastSelect<DoubleData> database = new FastSelectBuilder<>(DoubleData.class).blockSize(1).create();
+        database.addAll(singletonList(new DoubleData(-1)));
+        database.addAll(singletonList(new DoubleData(1)));
+        database.addAll(singletonList(new DoubleData(0)));
 
         List result = database.select();
 
-        Assert.assertEquals(asList(
-                new DoubleIntData(Math.PI, 12),
-                new DoubleIntData(-1.01333132, 12),
-                new DoubleIntData(0, 12),
-                new DoubleIntData(Double.MIN_VALUE, 12),
-                new DoubleIntData(Double.MAX_VALUE, 12)),
-                result);
+        Assert.assertEquals(asList(new DoubleData(-1), new DoubleData(1), new DoubleData(0)), result);
     }
 
-    public static class DoubleIntData {
+    public static class DoubleData {
+
         public double doubleValue;
-        public int intValue;
 
         @SuppressWarnings("unused")
-        public DoubleIntData() {
+        public DoubleData() {
         }
 
-        public DoubleIntData(double doubleValue, int intValue) {
+        public DoubleData(double doubleValue) {
             this.doubleValue = doubleValue;
-            this.intValue = intValue;
         }
 
         @Override
         public String toString() {
-            return "DoubleIntData{" +
-                    "doubleValue=" + doubleValue +
-                    ", intValue=" + intValue +
-                    '}';
+            return "DoubleData{doubleValue=" + doubleValue + '}';
         }
 
         @Override
@@ -105,20 +131,16 @@ public class FastSelectDoubleTest {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            DoubleIntData that = (DoubleIntData) o;
+            DoubleData that = (DoubleData) o;
 
-            return Double.compare(that.doubleValue, doubleValue) == 0 && intValue == that.intValue;
+            return Double.compare(that.doubleValue, doubleValue) == 0;
 
         }
 
         @Override
         public int hashCode() {
-            int result;
-            long temp;
-            temp = Double.doubleToLongBits(doubleValue);
-            result = (int) (temp ^ (temp >>> 32));
-            result = 31 * result + intValue;
-            return result;
+            long temp = Double.doubleToLongBits(doubleValue);
+            return (int) (temp ^ (temp >>> 32));
         }
     }
 

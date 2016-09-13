@@ -18,8 +18,6 @@ package com.github.terma.fastselect.data;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.ShortBuffer;
-import java.nio.channels.FileChannel;
 import java.util.Arrays;
 
 public class ShortData implements Data {
@@ -65,14 +63,6 @@ public class ShortData implements Data {
     public void save(final ByteBuffer buffer) throws IOException {
         buffer.asShortBuffer().put(data, 0, size);
         buffer.position(buffer.position() + Data.SHORT_BYTES * size);
-    }
-
-    public void load(FileChannel fileChannel, int size) throws IOException {
-        this.size = size;
-        this.data = new short[size];
-        ShortBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, fileChannel.position(), SHORT_BYTES * size).asShortBuffer();
-        buffer.get(data);
-        fileChannel.position(fileChannel.position() + SHORT_BYTES * buffer.position());
     }
 
     @Override

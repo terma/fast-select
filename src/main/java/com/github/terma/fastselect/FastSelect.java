@@ -35,10 +35,10 @@ import java.util.concurrent.Future;
 
 /**
  * Compact in-memory storage with fast search.
- * <p></p>
+ * <p>
  * In Memory implementation for database table. Supports fast search by any combination of columns.
  * Internal storage has constant size for mem overhead.
- * <p></p>
+ * <p>
  * Storage: Column oriented based on array
  * For example for normal Java object you have 12-16 bytes on object header.
  * Plus fields alignment depends on JVM and hardware architectures. Could be 4-8 bytes alignment.
@@ -46,13 +46,11 @@ import java.util.concurrent.Future;
  * on field on x64 machine with SunJVM. <a href="http://shipilev.net/blog/2014/heapdump-is-a-lie/">Details about JVM object mem layout</a>
  * When you add new object class internally extract required fields from that object and add this to
  * particular column data. <a href="http://the-paper-trail.org/blog/columnar-storage/">Columnar Storage</a>
- * <p></p>
+ * <p>
  * As result you don't need to spend mem on millions of object headers and alignment.
  * The downside of that each time when you need to get data back as object some time need to be spend on
  * recreation of your object. Mem as well. You can use references field in data at least for current implementation.
- * <p></p>
  * <h3>Implementation</h3>
- * <p></p>
  * <h4>Architecture</h4>
  * <pre>
  *                Columns
@@ -95,24 +93,21 @@ import java.util.concurrent.Future;
  * </pre>
  * Fast Search based two step search algorithm (<a href="https://en.wikipedia.org/wiki/Bloom_filter">Bloom Filter</a>
  * + direct scan within block)
- * <p></p>
  * <h4>Marshalling and unmarshalling.</h4>
- * <p></p>
  * Because storage uses non object layout. That's provide huge improvement for memory and performance.
  * Downside of that we need to extract field values from object on add and build new object when
  * return data. That's why this storage not good for selection big portion of data compare to original result set.
- * <p></p>
+ * <p>
  * We use {@link MethodHandle#invoke(Object...)} here to field values from object.
  * You could be surprised but it has same performance as normal reflect. Other alternative
  * which you can think will be faster {@link MethodHandle#invokeExact(Object...)} however it's not.
- * <p></p>
+ * <p>
  * More information about that:
  * <a href="https://gist.github.com/raphw/881e1745996f9d314ab0#file-result-field-txt">
  * https://gist.github.com/raphw/881e1745996f9d314ab0#file-result-field-txt</a>
- * <p></p>
+ * <p>
  * <h3>JMX</h3>
  * To see static of {@link FastSelect} you can use {@link com.github.terma.fastselect.jmx.FastSelectMXBeanImpl}
- * <p>
  * <h3>Save / Load from file</h3>
  * FastSelect support save and load from {@link FileChannel}
  * <p>
