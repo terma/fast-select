@@ -31,6 +31,30 @@ public class StringDataTest {
     }
 
     @Test
+    public void initWillResizeDataAndFillByZero() {
+        Data data = new StringData(100);
+        data.init(100);
+
+        Assert.assertEquals(100, data.size());
+        Assert.assertEquals(100, data.allocatedSize());
+        for (int i = 0; i < 100; i++) Assert.assertEquals("", data.get(i));
+    }
+
+    @Test
+    public void initWithZeroIsOk() {
+        Data data = new StringData(100);
+        data.init(0);
+
+        Assert.assertEquals(0, data.size());
+        Assert.assertEquals(0, data.allocatedSize());
+    }
+
+    @Test(expected = NegativeArraySizeException.class)
+    public void initWithNegativeSizeThrowException() {
+        new StringData(100).init(-1);
+    }
+
+    @Test
     public void supportCompact() {
         StringData data = new StringData(100);
         for (short i = 0; i < 17; i++) data.add(String.valueOf(i));

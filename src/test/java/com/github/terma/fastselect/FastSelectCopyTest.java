@@ -47,18 +47,21 @@ public class FastSelectCopyTest {
         data1.shortValue = (short) 19000;
         data1.intValue = 678990;
         data1.longValue = Long.MAX_VALUE / 2;
+        data1.doubleValue = Double.MAX_VALUE;
 
         ScalarData data2 = new ScalarData();
         data2.byteValue = 45;
         data2.shortValue = (short) 19000;
         data2.intValue = 678990;
         data2.longValue = Long.MAX_VALUE / 2;
+        data2.doubleValue = -Double.MAX_VALUE;
 
         ScalarData data3 = new ScalarData();
         data3.byteValue = 1;
         data3.shortValue = (short) 45;
         data3.intValue = 900000;
         data3.longValue = -1;
+        data3.doubleValue = 0.01;
 
         List<ScalarData> data = Arrays.asList(data1, data2, data3);
         fastSelect.addAll(data);
@@ -74,6 +77,9 @@ public class FastSelectCopyTest {
 
         Request[] byteWhere = new Request[]{new ByteRequest("byteValue", data2.byteValue)};
         Assert.assertEquals(fastSelect.select(byteWhere), copy.select(byteWhere));
+
+        Request[] doubleWhere = new Request[]{new DoubleBetweenRequest("doubleValue", -Double.MAX_VALUE, data2.doubleValue)};
+        Assert.assertEquals(fastSelect.select(doubleWhere), copy.select(doubleWhere));
     }
 
     @Test
@@ -194,16 +200,7 @@ public class FastSelectCopyTest {
         public short shortValue;
         public int intValue;
         public long longValue;
-
-        @Override
-        public String toString() {
-            return "ScalarData{" +
-                    "byteValue=" + byteValue +
-                    ", shortValue=" + shortValue +
-                    ", intValue=" + intValue +
-                    ", longValue=" + longValue +
-                    '}';
-        }
+        public double doubleValue;
 
         @Override
         public boolean equals(Object o) {
@@ -215,18 +212,36 @@ public class FastSelectCopyTest {
             if (byteValue != that.byteValue) return false;
             if (shortValue != that.shortValue) return false;
             if (intValue != that.intValue) return false;
-            return longValue == that.longValue;
+            if (longValue != that.longValue) return false;
+            return Double.compare(that.doubleValue, doubleValue) == 0;
 
         }
 
         @Override
         public int hashCode() {
-            int result = (int) byteValue;
+            int result;
+            long temp;
+            result = (int) byteValue;
             result = 31 * result + (int) shortValue;
             result = 31 * result + intValue;
             result = 31 * result + (int) (longValue ^ (longValue >>> 32));
+            temp = Double.doubleToLongBits(doubleValue);
+            result = 31 * result + (int) (temp ^ (temp >>> 32));
             return result;
         }
+
+        @Override
+        public String toString() {
+            return "ScalarData{" +
+                    "byteValue=" + byteValue +
+                    ", shortValue=" + shortValue +
+                    ", intValue=" + intValue +
+                    ", longValue=" + longValue +
+                    ", doubleValue=" + doubleValue +
+                    '}';
+
+        }
+
     }
 
 }

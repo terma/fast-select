@@ -221,7 +221,9 @@ public final class FastSelect<T> {
     public void load(final FileChannel fileChannel, final int threadCounts) throws IOException {
         if (fileChannel.size() > 0) {
             final int version = IOUtils.readInt(fileChannel);
-            if (version != Data.STORAGE_FORMAT_VERSION)
+            if (version == 0) {
+                throw new IllegalArgumentException("Corrupted data! Ensure that you create dump properly.");
+            } else if (version != Data.STORAGE_FORMAT_VERSION)
                 throw new IllegalArgumentException("Unsupported format version: " + version
                         + ", expected: " + Data.STORAGE_FORMAT_VERSION);
 
@@ -229,10 +231,12 @@ public final class FastSelect<T> {
             final int columnCount = IOUtils.readInt(fileChannel);
 
             final ExecutorService executorService = Executors.newFixedThreadPool(threadCounts);
+            final Set<String> loadedColumns = new HashSet<>();
             final List<Future<Object>> futures = new ArrayList<>();
             for (int i = 0; i < columnCount; i++) {
                 final String dataClass = IOUtils.readString(fileChannel);
                 final String columnName = IOUtils.readString(fileChannel);
+                loadedColumns.add(columnName);
                 final long position = IOUtils.readLong(fileChannel);
                 final int bytesSize = IOUtils.readInt(fileChannel);
 
@@ -248,6 +252,10 @@ public final class FastSelect<T> {
             }
             ThreadUtils.getAll(futures);
             executorService.shutdown();
+
+            for (Column column : columns) {
+                if (!loadedColumns.contains(column.name)) column.data.init(size);
+            }
         }
         rootBlock.init();
     }

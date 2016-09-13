@@ -89,7 +89,7 @@ public class FastSelectSaveLoadTest {
         Assert.assertEquals(0, fastSelect.size());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void loadOfUnexpectedFormatVersionThrowException() throws IOException {
         FastSelect<TestDoubleLongShort> fastSelect = new FastSelectBuilder<>(TestDoubleLongShort.class).create();
         File f = Files.createTempFile("a", "b").toFile();
@@ -97,7 +97,28 @@ public class FastSelectSaveLoadTest {
         fc.write((ByteBuffer) ByteBuffer.allocate(Data.INT_BYTES).putInt(-1).flip());
         fc.write((ByteBuffer) ByteBuffer.allocate(Data.INT_BYTES).putInt(0).flip());
         fc.position(0);
-        fastSelect.load(fc, 1);
+        try {
+            fastSelect.load(fc, 1);
+            Assert.fail("where is my exception?");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals("Unsupported format version: -1, expected: 1", e.getMessage());
+        }
+    }
+
+    @Test
+    public void loadWhenFormatVersionIsZeroThrowExceptionThatFileCorrupted() throws IOException {
+        FastSelect<TestDoubleLongShort> fastSelect = new FastSelectBuilder<>(TestDoubleLongShort.class).create();
+        File f = Files.createTempFile("a", "b").toFile();
+        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
+        fc.write((ByteBuffer) ByteBuffer.allocate(Data.INT_BYTES).putInt(0).flip());
+        fc.write((ByteBuffer) ByteBuffer.allocate(Data.INT_BYTES).putInt(0).flip());
+        fc.position(0);
+        try {
+            fastSelect.load(fc, 1);
+            Assert.fail("where is my exception?");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals("Corrupted data! Ensure that you create dump properly.", e.getMessage());
+        }
     }
 
     @Test
@@ -140,6 +161,78 @@ public class FastSelectSaveLoadTest {
                 Arrays.asList(
                         new TestDoubleLongShort(Double.MAX_VALUE, Long.MAX_VALUE, Short.MAX_VALUE),
                         new TestDoubleLongShort(0.0, 0, Short.MIN_VALUE)),
+                fastSelect.select()
+        );
+    }
+
+    @Test
+    public void loadIfDumpHasMoreColumnsThanDataClass() throws IOException {
+        FastSelect<TestAllTypes> fastSelect =
+                new FastSelectBuilder<>(TestAllTypes.class).inc(1).blockSize(1).create();
+        File f = Files.createTempFile("a", "b").toFile();
+        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
+
+        int headerEnd = 4 + 4 + 4
+                + getStringBytesSize(LongData.class.getName()) + getStringBytesSize("longValue") + 8 + 4 +
+                +getStringBytesSize(LongData.class.getName()) + getStringBytesSize("nonExLongValue") + 8 + 4;
+
+        writeInt(fc, Data.STORAGE_FORMAT_VERSION);
+        writeInt(fc, 2); // records
+        writeInt(fc, 2); // columns
+        writeString(fc, LongData.class.getName());
+        writeString(fc, "longValue");
+        writeLong(fc, headerEnd);
+        writeInt(fc, Data.LONG_BYTES * 2);
+        writeString(fc, LongData.class.getName());
+        writeString(fc, "nonExLongValue");
+        writeLong(fc, headerEnd + Data.LONG_BYTES * 2);
+        writeInt(fc, Data.LONG_BYTES * 2);
+
+        fc.write((ByteBuffer) ByteBuffer.allocate(1024).putLong(Long.MAX_VALUE).putLong(0).flip());
+        fc.write((ByteBuffer) ByteBuffer.allocate(1024).putLong(Long.MIN_VALUE).putLong(-1).flip());
+
+        fc.position(0);
+        fastSelect.load(fc, 1);
+        fc.close();
+
+        Assert.assertEquals(2, fastSelect.size());
+        Assert.assertEquals(
+                Arrays.asList(
+                        new TestAllTypes().andLongValue(Long.MAX_VALUE),
+                        new TestAllTypes().andLongValue(0)),
+                fastSelect.select()
+        );
+    }
+
+    @Test
+    public void loadIfOneOfColumnNotPresentInDump() throws IOException {
+        FastSelect<TestAllTypes> fastSelect =
+                new FastSelectBuilder<>(TestAllTypes.class).inc(1).blockSize(1).create();
+        File f = Files.createTempFile("a", "b").toFile();
+        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
+
+        int headerEnd = 4 + 4 + 4
+                + getStringBytesSize(LongData.class.getName()) + getStringBytesSize("longValue") + 8 + 4;
+
+        writeInt(fc, Data.STORAGE_FORMAT_VERSION);
+        writeInt(fc, 2); // records
+        writeInt(fc, 1); // columns
+        writeString(fc, LongData.class.getName());
+        writeString(fc, "longValue");
+        writeLong(fc, headerEnd);
+        writeInt(fc, Data.LONG_BYTES * 2);
+
+        fc.write((ByteBuffer) ByteBuffer.allocate(1024).putLong(Long.MAX_VALUE).putLong(0).flip());
+
+        fc.position(0);
+        fastSelect.load(fc, 1);
+        fc.close();
+
+        Assert.assertEquals(2, fastSelect.size());
+        Assert.assertEquals(
+                Arrays.asList(
+                        new TestAllTypes().andLongValue(Long.MAX_VALUE),
+                        new TestAllTypes().andLongValue(0)),
                 fastSelect.select()
         );
     }
@@ -225,6 +318,43 @@ public class FastSelectSaveLoadTest {
                 Arrays.asList(
                         new TestIntByte(0, (byte) 0),
                         new TestIntByte(Integer.MAX_VALUE, Byte.MIN_VALUE)),
+                fastSelect1.select()
+        );
+    }
+
+    @Test
+    public void saveAndLoadMultiX() throws IOException {
+        FastSelect<TestAllTypes> fastSelect = new FastSelectBuilder<>(TestAllTypes.class).blockSize(1).create();
+        fastSelect.addAll(Arrays.asList(
+                new TestAllTypes()
+                        .andMultiByte(new byte[]{Byte.MIN_VALUE, -1, Byte.MAX_VALUE})
+                        .andMultiShort(new short[]{Short.MIN_VALUE, -1, Short.MAX_VALUE})
+                        .andMultiInt(new int[]{Integer.MIN_VALUE, -1, Integer.MAX_VALUE})
+                        .andMultiLong(new long[]{Long.MIN_VALUE, -1, Long.MAX_VALUE}),
+                new TestAllTypes()));
+
+        File f = Files.createTempFile("a", "b").toFile();
+        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
+
+        fastSelect.save(fc);
+
+        fc.position(0);
+        FastSelect<TestAllTypes> fastSelect1 = new FastSelectBuilder<>(TestAllTypes.class).blockSize(1).create();
+        fastSelect1.load(fc, 1);
+
+        fc.close();
+        //noinspection ResultOfMethodCallIgnored
+        f.delete();
+
+        Assert.assertEquals(2, fastSelect1.size());
+        Assert.assertEquals(
+                Arrays.asList(
+                        new TestAllTypes()
+                                .andMultiByte(new byte[]{Byte.MIN_VALUE, -1, Byte.MAX_VALUE})
+                                .andMultiShort(new short[]{Short.MIN_VALUE, -1, Short.MAX_VALUE})
+                                .andMultiInt(new int[]{Integer.MIN_VALUE, -1, Integer.MAX_VALUE})
+                                .andMultiLong(new long[]{Long.MIN_VALUE, -1, Long.MAX_VALUE}),
+                        new TestAllTypes()),
                 fastSelect1.select()
         );
     }

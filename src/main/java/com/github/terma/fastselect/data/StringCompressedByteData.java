@@ -125,6 +125,13 @@ public class StringCompressedByteData implements Data {
     }
 
     @Override
+    public void init(int size) {
+        data.init(size);
+        values[0] = null;
+        valueToPosition.put(null, (byte) 0);
+    }
+
+    @Override
     public void compact() {
         data.compact();
     }

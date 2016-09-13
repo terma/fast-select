@@ -19,30 +19,30 @@ package com.github.terma.fastselect.data;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class MultiLongDataTest {
+public class MultiIntDataTest {
 
     @Test
     public void provideAllocatedSize() {
-        MultiLongData data = new MultiLongData(100);
+        MultiIntData data = new MultiIntData(100);
         Assert.assertEquals(Data.DEFAULT_SIZE, data.allocatedSize());
 
-        for (byte i = 0; i < 50; i++) data.add(new long[]{i});
+        for (byte i = 0; i < 50; i++) data.add(new int[]{i});
         Assert.assertEquals(Data.DEFAULT_SIZE + 100, data.allocatedSize());
     }
 
     @Test
     public void initWillResizeDataAndFillByZero() {
-        Data data = new MultiLongData(100);
+        Data data = new MultiIntData(100);
         data.init(100);
 
         Assert.assertEquals(100, data.size());
         Assert.assertEquals(100, data.allocatedSize());
-        for (int i = 0; i < 100; i++) Assert.assertArrayEquals(new long[0], (long[]) data.get(i));
+        for (int i = 0; i < 100; i++) Assert.assertArrayEquals(new int[0], (int[]) data.get(i));
     }
 
     @Test
     public void initWithZeroIsOk() {
-        Data data = new MultiLongData(100);
+        Data data = new MultiIntData(100);
         data.init(0);
 
         Assert.assertEquals(0, data.size());
@@ -51,38 +51,38 @@ public class MultiLongDataTest {
 
     @Test(expected = NegativeArraySizeException.class)
     public void initWithNegativeSizeThrowException() {
-        new MultiLongData(100).init(-1);
+        new MultiIntData(100).init(-1);
     }
 
     @Test
     public void supportCompact() {
-        MultiLongData data = new MultiLongData(100);
-        for (byte i = 0; i < 17; i++) data.add(new long[]{i});
+        MultiIntData data = new MultiIntData(100);
+        for (byte i = 0; i < 17; i++) data.add(new int[]{i});
         Assert.assertEquals(116, data.allocatedSize());
 
         data.compact();
 
         Assert.assertEquals(17, data.allocatedSize());
-        for (byte i = 0; i < data.size(); i++) Assert.assertArrayEquals(new long[]{i}, (long[]) data.get(i));
+        for (byte i = 0; i < data.size(); i++) Assert.assertArrayEquals(new int[]{i}, (int[]) data.get(i));
     }
 
     @Test
     public void provideMemSize() {
-        MultiLongData data = new MultiLongData(100);
-        Assert.assertEquals(280, data.mem());
+        MultiIntData data = new MultiIntData(100);
+        Assert.assertEquals(216, data.mem());
 
-        for (byte i = 0; i < 50; i++) data.add(new long[] {i});
-        Assert.assertEquals(1480, data.mem());
+        for (byte i = 0; i < 50; i++) data.add(new int[] {i});
+        Assert.assertEquals(1016, data.mem());
     }
 
     @Test
     public void provideInc() {
-        Assert.assertEquals(33, new MultiLongData(33).inc());
+        Assert.assertEquals(33, new MultiIntData(33).inc());
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void dontSupportCompare() {
-        new MultiLongData(22).compare(0, 1);
+        new MultiIntData(22).compare(0, 1);
     }
 
 }
