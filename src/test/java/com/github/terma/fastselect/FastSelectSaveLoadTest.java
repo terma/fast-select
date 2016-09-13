@@ -89,7 +89,7 @@ public class FastSelectSaveLoadTest {
         Assert.assertEquals(0, fastSelect.size());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void loadOfUnexpectedFormatVersionThrowException() throws IOException {
         FastSelect<TestDoubleLongShort> fastSelect = new FastSelectBuilder<>(TestDoubleLongShort.class).create();
         File f = Files.createTempFile("a", "b").toFile();
@@ -97,7 +97,28 @@ public class FastSelectSaveLoadTest {
         fc.write((ByteBuffer) ByteBuffer.allocate(Data.INT_BYTES).putInt(-1).flip());
         fc.write((ByteBuffer) ByteBuffer.allocate(Data.INT_BYTES).putInt(0).flip());
         fc.position(0);
-        fastSelect.load(fc, 1);
+        try {
+            fastSelect.load(fc, 1);
+            Assert.fail("where is my exception?");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals("Unsupported format version: -1, expected: 1", e.getMessage());
+        }
+    }
+
+    @Test
+    public void loadWhenFormatVersionIsZeroThrowExceptionThatFileCorrupted() throws IOException {
+        FastSelect<TestDoubleLongShort> fastSelect = new FastSelectBuilder<>(TestDoubleLongShort.class).create();
+        File f = Files.createTempFile("a", "b").toFile();
+        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
+        fc.write((ByteBuffer) ByteBuffer.allocate(Data.INT_BYTES).putInt(0).flip());
+        fc.write((ByteBuffer) ByteBuffer.allocate(Data.INT_BYTES).putInt(0).flip());
+        fc.position(0);
+        try {
+            fastSelect.load(fc, 1);
+            Assert.fail("where is my exception?");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals("Corrupted data! Ensure that you create dump properly.", e.getMessage());
+        }
     }
 
     @Test

@@ -221,7 +221,9 @@ public final class FastSelect<T> {
     public void load(final FileChannel fileChannel, final int threadCounts) throws IOException {
         if (fileChannel.size() > 0) {
             final int version = IOUtils.readInt(fileChannel);
-            if (version != Data.STORAGE_FORMAT_VERSION)
+            if (version == 0) {
+                throw new IllegalArgumentException("Corrupted data! Ensure that you create dump properly.");
+            } else if (version != Data.STORAGE_FORMAT_VERSION)
                 throw new IllegalArgumentException("Unsupported format version: " + version
                         + ", expected: " + Data.STORAGE_FORMAT_VERSION);
 
