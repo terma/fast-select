@@ -144,36 +144,31 @@ public class FastSelectSaveLoadTest {
         );
     }
 
-    // todo test case when dump.columns > columns
-    // todo test case when dump.columns < columns
-    // todo test case when dump.columns < columns and missed first
-    // todo test case when dump.columns < columns and missed non first
-
     @Test
-    public void loadIfOneOfColumnNotPresentInDump() throws IOException {
-        FastSelect<TestDoubleLongShort> fastSelect =
-                new FastSelectBuilder<>(TestDoubleLongShort.class).inc(1).blockSize(1).create();
+    public void loadIfDumpHasMoreColumnsThanDataClass() throws IOException {
+        FastSelect<TestAllTypes> fastSelect =
+                new FastSelectBuilder<>(TestAllTypes.class).inc(1).blockSize(1).create();
         File f = Files.createTempFile("a", "b").toFile();
         FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
 
         int headerEnd = 4 + 4 + 4
-                + getStringBytesSize(LongData.class.getName()) + getStringBytesSize("long1") + 8 + 4
-                + getStringBytesSize(ShortData.class.getName()) + getStringBytesSize("short1") + 8 + 4;
+                + getStringBytesSize(LongData.class.getName()) + getStringBytesSize("longValue") + 8 + 4 +
+                +getStringBytesSize(LongData.class.getName()) + getStringBytesSize("nonExLongValue") + 8 + 4;
 
         writeInt(fc, Data.STORAGE_FORMAT_VERSION);
         writeInt(fc, 2); // records
         writeInt(fc, 2); // columns
         writeString(fc, LongData.class.getName());
-        writeString(fc, "long1");
+        writeString(fc, "longValue");
         writeLong(fc, headerEnd);
         writeInt(fc, Data.LONG_BYTES * 2);
-        writeString(fc, ShortData.class.getName());
-        writeString(fc, "short1");
+        writeString(fc, LongData.class.getName());
+        writeString(fc, "nonExLongValue");
         writeLong(fc, headerEnd + Data.LONG_BYTES * 2);
-        writeInt(fc, Data.SHORT_BYTES * 2);
+        writeInt(fc, Data.LONG_BYTES * 2);
 
         fc.write((ByteBuffer) ByteBuffer.allocate(1024).putLong(Long.MAX_VALUE).putLong(0).flip());
-        fc.write((ByteBuffer) ByteBuffer.allocate(1024).putShort(Short.MAX_VALUE).putShort(Short.MIN_VALUE).flip());
+        fc.write((ByteBuffer) ByteBuffer.allocate(1024).putLong(Long.MIN_VALUE).putLong(-1).flip());
 
         fc.position(0);
         fastSelect.load(fc, 1);
@@ -182,8 +177,41 @@ public class FastSelectSaveLoadTest {
         Assert.assertEquals(2, fastSelect.size());
         Assert.assertEquals(
                 Arrays.asList(
-                        new TestDoubleLongShort(0.0, Long.MAX_VALUE, Short.MAX_VALUE),
-                        new TestDoubleLongShort(0.0, 0, Short.MIN_VALUE)),
+                        new TestAllTypes().andLongValue(Long.MAX_VALUE),
+                        new TestAllTypes().andLongValue(0)),
+                fastSelect.select()
+        );
+    }
+
+    @Test
+    public void loadIfOneOfColumnNotPresentInDump() throws IOException {
+        FastSelect<TestAllTypes> fastSelect =
+                new FastSelectBuilder<>(TestAllTypes.class).inc(1).blockSize(1).create();
+        File f = Files.createTempFile("a", "b").toFile();
+        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
+
+        int headerEnd = 4 + 4 + 4
+                + getStringBytesSize(LongData.class.getName()) + getStringBytesSize("longValue") + 8 + 4;
+
+        writeInt(fc, Data.STORAGE_FORMAT_VERSION);
+        writeInt(fc, 2); // records
+        writeInt(fc, 1); // columns
+        writeString(fc, LongData.class.getName());
+        writeString(fc, "longValue");
+        writeLong(fc, headerEnd);
+        writeInt(fc, Data.LONG_BYTES * 2);
+
+        fc.write((ByteBuffer) ByteBuffer.allocate(1024).putLong(Long.MAX_VALUE).putLong(0).flip());
+
+        fc.position(0);
+        fastSelect.load(fc, 1);
+        fc.close();
+
+        Assert.assertEquals(2, fastSelect.size());
+        Assert.assertEquals(
+                Arrays.asList(
+                        new TestAllTypes().andLongValue(Long.MAX_VALUE),
+                        new TestAllTypes().andLongValue(0)),
                 fastSelect.select()
         );
     }
