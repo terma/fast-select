@@ -30,7 +30,6 @@ public class MultiIntDataTest {
         Assert.assertEquals(Data.DEFAULT_SIZE + 100, data.allocatedSize());
     }
 
-
     @Test
     public void initWillResizeDataAndFillByZero() {
         Data data = new MultiIntData(100);

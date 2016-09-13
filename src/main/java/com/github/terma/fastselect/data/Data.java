@@ -38,10 +38,37 @@ public interface Data {
      */
     int getDiskSpace();
 
+    /**
+     * Opposite to {@link Data#load(String, ByteBuffer, int)}
+     * <p>
+     * To save entire {@link com.github.terma.fastselect.FastSelect} use
+     * {@link com.github.terma.fastselect.FastSelect#save(FileChannel)}
+     *
+     * @param buffer - b
+     * @throws IOException
+     */
     void save(ByteBuffer buffer) throws IOException;
 
+    /**
+     * Opposite to {@link Data#save(ByteBuffer)}
+     * <p>
+     * To load entire {@link com.github.terma.fastselect.FastSelect} use
+     * {@link com.github.terma.fastselect.FastSelect#load(FileChannel, int)}
+     *
+     * @param dataClass - dc
+     * @param buffer    - b
+     * @param size      - s
+     * @throws IOException
+     */
     void load(String dataClass, ByteBuffer buffer, int size) throws IOException;
 
+    /**
+     * Returns value store at position for that data (column)
+     * Type of value will be exact of type your field in data class.
+     *
+     * @param position - position
+     * @return - value store at position
+     */
     Object get(int position);
 
     int compare(int position1, int position2);

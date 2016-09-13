@@ -302,6 +302,43 @@ public class FastSelectSaveLoadTest {
     }
 
     @Test
+    public void saveAndLoadMultiX() throws IOException {
+        FastSelect<TestAllTypes> fastSelect = new FastSelectBuilder<>(TestAllTypes.class).blockSize(1).create();
+        fastSelect.addAll(Arrays.asList(
+                new TestAllTypes()
+                        .andMultiByte(new byte[]{Byte.MIN_VALUE, -1, Byte.MAX_VALUE})
+                        .andMultiShort(new short[]{Short.MIN_VALUE, -1, Short.MAX_VALUE})
+                        .andMultiInt(new int[]{Integer.MIN_VALUE, -1, Integer.MAX_VALUE})
+                        .andMultiLong(new long[]{Long.MIN_VALUE, -1, Long.MAX_VALUE}),
+                new TestAllTypes()));
+
+        File f = Files.createTempFile("a", "b").toFile();
+        FileChannel fc = new RandomAccessFile(f, "rw").getChannel();
+
+        fastSelect.save(fc);
+
+        fc.position(0);
+        FastSelect<TestAllTypes> fastSelect1 = new FastSelectBuilder<>(TestAllTypes.class).blockSize(1).create();
+        fastSelect1.load(fc, 1);
+
+        fc.close();
+        //noinspection ResultOfMethodCallIgnored
+        f.delete();
+
+        Assert.assertEquals(2, fastSelect1.size());
+        Assert.assertEquals(
+                Arrays.asList(
+                        new TestAllTypes()
+                                .andMultiByte(new byte[]{Byte.MIN_VALUE, -1, Byte.MAX_VALUE})
+                                .andMultiShort(new short[]{Short.MIN_VALUE, -1, Short.MAX_VALUE})
+                                .andMultiInt(new int[]{Integer.MIN_VALUE, -1, Integer.MAX_VALUE})
+                                .andMultiLong(new long[]{Long.MIN_VALUE, -1, Long.MAX_VALUE}),
+                        new TestAllTypes()),
+                fastSelect1.select()
+        );
+    }
+
+    @Test
     public void saveAndLoadCompressedString() throws IOException {
         FastSelect<TestCompressedString> fastSelect = new FastSelectBuilder<>(TestCompressedString.class).blockSize(1).create();
         fastSelect.addAll(Arrays.asList(new TestCompressedString(null, null, null),

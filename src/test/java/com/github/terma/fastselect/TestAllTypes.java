@@ -110,4 +110,24 @@ public class TestAllTypes {
         this.longValue = value;
         return this;
     }
+
+    public TestAllTypes andMultiLong(long[] value) {
+        this.multiLongValue = value;
+        return this;
+    }
+
+    public TestAllTypes andMultiByte(byte[] value) {
+        this.multiByteValue = value;
+        return this;
+    }
+
+    public TestAllTypes andMultiShort(short[] value) {
+        this.multiShortValue = value;
+        return this;
+    }
+
+    public TestAllTypes andMultiInt(int[] value) {
+        this.multiIntValue = value;
+        return this;
+    }
 }

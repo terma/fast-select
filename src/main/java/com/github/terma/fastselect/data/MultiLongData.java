@@ -55,17 +55,24 @@ public class MultiLongData implements Data {
 
     @Override
     public int getDiskSpace() {
-        throw new UnsupportedOperationException();
+        return index.getDiskSpace() + data.getDiskSpace();
     }
 
     @Override
     public void save(final ByteBuffer buffer) throws IOException {
-        throw new UnsupportedOperationException();
+        index.save(buffer);
+        data.save(buffer);
     }
 
     @Override
     public void load(String dataClass, ByteBuffer buffer, int size) throws IOException {
-        throw new UnsupportedOperationException();
+        index.load(IntData.class.getName(), buffer, size);
+
+        // tricky point, as data size doesn't depend really on count of items (size) in cache
+        // we just take rest of buffer as size of byte data block as size of buffer is
+        // size of index data and real data in bytes
+        final int dataSize = buffer.remaining() / Data.LONG_BYTES;
+        data.load(LongData.class.getName(), buffer, dataSize);
     }
 
     @Override
