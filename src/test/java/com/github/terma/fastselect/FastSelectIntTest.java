@@ -117,6 +117,32 @@ public class FastSelectIntTest {
     }
 
     @Test
+    public void shouldSelectByNot() {
+        FastSelect<TestInt> database = new FastSelectBuilder<>(TestInt.class).blockSize(1).create();
+        database.addAll(asList(
+                new TestInt(0),
+                new TestInt(91),
+                new TestInt(89)));
+
+        Assert.assertEquals(
+                asList(new TestInt(91), new TestInt(89)),
+                database.select(new NotRequest(new IntRequest("intValue", 0))));
+    }
+
+    @Test
+    public void shouldSelectByOr() {
+        FastSelect<TestInt> database = new FastSelectBuilder<>(TestInt.class).blockSize(1).create();
+        database.addAll(asList(
+                new TestInt(0),
+                new TestInt(91),
+                new TestInt(89)));
+
+        Assert.assertEquals(
+                asList(new TestInt(0), new TestInt(89)),
+                database.select(new OrRequest(new IntRequest("intValue", 0), new IntRequest("intValue", 89))));
+    }
+
+    @Test
     public void shouldCorrectlyRestoreField() {
         FastSelect<TestInt> database = new FastSelectBuilder<>(TestInt.class).create();
         database.addAll(asList(
@@ -150,9 +176,7 @@ public class FastSelectIntTest {
 
         @Override
         public String toString() {
-            return "TestInt{" +
-                    "intValue=" + intValue +
-                    '}';
+            return "TestInt{intValue=" + intValue + '}';
         }
 
         @Override
@@ -161,14 +185,12 @@ public class FastSelectIntTest {
             if (o == null || getClass() != o.getClass()) return false;
 
             TestInt testInt = (TestInt) o;
-
             return intValue == testInt.intValue;
-
         }
 
         @Override
         public int hashCode() {
-            return (int) intValue;
+            return intValue;
         }
     }
 

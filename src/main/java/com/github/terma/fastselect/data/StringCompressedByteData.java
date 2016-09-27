@@ -78,7 +78,7 @@ public class StringCompressedByteData implements Data {
 
     /**
      * @param buffer - b
-     * @throws IOException
+     * @throws IOException - IO exception
      * @see StringCompressedByteData#load(String, ByteBuffer, int)
      */
     @Override

@@ -45,7 +45,7 @@ public interface Data {
      * {@link com.github.terma.fastselect.FastSelect#save(FileChannel)}
      *
      * @param buffer - b
-     * @throws IOException
+     * @throws IOException - IO exception
      */
     void save(ByteBuffer buffer) throws IOException;
 
@@ -58,7 +58,7 @@ public interface Data {
      * @param dataClass - dc
      * @param buffer    - b
      * @param size      - s
-     * @throws IOException
+     * @throws IOException - IO exception
      */
     void load(String dataClass, ByteBuffer buffer, int size) throws IOException;
 

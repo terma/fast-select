@@ -24,23 +24,30 @@ import java.util.Map;
 public abstract class Request {
 
     /**
-     * @param block - block bitmap (we use it only for numeric types)
-     * @return - true if block could contains data good for request
+     * Called before filtering in each of block in {@link FastSelect}
+     * <p>
+     * Some of column supports statistics which could be used to speed up filtering by
+     * skipping entire block and avoid scan of that block
+     *
+     * @param block to check
+     * @return true if need to perform scan of records in a block and false to skip block
      */
     public boolean checkBlock(Block block) {
         return true;
     }
 
     /**
-     * @param position - absolute position in data set
-     * @return - true if value in requested position good for requested
+     * Called for each record within block for which {@link Request#checkBlock(Block)} was true
+     *
+     * @param position absolute position in data set
+     * @return true if value in requested position good for requested
      */
     public abstract boolean checkValue(int position);
 
     /**
-     * Prepare request to scan through data set
+     * Called before filtering started. Prepare request to scan through data set.
      *
-     * @param columnByNames - map passed by engine
+     * @param columnByNames map passed by engine
      */
     public abstract void prepare(Map<String, FastSelect.Column> columnByNames);
 
