@@ -105,7 +105,6 @@ import java.util.concurrent.Future;
  * More information about that:
  * <a href="https://gist.github.com/raphw/881e1745996f9d314ab0#file-result-field-txt">
  * https://gist.github.com/raphw/881e1745996f9d314ab0#file-result-field-txt</a>
- * <p>
  * <h3>JMX</h3>
  * To see static of {@link FastSelect} you can use {@link com.github.terma.fastselect.jmx.FastSelectMXBeanImpl}
  * <h3>Save / Load from file</h3>
@@ -199,7 +198,7 @@ public final class FastSelect<T> {
      * Format described in javadoc for class
      *
      * @param fileChannel - fileChannel
-     * @throws IOException
+     * @throws IOException - IO exception
      * @see Saver
      */
     public void save(final FileChannel fileChannel) throws IOException {
@@ -216,7 +215,7 @@ public final class FastSelect<T> {
      *
      * @param fileChannel  - fc
      * @param threadCounts - for parallel load
-     * @throws IOException
+     * @throws IOException - IO exception
      */
     public void load(final FileChannel fileChannel, final int threadCounts) throws IOException {
         if (fileChannel.size() > 0) {
