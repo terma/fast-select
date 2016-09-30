@@ -130,6 +130,19 @@ public class FastSelectIntTest {
     }
 
     @Test
+    public void shouldSelectByNotWhenTwoOppositeValuesInSameBlock() {
+        FastSelect<TestInt> database = new FastSelectBuilder<>(TestInt.class).blockSize(10).create();
+        database.addAll(asList(
+                new TestInt(0),
+                new TestInt(91),
+                new TestInt(89)));
+
+        Assert.assertEquals(
+                asList(new TestInt(91), new TestInt(89)),
+                database.select(new NotRequest(new IntRequest("intValue", 0))));
+    }
+
+    @Test
     public void shouldSelectByOr() {
         FastSelect<TestInt> database = new FastSelectBuilder<>(TestInt.class).blockSize(1).create();
         database.addAll(asList(
