@@ -4,5 +4,6 @@ install: true
 
 jdk:
   - oraclejdk7
+  - openjdk7
 
 script: mvn package jacoco:report coveralls:report
