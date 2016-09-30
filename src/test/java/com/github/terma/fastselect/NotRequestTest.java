@@ -33,22 +33,20 @@ public class NotRequestTest {
         Assert.assertEquals("not x = 1", new NotRequest(request).toString());
     }
 
+    /**
+     * For clarification why <code>NotRequest</code> doesn't use statistic goto {@link NotRequest}
+     */
     @Test
-    public void checkBlockReturnNotResult() {
+    public void checkBlockAlwaysReturnTrue() {
         Block block = Mockito.mock(Block.class);
 
         NotRequest notRequest = new NotRequest(request);
 
-        Mockito.when(notRequest.checkBlock(block)).thenReturn(false);
+        Assert.assertTrue(notRequest.checkBlock(block));
+        Mockito.verifyZeroInteractions(request);
 
         Assert.assertTrue(notRequest.checkBlock(block));
-        Mockito.verify(request).checkBlock(block);
-        Mockito.reset(request);
-
-        Mockito.when(notRequest.checkBlock(block)).thenReturn(true);
-        Assert.assertFalse(notRequest.checkBlock(block));
-        Mockito.verify(request).checkBlock(block);
-        Mockito.verifyNoMoreInteractions(request);
+        Mockito.verifyZeroInteractions(request);
     }
 
     @Test

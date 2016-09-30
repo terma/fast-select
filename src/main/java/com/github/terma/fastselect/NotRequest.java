@@ -25,8 +25,13 @@ import java.util.Map;
  * <p>
  * You can use it with any type of request
  * <p>
- * Try to keep amount of requests in your filter as small as possible. Because {@link NotRequest}
- * it's just a wrapper try to use real condition to build your logic.
+ * WARNING! <code>NotRequest</code> could be slow. It doesn't support column statistic.
+ * Because of that filtering will always use full scan by all cache elements regardless of underling request.
+ * <p>
+ * Simple explanation for that is <code>NotRequest</code> doesn't have information how to make opposite
+ * result from underling request. By definition {@link Request#checkBlock(Block)} returns <code>true</code>
+ * only when data present somewhere at the block. So it could be case when two records in block and only
+ * one of them good for filter but <code>checkBlock</code> should return <code>true</code>
  */
 @SuppressWarnings("WeakerAccess")
 public class NotRequest extends Request {
@@ -39,11 +44,11 @@ public class NotRequest extends Request {
 
     /**
      * @param block {@link Request#checkBlock(Block)}
-     * @return true if original request return false and vice versa
+     * @return always true Why? Check class javadoc
      */
     @Override
     public boolean checkBlock(Block block) {
-        return !request.checkBlock(block);
+        return true;
     }
 
     @Override
