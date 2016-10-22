@@ -5,7 +5,7 @@
 
 Extremely compact in-memory storage (table) with ultra fast quering under Apache 2.0 license.
 
-* Use Cases: https://github.com/terma/fast-select/wiki/Use-Cases
-* How To Use: https://github.com/terma/fast-select/wiki/How-to-use
-* Javadoc: http://terma.github.io/fast-select/
+* [Use Cases](https://github.com/terma/fast-select/wiki/Use-Cases)
+* [How To Use](https://github.com/terma/fast-select/wiki/How-to-use)
+* [Javadoc](http://terma.github.io/fast-select/)
 
