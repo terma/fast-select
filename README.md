@@ -8,7 +8,7 @@ Compact in-memory read-only storage with lock free ultra-fast quering by any att
 ### Compact
 
 * No java object overhead
-* Compact string representation (UTF-8 instead of Java UTF-16)
+* Compact string representation (```UTF-8``` instead of Java ```UTF-16```)
 * Persistance mode to restore storage from disk [details](USECASES.md)
 
 ### Ultra fast
@@ -22,7 +22,7 @@ Compact in-memory read-only storage with lock free ultra-fast quering by any att
 * Small jar file
 * Apache 2.0
 
-Info
+### Details
 
 * [Arhitecture](ARHI.md)
 * [Use Cases](USECASES.md)
