@@ -1,11 +1,32 @@
 [![Build Status](https://travis-ci.org/terma/fast-select.svg?branch=start)](https://travis-ci.org/terma/fast-select)
 [![Coverage Status](https://coveralls.io/repos/github/terma/fast-select/badge.svg?branch=master)](https://coveralls.io/github/terma/fast-select?branch=master) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.terma/fast-select/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.terma/fast-select/)
 
-## Fast-Select
+## fast-select
 
-Extremely compact in-memory storage (table) with ultra fast quering under Apache 2.0 license.
+Compact in-memory read-only storage with lock free ultra-fast quering by any attributes under Apache 2.0 license.
 
+### Compact
+
+* No java object overhead
+* Compact string representation (UTF-8 instead of Java UTF-16)
+* Persistance mode to restore storage from disk [details](USECASES.md)
+
+### Ultra fast
+
+* Thread safe and lock free
+* Using data statistic to avoid full scan
+* Column oriented
+
+### More
+
+* Small jar file
+* Apache 2.0
+
+Info
+
+* [Arhitecture](ARHI.md)
 * [Use Cases](USECASES.md)
 * [How To Use](HOWTOUSE.md)
+* [Performance](PERF.md)
 * [Javadoc](http://terma.github.io/fast-select/)
 
