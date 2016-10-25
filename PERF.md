@@ -1,7 +1,14 @@
+Below you can find comparision of fast-select with other databases by 3 different queries. Table has [24 columns](https://github.com/terma/fast-select/blob/master/src/main/java/com/github/terma/fastselect/demo/DemoData.java)
+
+[fast-select vs H2](#fast-select-vs-H2)
+[fast-select vs MongoDB](#fast-select-vs-MongoDB)
+
 ## fast-select vs H2
 
-[24 columns](https://github.com/terma/fast-select/blob/master/src/main/java/com/github/terma/fastselect/demo/DemoData.java)
+H2 setup:
+* Transaction log was truned off to speed up
 
+Result:
 ```
 Benchmark                               (blockSize)    (engine)  (volume)  Mode  Cnt     Score  Error  Units
 first 25 where (11 + 6 con + sorting)                        H2   1000000  avgt       1422.091         ms/op
@@ -14,6 +21,12 @@ group 2 columns and where (11 + 6 con)         1000  FastSelect   1000000  avgt 
 
 ## fast-select vs MongoDB
 
+MongoDB setup:
+* Single node
+* Index for each column to query
+* _Note: I didn't find different between test with indexes and without. Need to clarify that question._
+
+Result:
 ```
 Benchmark                                           (blockSize)    (engine)  (volume)  Mode  Cnt      Score   Error  Units
 group 2 columns and where (11 + 6 con)                              MongoDb   1000000  avgt        1558.917          ms/op
