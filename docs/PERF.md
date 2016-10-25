@@ -26,7 +26,7 @@ MongoDB setup:
 * Index for each column to query
 * _Note: I didn't find different between test with indexes and without. Need to clarify that question._
 
-Result:
+Raw result:
 ```
 Benchmark                                           (blockSize)    (engine)  (volume)  Mode  Cnt      Score   Error  Units
 group 2 columns and where (11 + 6 con)                              MongoDb   1000000  avgt        1558.917          ms/op
@@ -37,4 +37,5 @@ group 2 columns and where (11 + 6 con)  x5 threads                  MongoDb   10
 group 2 columns and where (11 + 6 con)  x5 threads         1000  FastSelect   1000000  avgt          20.384          ms/op
 ```
 
-![Image of Yaktocat](https://github.com/terma/fast-select/raw/master/docs/fast-select-vs-mongo-db.png)
+In chart:
+![Chart](https://github.com/terma/fast-select/raw/master/docs/fast-select-vs-mongo-db.png)
