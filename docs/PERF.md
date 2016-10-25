@@ -3,7 +3,7 @@ Below you can find comparision of fast-select with other databases by 3 differen
 * [fast-select vs H2](#fast-select-vs-h2)
 * [fast-select vs MongoDB](#fast-select-vs-mongodb)
 
-## fast-select vs H2
+# fast-select vs H2
 
 H2 setup:
 * Transaction log was truned off to speed up
@@ -19,14 +19,17 @@ group 2 columns and where (11 + 6 con)                       H2   1000000  avgt 
 group 2 columns and where (11 + 6 con)         1000  FastSelect   1000000  avgt         11.773         ms/op
 ```
 
-## fast-select vs MongoDB
+# fast-select vs MongoDB
 
 MongoDB setup:
 * Single node
 * Index for each column to query
-* _Note: I didn't find different between test with indexes and without. Need to clarify that question._
 
-Raw result:
+_Note:_ 
+* I didn't find difference between test with indexes and without. Need to clarify that question.
+* Testing in progress that's draft result
+
+Current Result:
 ```
 Benchmark                                           (blockSize)    (engine)  (volume)  Mode  Cnt      Score   Error  Units
 group 2 columns and where (11 + 6 con)                              MongoDb   1000000  avgt        1558.917          ms/op
