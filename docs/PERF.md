@@ -37,4 +37,4 @@ group 2 columns and where (11 + 6 con)  x5 threads                  MongoDb   10
 group 2 columns and where (11 + 6 con)  x5 threads         1000  FastSelect   1000000  avgt          20.384          ms/op
 ```
 
-![Image of Yaktocat](docs/fast-select-vs-mongo-db.png)
+![Image of Yaktocat](https://github.com/terma/fast-select/raw/master/docs/fast-select-vs-mongo-db.png)
