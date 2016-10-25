@@ -28,7 +28,7 @@ public class Saver implements Closeable {
     private ColumnInfo[] info;
     private int columnIndex;
 
-    public Saver(final List<FastSelect.Column> columns, final int size, final FileChannel fileChannel) throws IOException {
+        public Saver(final List<FastSelect.Column> columns, final int size, final FileChannel fileChannel) throws IOException {
         this.fileChannel = fileChannel;
 
         info = new ColumnInfo[columns.size()];

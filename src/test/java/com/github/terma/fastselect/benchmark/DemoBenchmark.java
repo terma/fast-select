@@ -33,12 +33,12 @@ import java.util.concurrent.TimeUnit;
 
 //@Fork(value = 1, jvmArgs = {"-Xmx7g", "-XX:CompileThreshold=1", "-XX:CompileCommand=print,*.FastSelect", "-prof perfasm:intelSyntax=true"})
 //@Fork(value = 1, jvmArgs = {"-Xmx7g", "-XX:CompileThreshold=1", "-XX:+UnlockDiagnosticVMOptions", "-XX:+PrintAssembly"})
-@Fork(value = 1, jvmArgs = {"-Xmx7g", "-XX:CompileThreshold=1"})
+@Fork(value = 1, jvmArgs = {"-Xmx3g", "-XX:CompileThreshold=1"})
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
-@Warmup(timeUnit = TimeUnit.SECONDS, time = 15, iterations = 1)
-@Measurement(timeUnit = TimeUnit.SECONDS, time = 15, iterations = 1)
+@Warmup(timeUnit = TimeUnit.SECONDS, time = 5, iterations = 0)
+@Measurement(timeUnit = TimeUnit.SECONDS, time = 5, iterations = 1)
 public class DemoBenchmark {
 
     static final Map<String, Class<? extends PlayerFactory<DemoData>>> ENGINE_FACTORIES =
@@ -46,6 +46,8 @@ public class DemoBenchmark {
                 put("H2", PlayerFactoryH2.class);
                 put("FastSelect", PlayerFactoryFastSelect.class);
                 put("Oracle", PlayerFactoryOracle.class);
+                put("ApacheDrill", PlayerFactoryApacheDrill.class);
+                put("MongoDb", PlayerFactoryMongoDb.class);
             }};
 
     @Param({"1000"})
@@ -54,7 +56,7 @@ public class DemoBenchmark {
     @Param({"1000000"}) // "1000000", "10000000", "60000000"
     private int volume;
 
-    @Param({"FastSelect"}) // "Oracle", "FastSelect", "H2"
+    @Param({"MongoDb", "FastSelect"}) // "Oracle", "FastSelect", "H2"
     private String engine;
 
     private Player player;
@@ -97,6 +99,7 @@ public class DemoBenchmark {
         }
 
         playerFactory.addData(data);
+        playerFactory.finishAddData();
         data.clear();
     }
 
@@ -132,12 +135,12 @@ public class DemoBenchmark {
         return player.playGroupByGAndR();
     }
 
-    @Benchmark
+//    @Benchmark
     public Object groupByBsIdAndR() throws Exception {
         return player.playGroupByBsIdAndR();
     }
 
-    @Benchmark
+//    @Benchmark
     public Object detailsByGAndRAndSorting() throws Exception {
         return player.playDetailsByGAndRAndSorting();
     }

@@ -22,6 +22,8 @@ interface PlayerFactory<T> {
 
     void addData(List<T> data) throws Exception;
 
+    void finishAddData() throws Exception;
+
     Player createPlayer() throws Exception;
 
 }

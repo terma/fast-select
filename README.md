@@ -24,9 +24,9 @@ Compact in-memory read-only storage with lock free ultra-fast quering by any att
 
 ### Details
 
-* [Arhitecture](ARHI.md)
-* [Use Cases](USECASES.md)
-* [How To Use](HOWTOUSE.md)
-* [Performance](PERF.md)
+* [Arhitecture](docs/ARHI.md)
+* [Use Cases](docs/USECASES.md)
+* [How To Use](docs/HOWTOUSE.md)
+* [Performance](docs/PERF.md)
 * [Javadoc](http://terma.github.io/fast-select/)
 

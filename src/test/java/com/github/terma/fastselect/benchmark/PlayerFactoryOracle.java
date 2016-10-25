@@ -63,6 +63,11 @@ class PlayerFactoryOracle implements PlayerFactory<DemoData> {
     }
 
     @Override
+    public void finishAddData() throws Exception {
+
+    }
+
+    @Override
     public Player createPlayer() throws Exception {
         connection.close();
         return new PlayerOracle();

@@ -248,3 +248,25 @@ DemoBenchmark.groupByGAndR_50_Threads          1000  FastSelect   1000000  avgt 
 ### new compressed type of data
 Benchmark                                                         (volume)  Mode  Cnt  Score   Error  Units
 SelectByStringCompressedByteBenchmark.countFilterOneItemByString   1000000  avgt       3.779          ms/op
+
+### FS vs MongoDB (no indexes and only groupByGAndR implemented)
+Benchmark                               (blockSize)    (engine)  (volume)  Mode  Cnt      Score   Error  Units
+DemoBenchmark.detailsByGAndRAndSorting         1000     MongoDb   1000000  avgt          ≈ 10⁻⁵          ms/op
+DemoBenchmark.detailsByGAndRAndSorting         1000  FastSelect   1000000  avgt          23.596          ms/op
+DemoBenchmark.groupByBsIdAndR                  1000     MongoDb   1000000  avgt          ≈ 10⁻⁵          ms/op
+DemoBenchmark.groupByBsIdAndR                  1000  FastSelect   1000000  avgt           0.107          ms/op
+DemoBenchmark.groupByGAndR                     1000     MongoDb   1000000  avgt        1581.894          ms/op
+DemoBenchmark.groupByGAndR                     1000  FastSelect   1000000  avgt           6.540          ms/op
+DemoBenchmark.groupByGAndR_50_Threads          1000     MongoDb   1000000  avgt       45588.104          ms/op
+DemoBenchmark.groupByGAndR_50_Threads          1000  FastSelect   1000000  avgt         141.030          ms/op
+DemoBenchmark.groupByGAndR_5_Threads           1000     MongoDb   1000000  avgt        4082.017          ms/op
+DemoBenchmark.groupByGAndR_5_Threads           1000  FastSelect   1000000  avgt          13.891          ms/op
+
+### FS vs MongoDB (with dedicated index for prg and prr)
+Benchmark                              (blockSize)    (engine)  (volume)  Mode  Cnt      Score   Error  Units
+DemoBenchmark.groupByGAndR                    1000     MongoDb   1000000  avgt        1558.917          ms/op
+DemoBenchmark.groupByGAndR                    1000  FastSelect   1000000  avgt           7.692          ms/op
+DemoBenchmark.groupByGAndR_50_Threads         1000     MongoDb   1000000  avgt       39526.173          ms/op
+DemoBenchmark.groupByGAndR_50_Threads         1000  FastSelect   1000000  avgt         152.550          ms/op
+DemoBenchmark.groupByGAndR_5_Threads          1000     MongoDb   1000000  avgt        4150.435          ms/op
+DemoBenchmark.groupByGAndR_5_Threads          1000  FastSelect   1000000  avgt          20.384          ms/op
