@@ -1,7 +1,7 @@
 Below you can find comparision of fast-select with other databases by 3 different queries. Table has [24 columns](https://github.com/terma/fast-select/blob/master/src/main/java/com/github/terma/fastselect/demo/DemoData.java)
 
-[fast-select vs H2](#fast-select-vs-H2)
-[fast-select vs MongoDB](#fast-select-vs-MongoDB)
+* [fast-select vs H2](#fast-select-vs-H2)
+* [fast-select vs MongoDB](#fast-select-vs-MongoDB)
 
 ## fast-select vs H2
 
