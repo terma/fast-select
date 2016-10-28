@@ -19,7 +19,7 @@ group 2 columns and where (11 + 6 con)                       H2   1000000  avgt 
 group 2 columns and where (11 + 6 con)         1000  FastSelect   1000000  avgt         11.773         ms/op
 ```
 
-# fast-select vs MongoDB, in progress...
+# fast-select vs MongoDB
 
 #### Env:
 * Mac Air 13" i5 1.4HGz RAM 8Gb SSD 110Gb
