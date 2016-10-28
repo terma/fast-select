@@ -24,10 +24,15 @@ group 2 columns and where (11 + 6 con)         1000  FastSelect   1000000  avgt 
 #### Env:
 * Mac Air 13" i5 1.4HGz RAM 8Gb SSD 110Gb
 
+#### fast-select setup:
+* ```-Xmx3g```
+* [Test Cases](https://github.com/terma/fast-select/blob/master/src/test/java/com/github/terma/fastselect/benchmark/PlayerFastSelect.java)
+
 #### MongoDB setup:
 * Single node
 * Query profiling disabled and ```--slowms``` increased to ```1min```
 * Index for each column to query, no compound indexes as not my use case
+* [Test Cases](https://github.com/terma/fast-select/blob/master/src/test/java/com/github/terma/fastselect/benchmark/PlayerMongoDb.java)
 
 #### Raw:
 ```
