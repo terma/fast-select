@@ -64,7 +64,27 @@ class PlayerApacheDrill implements Player {
      */
 
     @Override
-    public Object playGroupByGAndR() throws Exception {
+    public Object groupByWhereSimple() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereManySimple() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereIn() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereHugeIn() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereManyIn() throws Exception {
         Map<Integer, Map<Integer, Integer>> g = new HashMap<>();
         try (Connection connection = DriverManager.getConnection("jdbc:drill:drillbit=localhost:31010;schema=parquet")) {
             try (final ResultSet resultSet = connection.createStatement().executeQuery(
@@ -76,7 +96,7 @@ class PlayerApacheDrill implements Player {
     }
 
     @Override
-    public Object playGroupByBsIdAndR() throws Exception {
+    public Object groupByWhereManyHugeIn() throws Exception {
         Map<Integer, Map<Integer, Integer>> g = new HashMap<>();
         try (Connection connection = DriverManager.getConnection("jdbc:drill:drillbit=localhost:31010;schema=parquet")) {
             try (final ResultSet resultSet = connection.createStatement().executeQuery(
@@ -88,7 +108,52 @@ class PlayerApacheDrill implements Player {
     }
 
     @Override
-    public Object playDetailsByGAndRAndSorting() throws Exception {
+    public Object groupByWhereRange() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereManyRange() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereStringLike() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereSpareStringLike() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereManyStringLike() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereString() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereManyString() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereSimpleRangeInStringLike() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object selectLimit() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object selectOrderByLimit() throws Exception {
         List<Object> r = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection("jdbc:drill:drillbit=localhost:31010;schema=parquet")) {
             try (final ResultSet resultSet = connection.createStatement().executeQuery(

@@ -16,10 +16,13 @@ limitations under the License.
 
 package com.github.terma.fastselect.demo;
 
-/**
- * Demo object
- */
 public class DemoData {
+
+    public static final int[] SCALAR_IN_1 = new int[]{1, 2, 3, 22, 5, 6, 33, 8, 9, 10, 89};
+    public static final String SCALAR_IN_1_AS_STRING = "1, 2, 3, 22, 5, 6, 33, 8, 9, 10, 89";
+
+    public static final int[] SCALAR_IN_2 = new int[]{1, 2, 3, 4};
+    public static final String SCALAR_IN_2_AS_STRING = "1, 2, 3, 4";
 
     public static final int G_ID_MAX = 100;
     public static final int G_ID_PORTION_DEVIATION = 5;
@@ -30,6 +33,11 @@ public class DemoData {
     public static final int BS_ID_MAX = 150000;
     public static final int BS_ID_PORTION_DEVIATION = 500;
     public static final int BS_ID_PORTION = 200000;
+
+    public static final long RANGE_LEFT = 100;
+    public static final long RANGE_RIGHT = Long.MAX_VALUE / 2;
+
+    public static final String STRING_LIKE = "like value 99";
 
     public byte prg;
     public byte csg;
@@ -62,4 +70,14 @@ public class DemoData {
     public String prn;
     public String csn;
 
+    public static String joinByComma(int[] a) {
+        int iMax = a.length - 1;
+
+        StringBuilder b = new StringBuilder();
+        for (int i = 0; ; i++) {
+            b.append(a[i]);
+            if (i == iMax) return b.toString();
+            b.append(", ");
+        }
+    }
 }

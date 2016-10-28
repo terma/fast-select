@@ -16,6 +16,7 @@ limitations under the License.
 
 package com.github.terma.fastselect.benchmark;
 
+import com.github.terma.fastselect.demo.DemoData;
 import com.github.terma.fastselect.demo.DemoUtils;
 
 import java.sql.Connection;
@@ -28,17 +29,6 @@ import java.util.List;
 import java.util.Map;
 
 class PlayerH2 implements Player {
-
-    private static String joinByComma(int[] a) {
-        int iMax = a.length - 1;
-
-        StringBuilder b = new StringBuilder();
-        for (int i = 0; ; i++) {
-            b.append(a[i]);
-            if (i == iMax) return b.toString();
-            b.append(", ");
-        }
-    }
 
     private static void groupBy(Map<Integer, Map<Integer, Integer>> g, ResultSet resultSet) throws SQLException {
         while (resultSet.next()) {
@@ -59,7 +49,27 @@ class PlayerH2 implements Player {
     }
 
     @Override
-    public Object playGroupByGAndR() throws Exception {
+    public Object groupByWhereSimple() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereManySimple() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereIn() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereHugeIn() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereManyIn() throws Exception {
         Map<Integer, Map<Integer, Integer>> g = new HashMap<>();
         try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")) {
             try (final ResultSet resultSet = connection.createStatement().executeQuery(
@@ -71,11 +81,11 @@ class PlayerH2 implements Player {
     }
 
     @Override
-    public Object playGroupByBsIdAndR() throws Exception {
+    public Object groupByWhereManyHugeIn() throws Exception {
         Map<Integer, Map<Integer, Integer>> g = new HashMap<>();
         try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")) {
             try (final ResultSet resultSet = connection.createStatement().executeQuery(
-                    "select bsid, prr, count(*) from tb where prr in (1, 2, 3, 4, 5, 6) and bsid in (" + joinByComma(DemoUtils.getBsIds()) + ") group by bsid, prr")) {
+                    "select bsid, prr, count(*) from tb where prr in (1, 2, 3, 4, 5, 6) and bsid in (" + DemoData.joinByComma(DemoUtils.getBsIds()) + ") group by bsid, prr")) {
                 groupBy(g, resultSet);
             }
         }
@@ -83,7 +93,52 @@ class PlayerH2 implements Player {
     }
 
     @Override
-    public Object playDetailsByGAndRAndSorting() throws Exception {
+    public Object groupByWhereRange() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereManyRange() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereStringLike() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereSpareStringLike() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereManyStringLike() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereString() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereManyString() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereSimpleRangeInStringLike() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object selectLimit() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object selectOrderByLimit() throws Exception {
         List<Object> r = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")) {
             try (final ResultSet resultSet = connection.createStatement().executeQuery(

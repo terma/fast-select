@@ -47,6 +47,16 @@ class PlayerFactoryApacheDrill implements PlayerFactory<DemoData> {
     }
 
     @Override
+    public boolean isDurable() {
+        return true;
+    }
+
+    @Override
+    public void startAddData() throws Exception {
+
+    }
+
+    @Override
     public void addData(List<DemoData> data) throws Exception {
         if (!dataPresent) {
             for (DemoData item : data) {

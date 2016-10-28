@@ -20,6 +20,10 @@ import java.util.List;
 
 interface PlayerFactory<T> {
 
+    boolean isDurable();
+
+    void startAddData() throws Exception;
+
     void addData(List<T> data) throws Exception;
 
     void finishAddData() throws Exception;

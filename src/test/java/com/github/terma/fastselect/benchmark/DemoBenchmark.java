@@ -25,10 +25,12 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 //@Fork(value = 1, jvmArgs = {"-Xmx7g", "-XX:CompileThreshold=1", "-XX:CompileCommand=print,*.FastSelect", "-prof perfasm:intelSyntax=true"})
@@ -37,8 +39,8 @@ import java.util.concurrent.TimeUnit;
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
-@Warmup(timeUnit = TimeUnit.SECONDS, time = 5, iterations = 0)
-@Measurement(timeUnit = TimeUnit.SECONDS, time = 5, iterations = 1)
+@Warmup(timeUnit = TimeUnit.SECONDS, time = 5, iterations = 1)
+@Measurement(timeUnit = TimeUnit.SECONDS, time = 10, iterations = 1)
 public class DemoBenchmark {
 
     static final Map<String, Class<? extends PlayerFactory<DemoData>>> ENGINE_FACTORIES =
@@ -53,16 +55,22 @@ public class DemoBenchmark {
     @Param({"1000"})
     private int blockSize;
 
-    @Param({"1000000"}) // "1000000", "10000000", "60000000"
+    @Param({"1000000"}) // 1000, 1000000, 10000000, 60000000
     private int volume;
 
-    @Param({"MongoDb", "FastSelect"}) // "Oracle", "FastSelect", "H2"
+    @Param({"MongoDb", "FastSelect"}) // MongoDb, Oracle, FastSelect", H2
     private String engine;
 
     private Player player;
 
-    public static void main(String[] args) throws RunnerException {
-        Options opt = new OptionsBuilder().include("." + DemoBenchmark.class.getSimpleName() + ".*").build();
+    public static void main(String[] args) throws RunnerException, IOException {
+        final File stateFile = File.createTempFile("fast-select", "performance-benchmark");
+        stateFile.deleteOnExit();
+
+        Options opt = new OptionsBuilder()
+                .include("." + DemoBenchmark.class.getSimpleName() + ".*")
+                .jvmArgsAppend("-Dstate=" + stateFile.getAbsolutePath())
+                .build();
         new Runner(opt).run();
     }
 
@@ -76,9 +84,13 @@ public class DemoBenchmark {
                 DemoData.G_ID_PORTION_DEVIATION, DemoData.G_ID_PORTION, DemoData.G_ID_MAX);
         final BlockRoundValue csgIdRandom = new BlockRoundValue(
                 DemoData.G_ID_PORTION_DEVIATION, DemoData.G_ID_PORTION, DemoData.G_ID_MAX);
+        final BlockRoundValue stringRandom = new BlockRoundValue(1000, 200000, 50000);
 
         RoundValue prrValue = new RoundValue(DemoData.R_MAX);
         RoundValue csrValue = new RoundValue(DemoData.R_MAX);
+        Random longValue = new Random();
+
+        playerFactory.startAddData();
 
         for (int i = 0; i < itemsToCreate; i++) {
             DemoData item = new DemoData();
@@ -87,6 +99,11 @@ public class DemoBenchmark {
 
             item.prr = (byte) prrValue.next();
             item.csr = (byte) csrValue.next();
+
+            item.vlc = longValue.nextLong();
+            item.vch = longValue.nextLong();
+
+            item.tr = "String like value " + stringRandom.next();
 
             item.bsid = bsIdRandom.next();
 
@@ -105,44 +122,145 @@ public class DemoBenchmark {
 
     @Setup
     public void init() throws Exception {
+        System.out.println();
+        File stateFile = new File(System.getProperty("state"));
+        Properties stateProperties = new Properties();
+        stateProperties.load(new FileInputStream(stateFile));
+
         final PlayerFactory<DemoData> playerFactory = ENGINE_FACTORIES.get(engine).newInstance();
 
-        fill(volume, playerFactory);
+        if (playerFactory.isDurable()) {
+            if (stateProperties.containsKey(engine)) {
+                System.out.println("durable use prepared data...");
+            } else {
+                System.out.println("durable prepare data first time...");
+                fill(volume, playerFactory);
+                stateProperties.put(engine, "true");
+            }
+        } else {
+            System.out.println("not durable prepare data...");
+            fill(volume, playerFactory);
+        }
 
         player = playerFactory.createPlayer();
 
-        System.out.println("Check play:");
-        System.out.println(player.playGroupByGAndR());
-        System.out.println(player.playGroupByBsIdAndR());
-        System.out.println(player.playDetailsByGAndRAndSorting());
+        if (!stateProperties.containsKey(engine + "-check-play")) {
+            System.out.println("first time check play:");
+
+            Method[] methods = Player.class.getDeclaredMethods();
+            Arrays.sort(methods, new Comparator<Method>() {
+                @Override
+                public int compare(Method o1, Method o2) {
+                    return o1.getName().compareTo(o2.getName());
+                }
+            });
+
+            for (Method method : methods) {
+                Object value = method.invoke(player);
+
+                String string = method.getName();
+                while (string.length() < 35) string = string + " ";
+
+                if (value != null) System.out.println(string + " => " + value);
+                else System.out.println(string + " => not implemented");
+            }
+
+            stateProperties.put(engine + "-check-play", "true");
+        }
+
+        stateProperties.store(new FileOutputStream(stateFile), "");
     }
 
     @Benchmark
-    @Threads(1)
-    public Object groupByGAndR() throws Exception {
-        return player.playGroupByGAndR();
+    public Object groupByWhereSimple() throws Exception {
+        return player.groupByWhereSimple();
+    }
+
+    @Benchmark
+    public Object groupByWhereManySimple() throws Exception {
+        return player.groupByWhereManySimple();
+    }
+
+    @Benchmark
+    public Object groupByWhereIn() throws Exception {
+        return player.groupByWhereIn();
+    }
+
+    @Benchmark
+    public Object groupByWhereHugeIn() throws Exception {
+        return player.groupByWhereHugeIn();
+    }
+
+    @Benchmark
+    public Object groupByWhereManyIn() throws Exception {
+        return player.groupByWhereManyIn();
     }
 
     @Benchmark
     @Threads(5)
-    public Object groupByGAndR_5_Threads() throws Exception {
-        return player.playGroupByGAndR();
+    public Object groupByWhereManyIn5Threads() throws Exception {
+        return player.groupByWhereManyIn();
     }
 
     @Benchmark
     @Threads(50)
-    public Object groupByGAndR_50_Threads() throws Exception {
-        return player.playGroupByGAndR();
+    public Object groupByWhereManyIn50Threads() throws Exception {
+        return player.groupByWhereManyIn();
     }
 
-//    @Benchmark
-    public Object groupByBsIdAndR() throws Exception {
-        return player.playGroupByBsIdAndR();
+    @Benchmark
+    public Object groupByWhereRange() throws Exception {
+        return player.groupByWhereRange();
     }
 
-//    @Benchmark
-    public Object detailsByGAndRAndSorting() throws Exception {
-        return player.playDetailsByGAndRAndSorting();
+    @Benchmark
+    public Object groupByWhereManyRange() throws Exception {
+        return player.groupByWhereManyRange();
+    }
+
+    @Benchmark
+    public Object groupByWhereStringLike() throws Exception {
+        return player.groupByWhereStringLike();
+    }
+
+    @Benchmark
+    public Object groupByWhereSpareStringLike() throws Exception {
+        return player.groupByWhereSpareStringLike();
+    }
+
+    @Benchmark
+    public Object groupByWhereManyStringLike() throws Exception {
+        return player.groupByWhereManyStringLike();
+    }
+
+    @Benchmark
+    public Object groupByWhereString() throws Exception {
+        return player.groupByWhereString();
+    }
+
+    @Benchmark
+    public Object groupByWhereManyString() throws Exception {
+        return player.groupByWhereManyString();
+    }
+
+    @Benchmark
+    public Object groupByWhereSimpleRangeInStringLike() throws Exception {
+        return player.groupByWhereSimpleRangeInStringLike();
+    }
+
+    @Benchmark
+    public Object groupByWhereManyHugeIn() throws Exception {
+        return player.groupByWhereManyHugeIn();
+    }
+
+    @Benchmark
+    public Object selectLimit() throws Exception {
+        return player.selectLimit();
+    }
+
+    @Benchmark
+    public Object selectOrderByLimit() throws Exception {
+        return player.selectOrderByLimit();
     }
 
 }

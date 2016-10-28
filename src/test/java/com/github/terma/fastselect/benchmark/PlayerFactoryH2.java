@@ -47,6 +47,16 @@ class PlayerFactoryH2 implements PlayerFactory<DemoData> {
     }
 
     @Override
+    public boolean isDurable() {
+        return false;
+    }
+
+    @Override
+    public void startAddData() throws Exception {
+
+    }
+
+    @Override
     public void addData(List<DemoData> data) throws Exception {
         // todo add data
         PreparedStatement preparedStatement = connection.prepareStatement(

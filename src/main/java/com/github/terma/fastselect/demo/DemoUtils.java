@@ -26,13 +26,15 @@ import java.util.List;
 
 public abstract class DemoUtils {
 
+    public static final int[] HUGE_SCALAR_IN = getBsIds();
+
     public static FastSelect<DemoData> createFastSelect(int blockSize, int itemsToCreate) {
         System.out.println("Filler started");
 
         final MemMeter memMeter = new MemMeter();
         final long start = System.currentTimeMillis();
 
-        FastSelect<DemoData> database =  new FastSelectBuilder<>(DemoData.class).blockSize(blockSize).create();
+        FastSelect<DemoData> database = new FastSelectBuilder<>(DemoData.class).blockSize(blockSize).create();
 
         final List<DemoData> data = new ArrayList<>();
 
@@ -57,7 +59,7 @@ public abstract class DemoUtils {
 
             /*
             make distribution more realistic.
-            Instead of normal use small deviation in near blocks than make hure shift for next
+            Instead of normal use small deviation in near blocks than make huge shift for next
             portion.
              */
             item.bsid = bsIdRandom.next();
@@ -87,14 +89,14 @@ public abstract class DemoUtils {
 
     public static ColumnRequest[] whereGAndR() {
         return new ColumnRequest[]{
-                new ByteRequest("prg", 1, 2, 3, 4),
-                new ByteRequest("prr", 1, 2, 3, 4, 5, 6)
+                new ByteRequest("prg", DemoData.SCALAR_IN_1),
+                new ByteRequest("prr", DemoData.SCALAR_IN_2)
         };
     }
 
     public static ColumnRequest[] whereBsIdAndR() {
         return new ColumnRequest[]{
-                new ByteRequest("prr", 1, 2, 3, 4, 5, 6),
+                new ByteRequest("prr", DemoData.SCALAR_IN_2),
                 new IntRequest("bsid", getBsIds())
         };
     }

@@ -23,7 +23,27 @@ import java.sql.ResultSet;
 class PlayerOracle implements Player {
 
     @Override
-    public Object playGroupByGAndR() throws Exception {
+    public Object groupByWhereSimple() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereManySimple() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereIn() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereHugeIn() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereManyIn() throws Exception {
         int c;
         try (Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.56.101:1521:cdb1", "sys as sysdba", "oracle")) {
             try (ResultSet resultSet = connection.createStatement().executeQuery(
@@ -36,12 +56,57 @@ class PlayerOracle implements Player {
     }
 
     @Override
-    public Object playGroupByBsIdAndR() {
+    public Object groupByWhereManyHugeIn() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Object playDetailsByGAndRAndSorting() throws Exception {
+    public Object groupByWhereRange() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereManyRange() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereStringLike() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereSpareStringLike() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereManyStringLike() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereString() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereManyString() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object groupByWhereSimpleRangeInStringLike() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object selectLimit() throws Exception {
+        return null;
+    }
+
+    @Override
+    public Object selectOrderByLimit() throws Exception {
         throw new UnsupportedOperationException();
     }
 }

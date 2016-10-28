@@ -270,3 +270,44 @@ DemoBenchmark.groupByGAndR_50_Threads         1000     MongoDb   1000000  avgt  
 DemoBenchmark.groupByGAndR_50_Threads         1000  FastSelect   1000000  avgt         152.550          ms/op
 DemoBenchmark.groupByGAndR_5_Threads          1000     MongoDb   1000000  avgt        4150.435          ms/op
 DemoBenchmark.groupByGAndR_5_Threads          1000  FastSelect   1000000  avgt          20.384          ms/op
+
+### FS vs MongoDB (with compound index and profile log turned off)
+Benchmark                              (blockSize)    (engine)  (volume)  Mode  Cnt      Score   Error  Units
+DemoBenchmark.groupByGAndR                    1000     MongoDb   1000000  avgt        1004.130          ms/op
+DemoBenchmark.groupByGAndR                    1000  FastSelect   1000000  avgt           7.197          ms/op
+DemoBenchmark.groupByGAndR_50_Threads         1000     MongoDb   1000000  avgt       28987.690          ms/op
+DemoBenchmark.groupByGAndR_50_Threads         1000  FastSelect   1000000  avgt         131.076          ms/op
+DemoBenchmark.groupByGAndR_5_Threads          1000     MongoDb   1000000  avgt        2763.995          ms/op
+DemoBenchmark.groupByGAndR_5_Threads          1000  FastSelect   1000000  avgt          16.523          ms/op
+
+### FS vs MongoDB
+DemoBenchmark.groupByWhereHugeIn                          1000     MongoDb   1000000  avgt          87.820          ms/op
+DemoBenchmark.groupByWhereHugeIn                          1000  FastSelect   1000000  avgt           0.034          ms/op
+DemoBenchmark.groupByWhereIn                              1000     MongoDb   1000000  avgt        2396.010          ms/op
+DemoBenchmark.groupByWhereIn                              1000  FastSelect   1000000  avgt          21.943          ms/op
+DemoBenchmark.groupByWhereManyHugeIn                      1000     MongoDb   1000000  avgt         151.106          ms/op
+DemoBenchmark.groupByWhereManyHugeIn                      1000  FastSelect   1000000  avgt           0.084          ms/op
+DemoBenchmark.groupByWhereManyIn                          1000     MongoDb   1000000  avgt        1821.709          ms/op
+DemoBenchmark.groupByWhereManyIn                          1000  FastSelect   1000000  avgt          15.903          ms/op
+DemoBenchmark.groupByWhereManyIn50Threads                 1000     MongoDb   1000000  avgt       45994.938          ms/op
+DemoBenchmark.groupByWhereManyIn50Threads                 1000  FastSelect   1000000  avgt         346.971          ms/op
+DemoBenchmark.groupByWhereManyIn5Threads                  1000     MongoDb   1000000  avgt        4430.695          ms/op
+DemoBenchmark.groupByWhereManyIn5Threads                  1000  FastSelect   1000000  avgt          36.367          ms/op
+DemoBenchmark.groupByWhereManyRange                       1000     MongoDb   1000000  avgt        1340.807          ms/op
+DemoBenchmark.groupByWhereManyRange                       1000  FastSelect   1000000  avgt          25.019          ms/op
+DemoBenchmark.groupByWhereManySimple                      1000     MongoDb   1000000  avgt           0.517          ms/op
+DemoBenchmark.groupByWhereManySimple                      1000  FastSelect   1000000  avgt           0.043          ms/op
+DemoBenchmark.groupByWhereRange                           1000     MongoDb   1000000  avgt        1600.680          ms/op
+DemoBenchmark.groupByWhereRange                           1000  FastSelect   1000000  avgt          21.350          ms/op
+DemoBenchmark.groupByWhereSimple                          1000     MongoDb   1000000  avgt         590.481          ms/op
+DemoBenchmark.groupByWhereSimple                          1000  FastSelect   1000000  avgt           7.329          ms/op
+DemoBenchmark.groupByWhereSimpleRangeInStringLike         1000     MongoDb   1000000  avgt         405.172          ms/op
+DemoBenchmark.groupByWhereSimpleRangeInStringLike         1000  FastSelect   1000000  avgt           8.549          ms/op
+DemoBenchmark.groupByWhereString                          1000     MongoDb   1000000  avgt           0.398          ms/op
+DemoBenchmark.groupByWhereString                          1000  FastSelect   1000000  avgt          49.741          ms/op
+DemoBenchmark.groupByWhereStringLike                      1000     MongoDb   1000000  avgt        1363.704          ms/op
+DemoBenchmark.groupByWhereStringLike                      1000  FastSelect   1000000  avgt         156.684          ms/op
+DemoBenchmark.selectLimit                                 1000     MongoDb   1000000  avgt           0.835          ms/op
+DemoBenchmark.selectLimit                                 1000  FastSelect   1000000  avgt           0.031          ms/op
+DemoBenchmark.selectOrderByLimit                          1000     MongoDb   1000000  avgt           0.817          ms/op
+DemoBenchmark.selectOrderByLimit                          1000  FastSelect   1000000  avgt          28.271          ms/op

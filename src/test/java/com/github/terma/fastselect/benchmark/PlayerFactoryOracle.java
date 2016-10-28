@@ -46,6 +46,16 @@ class PlayerFactoryOracle implements PlayerFactory<DemoData> {
     }
 
     @Override
+    public boolean isDurable() {
+        return true;
+    }
+
+    @Override
+    public void startAddData() throws Exception {
+
+    }
+
+    @Override
     public void addData(List<DemoData> data) throws Exception {
         PreparedStatement preparedStatement = connection.prepareStatement(
                 "insert into " +

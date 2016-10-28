@@ -18,9 +18,35 @@ package com.github.terma.fastselect.benchmark;
 
 interface Player {
 
-    Object playGroupByGAndR() throws Exception;
+    Object groupByWhereSimple() throws Exception;
 
-    Object playGroupByBsIdAndR() throws Exception;
+    Object groupByWhereManySimple() throws Exception;
 
-    Object playDetailsByGAndRAndSorting() throws Exception;
+    Object groupByWhereIn() throws Exception;
+
+    Object groupByWhereHugeIn() throws Exception;
+
+    Object groupByWhereManyIn() throws Exception;
+
+    Object groupByWhereManyHugeIn() throws Exception;
+
+    Object groupByWhereRange() throws Exception;
+
+    Object groupByWhereManyRange() throws Exception;
+
+    Object groupByWhereStringLike() throws Exception;
+
+    Object groupByWhereSpareStringLike() throws Exception;
+
+    Object groupByWhereManyStringLike() throws Exception;
+
+    Object groupByWhereString() throws Exception;
+
+    Object groupByWhereManyString() throws Exception;
+
+    Object groupByWhereSimpleRangeInStringLike() throws Exception;
+
+    Object selectLimit() throws Exception;
+
+    Object selectOrderByLimit() throws Exception;
 }
