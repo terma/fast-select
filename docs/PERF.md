@@ -2,6 +2,7 @@ Below you can find comparision of fast-select with other databases by 3 differen
 
 * [fast-select vs H2](#fast-select-vs-h2)
 * [fast-select vs MongoDB](#fast-select-vs-mongodb)
+* [fast-select vs Apache Impala](#fast-select-vs-apache-impala)
 
 # fast-select vs H2
 
@@ -76,3 +77,51 @@ selectOrderByLimit                   FastSelect   1000000  avgt          28.271 
 * 28 cases from 30 fast-select faster MongoDb in ```100 times```
 * ```groupByWhereString``` case which should be fixed by https://github.com/terma/fast-select/pull/22
 * ```selectOrderByLimit``` is interesting case as well need to clarify
+
+# fast-select vs Apache Impala
+
+#### Env
+* Demo VM from http://kudu.apache.org/docs/quickstart.html on top of Mac Air 13" i5 1.4HGz RAM 8Gb SSD 110Gb
+* No additional changes for VM
+
+#### Impala Setup
+
+* Impala Daemon version ```2.8.0```
+* On top of Hadoop
+* Data stored in (Parquet)[https://parquet.apache.org] within Impala (not Hadoop)
+ * CSV table tested as well but in general in two times slower than Parquet
+* It's hard to install JDBC driver for Impala so testing was done from Impala console
+
+#### Raw 
+
+```
+Benchmark                            (blockSize)    (engine)  (volume)  Mode  Cnt    Score   Error  Units
+groupByWhereSimple                          1000  FastSelect   1000000  avgt        11.780          ms/op
+groupByWhereSimple                                    Impala   1000000  avgt       350.000          ms/op
+groupByWhereManySimple                      1000  FastSelect   1000000  avgt         0.042          ms/op
+groupByWhereManySimple                                Impala   1000000  avgt       350.000          ms/op
+groupByWhereIn                              1000  FastSelect   1000000  avgt        31.498          ms/op
+groupByWhereIn                                        Impala   1000000  avgt       350.000          ms/op
+groupByWhereManyIn                          1000  FastSelect   1000000  avgt        17.381          ms/op
+groupByWhereManyIn                                    Impala   1000000  avgt       340.000          ms/op
+groupByWhereRange                           1000  FastSelect   1000000  avgt        26.126          ms/op
+groupByWhereRange                                     Impala   1000000  avgt       340.000          ms/op
+groupByWhereManyRange                       1000  FastSelect   1000000  avgt        21.836          ms/op
+groupByWhereManyRange                                 Impala   1000000  avgt       250.000          ms/op
+groupByWhereString                          1000  FastSelect   1000000  avgt        42.969          ms/op
+groupByWhereString                                    Impala   1000000  avgt       320.000          ms/op
+groupByWhereStringLike                      1000  FastSelect   1000000  avgt       141.119          ms/op
+groupByWhereStringLike                                Impala   1000000  avgt       220.000          ms/op
+selectLimit                                 1000  FastSelect   1000000  avgt         0.765          ms/op
+selectLimit                                           Impala   1000000  avgt       230.000          ms/op
+selectOrderByLimit                          1000  FastSelect   1000000  avgt        43.393          ms/op
+selectOrderByLimit                                    Impala   1000000  avgt       800.000          ms/op
+```
+
+#### Summary
+
+* _Research in progress_ 
+* Currently all test cases fast-select faster Apache Impala in 10-20 times. Very similar time raise a question! It could be expected result as same group operation or bottleneck. 
+* I expect much better performance according to http://cidrdb.org/cidr2015/Papers/CIDR15_Paper28.pdf 
+* My initial idea was that ```200-300ms``` is data access price however it's not because ```count(*)``` takes only ```160ms```
+Need more investigation.
