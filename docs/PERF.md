@@ -120,8 +120,9 @@ selectOrderByLimit                                    Impala   1000000  avgt    
 
 #### Summary
 
-* _Research in progress_ 
-* Currently all test cases fast-select faster Apache Impala in 10-20 times. Very similar time raise a question! It could be expected result as same group operation or bottleneck. 
+* _Research in progress_
+* Currently all test cases fast-select faster Apache Impala in ```10-30 times```
+* Much faster compare to MongoDB
 * I expect much better performance according to http://cidrdb.org/cidr2015/Papers/CIDR15_Paper28.pdf 
 * My initial idea was that ```200-300ms``` is data access price however it's not because ```count(*)``` takes only ```160ms```
 Need more investigation.
