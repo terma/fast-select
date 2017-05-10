@@ -40,8 +40,8 @@ import java.util.concurrent.TimeUnit;
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.SECONDS)
 @State(Scope.Benchmark)
-@Warmup(timeUnit = TimeUnit.SECONDS, time = 15, iterations = 1)
-@Measurement(timeUnit = TimeUnit.SECONDS, time = 15, iterations = 1)
+@Warmup(time = 15, iterations = 1)
+@Measurement(time = 15, iterations = 1)
 public class AddAllBenchmark {
 
     @Param({"1000"})

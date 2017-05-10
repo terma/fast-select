@@ -39,8 +39,8 @@ import java.util.concurrent.TimeUnit;
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
-@Warmup(timeUnit = TimeUnit.SECONDS, time = 5, iterations = 1)
-@Measurement(timeUnit = TimeUnit.SECONDS, time = 10, iterations = 1)
+@Warmup(time = 5, iterations = 1)
+@Measurement(time = 10, iterations = 1)
 public class DemoBenchmark {
 
     static final Map<String, Class<? extends PlayerFactory<DemoData>>> ENGINE_FACTORIES =

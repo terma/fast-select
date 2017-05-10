@@ -31,6 +31,20 @@ public class MultiByteDataTest {
     }
 
     @Test
+    public void supportCopy() {
+        MultiByteData original = new MultiByteData(100);
+        original.add(new byte[]{});
+        original.add(new byte[]{-90});
+        original.add(new byte[]{3, 4, 5});
+        original.add(new byte[]{1, 2});
+
+        MultiByteData data = new MultiByteData(original, new byte[]{1, 1, 0, 1});
+
+        Assert.assertArrayEquals(new int[]{0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, data.index.data);
+        Assert.assertArrayEquals(new byte[]{-90, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, data.data.data);
+    }
+
+    @Test
     public void initWillResizeDataAndFillByZero() {
         Data data = new MultiByteData(100);
         data.init(100);

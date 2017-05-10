@@ -19,6 +19,8 @@ package com.github.terma.fastselect.benchmark;
 import com.github.terma.fastselect.FastSelect;
 import com.github.terma.fastselect.FastSelectBuilder;
 import com.github.terma.fastselect.Request;
+import com.github.terma.fastselect.data.StringCompressedByte;
+import com.github.terma.fastselect.data.StringCompressedShort;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -29,12 +31,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@Fork(value = 1, jvmArgs = "-Xmx7g")
+@Fork(value = 1, jvmArgs = {"-Xmx3g", "-XX:CompileThreshold=1"})
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
-@Warmup(timeUnit = TimeUnit.SECONDS, time = 15, iterations = 1)
-@Measurement(timeUnit = TimeUnit.SECONDS, time = 15, iterations = 1)
+@Warmup(time = 15, iterations = 1)
+@Measurement(time = 15, iterations = 1)
 public class CopyBenchmark {
 
     @Param({"1000000"}) // "10000000"
@@ -42,6 +44,7 @@ public class CopyBenchmark {
 
     private FastSelect<OneData> oneFastSelect;
     private FastSelect<ScalarData> scalarFastSelect;
+    private FastSelect<StringData> stringFastSelect;
 
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder().include("." + CopyBenchmark.class.getSimpleName() + ".*").build();
@@ -72,6 +75,23 @@ public class CopyBenchmark {
         }
         scalarFastSelect.addAll(scalar);
         System.out.println("4 scalar columns size: " + ((FastSelect) scalarColumns()).size());
+
+        stringFastSelect = new FastSelectBuilder<>(StringData.class).inc(volume).create();
+        List<StringData> strings = new ArrayList<>();
+        for (int i = 0; i < volume; i++) {
+            StringData data = new StringData();
+            data.longValue = (byte) i;
+            data.stringData = "unique string data" + i;
+            data.stringCompressedByteData = "string feet in byte " + (i % 100);
+            data.stringCompressedShortData = "string feet in short " + (i % 30000);
+            strings.add(data);
+            if (i % 10000 == 0) {
+                stringFastSelect.addAll(strings);
+                strings.clear();
+            }
+        }
+        stringFastSelect.addAll(strings);
+        System.out.println("string columns size: " + ((FastSelect) stringColumns()).size());
     }
 
     @Benchmark
@@ -84,15 +104,32 @@ public class CopyBenchmark {
         return scalarFastSelect.copy(new Request[0]);
     }
 
+    @Benchmark
+    public Object stringColumns() throws Exception {
+        return stringFastSelect.copy(new Request[0]);
+    }
+
+    @SuppressWarnings("WeakerAccess")
     public static class OneData {
         public int intValue;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public static class ScalarData {
         public byte byteValue;
         public short shortValue;
         public int intValue;
         public long longValue;
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public static class StringData {
+        public long longValue;
+        public String stringData;
+        @StringCompressedByte
+        public String stringCompressedByteData;
+        @StringCompressedShort
+        public String stringCompressedShortData;
     }
 
 }

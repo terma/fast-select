@@ -311,3 +311,25 @@ DemoBenchmark.selectLimit                                 1000     MongoDb   100
 DemoBenchmark.selectLimit                                 1000  FastSelect   1000000  avgt           0.031          ms/op
 DemoBenchmark.selectOrderByLimit                          1000     MongoDb   1000000  avgt           0.817          ms/op
 DemoBenchmark.selectOrderByLimit                          1000  FastSelect   1000000  avgt          28.271          ms/op
+
+### fastSelect.copy(new Request[0])
+Benchmark                    (volume)  Mode  Cnt   Score   Error  Units
+CopyBenchmark.oneColumn       1000000  avgt        3.167          ms/op
+CopyBenchmark.scalarColumns   1000000  avgt       26.223          ms/op
+
+Benchmark                    (volume)  Mode  Cnt    Score   Error  Units
+CopyBenchmark.oneColumn       1000000  avgt         3.822          ms/op
+CopyBenchmark.scalarColumns   1000000  avgt        21.717          ms/op
+CopyBenchmark.stringColumns   1000000  avgt       254.373          ms/op
+
+### fastSelect.copy optimization for MultiByteData.copy +25%
+Benchmark                    (volume)  Mode  Cnt    Score   Error  Units
+CopyBenchmark.oneColumn       1000000  avgt         3.230          ms/op
+CopyBenchmark.scalarColumns   1000000  avgt        23.227          ms/op
+CopyBenchmark.stringColumns   1000000  avgt       192.888          ms/op
+
+### fastSelect.copy optimization for ByteData.add +30%
+Benchmark                    (volume)  Mode  Cnt    Score   Error  Units
+CopyBenchmark.oneColumn       1000000  avgt         3.803          ms/op
+CopyBenchmark.scalarColumns   1000000  avgt        23.269          ms/op
+CopyBenchmark.stringColumns   1000000  avgt       130.495          ms/op

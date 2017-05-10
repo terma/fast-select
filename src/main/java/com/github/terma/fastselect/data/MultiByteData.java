@@ -36,9 +36,14 @@ public class MultiByteData implements Data {
         this.index = new IntData(data.inc());
         this.data = new ByteData(data.inc());
 
+        final byte[] bytes = data.data.data;
+
         for (int i = 0; i < needToCopy.length; i++) {
             if (needToCopy[i] == 1) {
-                add((byte[]) data.get(i));
+                index.add(this.data.size);
+                int end = data.getDataEnd(i);
+                int start = data.getDataStart(i);
+                this.data.add(bytes, start, end);
             }
         }
     }
