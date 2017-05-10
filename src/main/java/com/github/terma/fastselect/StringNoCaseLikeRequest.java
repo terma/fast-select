@@ -17,6 +17,9 @@ limitations under the License.
 package com.github.terma.fastselect;
 
 import com.github.terma.fastselect.data.StringData;
+import com.github.terma.fastselect.utils.Utf8Utils;
+
+import java.util.Map;
 
 /**
  * SQL analog <code>where lowerCase(STRING_FIELD) like lowerCase('%SUBSTRING%')</code>
@@ -30,7 +33,9 @@ import com.github.terma.fastselect.data.StringData;
 public class StringNoCaseLikeRequest extends ColumnRequest {
 
     private final String like;
+    private StringData data;
 
+    @Deprecated
     public StringNoCaseLikeRequest(String name, String like) {
         super(name);
 
@@ -38,11 +43,22 @@ public class StringNoCaseLikeRequest extends ColumnRequest {
         this.like = like.toLowerCase();
     }
 
+    public static Request create(final String columnName, final String noCaseLike) {
+        final byte[] bytes = noCaseLike.getBytes();
+        if (Utf8Utils.isLatinOnly(bytes)) return new LatinStringNoCaseLikeRequest(columnName, bytes);
+        else return new StringNoCaseLikeRequest(columnName, noCaseLike);
+    }
+
     @Override
-    public  boolean checkValue(int position) {
-        StringData data = (StringData) column.data;
-        String value = (String) data.get(position);
+    public boolean checkValue(final int position) {
+        final String value = (String) data.get(position);
         return value.toLowerCase().contains(like);
+    }
+
+    @Override
+    public void prepare(final Map<String, FastSelect.Column> columnByNames) {
+        super.prepare(columnByNames);
+        data = (StringData) column.data;
     }
 
     @Override

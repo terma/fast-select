@@ -421,7 +421,7 @@ public final class FastSelect<T> {
         return copy;
     }
 
-    public int blockTouch(final ColumnRequest[] where) {
+    public int blockTouch(final Request[] where) {
         prepareRequest(where);
         return rootBlock.blockTouch(where);
     }
@@ -830,9 +830,11 @@ public final class FastSelect<T> {
 
                     } else if (column.type == String.class) {
                         final StringData data = (StringData) column.data;
+                        final BitSet bitSet = columnBitSets.get(column.index);
                         for (int i = addFrom; i < addTo; i++) {
                             String v = (String) methodHandle.invoke(dataToAdd.get(i));
-                            data.add(v);
+                            final byte[] bytes = data.add(v);
+                            for (final byte b : bytes) bitSet.set(b);
                         }
 
                     } else if (column.type == double.class) {

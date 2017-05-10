@@ -28,9 +28,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * Mac Air
  * <pre>
- *     Benchmark                                     Mode  Cnt     Score   Error  Units
- *     StringGetBytesBenchmark.createString          avgt        833.393          ms/op
- *     StringGetBytesBenchmark.createStringGetBytes  avgt       1500.364          ms/op
+ * Benchmark                         (volume)  Mode  Cnt     Score      Error  Units
+ * StringGetBytesBenchmark.getBytes  10000000  avgt    5  2428.723 ± 3187.575  ms/op
  * </pre>
  */
 @Fork(value = 1, jvmArgs = "-Xmx6g")
@@ -38,10 +37,14 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
 @Warmup(timeUnit = TimeUnit.SECONDS, time = 15, iterations = 1)
-@Measurement(timeUnit = TimeUnit.SECONDS, time = 15, iterations = 1, batchSize = 6000000)
+@Measurement(timeUnit = TimeUnit.SECONDS, time = 15, iterations = 5)
 public class StringGetBytesBenchmark {
 
-    private Random random = new Random();
+    private String[] in;
+    private byte[][] out;
+
+    @Param("10000000")
+    private int volume;
 
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
@@ -52,17 +55,18 @@ public class StringGetBytesBenchmark {
 
     @Setup
     public void init() throws Exception {
-
+        Random random = new Random();
+        in = new String[volume];
+        out = new byte[volume][];
+        for (int i = 0; i < volume; i++) {
+            in[i] = "Some String " + random.nextInt();
+        }
     }
 
     @Benchmark
-    public Object createString() {
-        return "SOME STRING " + random.nextInt();
-    }
-
-    @Benchmark
-    public Object createStringGetBytes() throws Exception {
-        return ("SOME STRING " + random.nextInt()).getBytes();
+    public Object getBytes() throws Exception {
+        for (int i = 0; i < volume; i++) out[i] = in[i].getBytes();
+        return out;
     }
 
 }

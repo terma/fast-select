@@ -33,9 +33,10 @@ public class StringData implements Data {
         this.data = (MultiByteData) data.data.copy(needToCopy);
     }
 
-    public void add(String v) {
+    public byte[] add(String v) {
         final byte[] bytes = v == null ? ZERO : v.getBytes();
         data.add(bytes);
+        return bytes;
     }
 
     @Override
@@ -102,4 +103,9 @@ public class StringData implements Data {
     public Data copy(byte[] needToCopy) {
         return new StringData(this, needToCopy);
     }
+
+    public MultiByteData getData() {
+        return data;
+    }
+
 }
