@@ -63,10 +63,15 @@ public class ByteData implements Data {
         data[index] = v;
     }
 
+    public void add(byte[] d, int start, int end) {
+        int l = end - start;
+        if (size + l >= data.length) data = Arrays.copyOf(data, size + l + inc);
+        System.arraycopy(d, start, data, size, l);
+        size += l;
+    }
+
     public void add(byte v) {
-        if (size == data.length) {
-            data = Arrays.copyOf(data, size + inc);
-        }
+        if (size == data.length) data = Arrays.copyOf(data, size + inc);
         data[size] = v;
         size++;
     }
