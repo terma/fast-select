@@ -2,6 +2,7 @@ Below you can find comparision of fast-select with other databases by 3 differen
 
 * [fast-select vs H2](#fast-select-vs-h2)
 * [fast-select vs MongoDB](#fast-select-vs-mongodb)
+* [fast-select vs Spark Draft](#fast-select-vs-spark-draft)
 * [fast-select vs Apache Impala](#fast-select-vs-apache-impala)
 
 # fast-select vs H2
@@ -77,6 +78,49 @@ selectOrderByLimit                   FastSelect   1000000  avgt          28.271 
 * 28 cases from 30 fast-select faster MongoDb in ```100 times```
 * ```groupByWhereString``` case which should be fixed by https://github.com/terma/fast-select/pull/22
 * ```selectOrderByLimit``` is interesting case as well need to clarify
+
+# fast-select vs Spark (Draft)
+
+Just quick check. Due to luck of Spark knowledge it could be 
+way to improve Spark result. In progress. If you see any mistakes please ping me.
+
+#### Env:
+* Mac Air 13" i5 1.4HGz RAM 8Gb SSD 110Gb
+
+#### fast-select setup:
+* ```-Xmx3g```
+* [Test Cases](https://github.com/terma/fast-select/blob/master/src/test/java/com/github/terma/fastselect/benchmark/PlayerFastSelect.java)
+
+#### Spark setup:
+* same machine
+* 1 worker, 4 cores
+* ```7 Gb``` for Spark
+* data class ```case class T1(prr: Byte, prg: Short, tr: String)```
+* RDD query ```val t1rdd = sc.makeRDD(0 until 1000000 map {i => T1((i % 6).toByte, (i % 100).toShort, s"String like value ${(i % 50000)}") }).cache```
+* DF query ```val t1rdd = sc.makeRDD(0 until 1000000 map {i => T1((i % 6).toByte, (i % 100).toShort, s"String like value ${(i % 50000)}") }).toDF().cache``` 
+
+#### Spark Measure Function
+
+```scala
+def measure(body: => Unit): Unit = {
+  var h = 3
+  0 until h foreach {_ => body}
+  val s = System.currentTimeMillis()
+  val r = 10
+  0 until r foreach {_ => body}
+  println(s"took avg ${(System.currentTimeMillis() - s)/r} ms/op (runs $r)");
+}
+```
+
+#### Results:
+```
+Benchmark               (partitions)    (engine)  (volume)  Score  Units
+groupByWhereStringLike             4   Spark RDD   1000000   2500  ms/op
+groupByWhereStringLike             4    Spark DF   1000000   2734  ms/op
+groupByWhereStringLike             1    Spark DF   1000000   3812  ms/op
+groupByWhereStringLike           N/A  FastSelect   1000000    141  ms/op
+
+```
 
 # fast-select vs Apache Impala
 
