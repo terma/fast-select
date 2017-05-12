@@ -1,3 +1,14 @@
+### Key Points
+
+#### Why heap array and not off heap by ```Unsafe```?
+
+* [Heap Array faster than Unsafe](https://groups.google.com/forum/#!topic/mechanical-sympathy/k0qd7dLHFQE)
+  * [Code](https://gist.github.com/rxin/ae6d7692e58c03a92861)
+* https://www.slideshare.net/leventov/optimizing-arraybased-data-structures-to-the-limit
+* https://blog.bramp.net/post/2015/08/27/unsafe-part-3-benchmarking-a-java-unsafearraylist/
+
+### Data Structure
+
 ```
                Columns
                 0     n

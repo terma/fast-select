@@ -24,7 +24,7 @@ Compact in-memory read-only storage with lock free ultra-fast quering by any att
 
 ### Details
 
-* [Arhitecture](docs/ARHI.md)
+* [Architecture](docs/ARHI.md)
 * [Use Cases](docs/USECASES.md)
 * [How To Use](docs/HOWTOUSE.md)
 * [Performance](docs/PERF.md)
