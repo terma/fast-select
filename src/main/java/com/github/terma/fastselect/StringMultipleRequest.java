@@ -20,6 +20,7 @@ import com.github.terma.fastselect.data.StringData;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -34,8 +35,21 @@ public class StringMultipleRequest extends ColumnRequest {
     private final Set<String> values;
 
     public StringMultipleRequest(String name, String... values) {
+        this(name, Arrays.asList(values));
+    }
+
+    public StringMultipleRequest(String name, List<String> values) {
         super(name);
-        this.values = new HashSet<>(Arrays.asList(values));
+        this.values = new HashSet<>(values);
+    }
+
+    /**
+     * @param name   - column name
+     * @param values - set of values will be used as is without copy so be careful
+     */
+    public StringMultipleRequest(String name, Set<String> values) {
+        super(name);
+        this.values = values;
     }
 
     @Override

@@ -19,6 +19,10 @@ package com.github.terma.fastselect;
 import junit.framework.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+
 public class StringMultipleRequestTest {
 
     @Test
@@ -26,6 +30,15 @@ public class StringMultipleRequestTest {
         Assert.assertEquals(
                 "StringMultipleRequest {name: 'col', in: [v1, v2]}",
                 new StringMultipleRequest("col", "v1", "v2").toString());
+        Assert.assertEquals(
+                "StringMultipleRequest {name: 'col', in: [v1, v2]}",
+                new StringMultipleRequest("col", Arrays.asList("v1", "v2")).toString());
+        Assert.assertEquals(
+                "StringMultipleRequest {name: 'col', in: [v1, v2]}",
+                new StringMultipleRequest("col", new HashSet<String>() {{
+                    add("v1");
+                    add("v2");
+                }}).toString());
         Assert.assertEquals(
                 "StringMultipleRequest {name: 'col', in: [val]}",
                 new StringMultipleRequest("col", "val").toString());
