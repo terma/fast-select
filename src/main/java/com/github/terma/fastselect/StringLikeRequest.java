@@ -46,4 +46,19 @@ public class StringLikeRequest extends ColumnRequest {
         return "StringLikeRequest {name: '" + name + "', like: '" + like + "'}";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StringLikeRequest that = (StringLikeRequest) o;
+        return name.equals(that.name) && like.equals(that.like);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = like.hashCode();
+        result = 31 * result + name.hashCode();
+        return result;
+    }
+
 }

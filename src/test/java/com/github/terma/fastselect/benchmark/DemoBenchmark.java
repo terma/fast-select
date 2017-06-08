@@ -58,7 +58,7 @@ public class DemoBenchmark {
     @Param({"1000000"}) // 1000, 1000000, 10000000, 60000000
     private int volume;
 
-    @Param({"MongoDb", "FastSelect"}) // MongoDb, Oracle, FastSelect", H2
+    @Param({"FastSelect"}) // MongoDb, Oracle, FastSelect", H2
     private String engine;
 
     private Player player;

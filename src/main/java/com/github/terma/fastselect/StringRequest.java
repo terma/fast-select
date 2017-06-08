@@ -45,4 +45,19 @@ public class StringRequest extends ColumnRequest {
         return name + " = '" + new String(bytes) + "'";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StringRequest that = (StringRequest) o;
+        return name.equals(that.name) && Arrays.equals(bytes, that.bytes);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Arrays.hashCode(bytes);
+        result = 31 * result + name.hashCode();
+        return result;
+    }
+
 }

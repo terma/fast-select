@@ -83,4 +83,25 @@ public class StringNoCaseLikeRequestTest {
         Assert.assertEquals("StringNoCaseLikeRequest {name: x, like: aa}", request.toString());
     }
 
+
+    @Test
+    public void provideEqualsAndHashCode() {
+        StringNoCaseLikeRequest r = new StringNoCaseLikeRequest("col", "valLike");
+        Assert.assertEquals(r, r);
+        Assert.assertEquals(r.hashCode(), r.hashCode());
+
+        StringNoCaseLikeRequest r1 = new StringNoCaseLikeRequest("col", "valLike");
+        StringNoCaseLikeRequest r2 = new StringNoCaseLikeRequest("col", "valLike");
+        Assert.assertEquals(r1, r2);
+        Assert.assertEquals(r2, r1);
+        Assert.assertEquals(r1.hashCode(), r2.hashCode());
+
+        Assert.assertFalse(new StringNoCaseLikeRequest("col", "VALlike")
+                .equals(new StringNoCaseLikeRequest("col", "")));
+        Assert.assertFalse(new StringNoCaseLikeRequest("col", "valLike")
+                .equals(new StringNoCaseLikeRequest("a", "valLike")));
+        Assert.assertFalse(new StringNoCaseLikeRequest("col", "valLike").hashCode() ==
+                new StringNoCaseLikeRequest("a", "valLike").hashCode());
+    }
+
 }

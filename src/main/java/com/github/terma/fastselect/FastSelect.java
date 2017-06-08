@@ -143,7 +143,7 @@ import java.util.concurrent.Future;
  */
 @SuppressWarnings("WeakerAccess")
 @ThreadSafe
-public final class FastSelect<T> {
+public class FastSelect<T> {
 
     private final int[] blockSizes;
     private final Class<T> dataClass;

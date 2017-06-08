@@ -50,4 +50,19 @@ public class StringNoCaseLikeRequest extends ColumnRequest {
         return "StringNoCaseLikeRequest {name: " + name + ", like: " + like + '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StringNoCaseLikeRequest that = (StringNoCaseLikeRequest) o;
+        return name.equals(that.name) && like.equals(that.like);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = like.hashCode();
+        result = 31 * result + name.hashCode();
+        return result;
+    }
+
 }

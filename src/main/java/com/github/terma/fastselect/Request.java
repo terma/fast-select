@@ -19,7 +19,24 @@ package com.github.terma.fastselect;
 import java.util.Map;
 
 /**
- * Abstract class. Parent for all kind of filtering predicates.
+ * Parent for all kind of predicates for filtering inside of {@link FastSelect}.
+ * <p>
+ * <h3>Abstract class! Why not interface?</h3>
+ * Because that's a little bit faster from performance
+ * prospective you can take a look <a href="https://shipilev.net/blog/2015/black-magic-method-dispatch/">details</a>
+ * but impact is really small
+ * <p>
+ * <h3>Rules for implementations</h3>
+ * <ul>
+ * <li>Should immutable until you need to cover really special
+ * case but in that way you need to worry about side effects</li>
+ * <li>Method of requests will be called many times on data set, as result
+ * better to keep implementations as <code>final</code> to reduce performance
+ * penalties, however impact is really small</li>
+ * <li>Implement {@link Object#toString()} for easy debug</li>
+ * <li>Implement {@link Object#hashCode()} and {@link Object#equals(Object)} for easy testing
+ * as in general request classes don't expose data</li>
+ * </ul>
  */
 public abstract class Request {
 

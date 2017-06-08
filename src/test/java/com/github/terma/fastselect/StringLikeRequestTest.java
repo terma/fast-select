@@ -73,4 +73,24 @@ public class StringLikeRequestTest {
         Assert.assertEquals("StringLikeRequest {name: 'col', like: 'valLike'}", new StringLikeRequest("col", "valLike").toString());
     }
 
+    @Test
+    public void provideEqualsAndHashCode() {
+        StringLikeRequest r = new StringLikeRequest("col", "valLike");
+        Assert.assertEquals(r, r);
+        Assert.assertEquals(r.hashCode(), r.hashCode());
+
+        StringLikeRequest r1 = new StringLikeRequest("col", "valLike");
+        StringLikeRequest r2 = new StringLikeRequest("col", "valLike");
+        Assert.assertEquals(r1, r2);
+        Assert.assertEquals(r2, r1);
+        Assert.assertEquals(r1.hashCode(), r2.hashCode());
+
+        Assert.assertFalse(new StringLikeRequest("col", "valLike")
+                .equals(new StringLikeRequest("col", "")));
+        Assert.assertFalse(new StringLikeRequest("col", "valLike")
+                .equals(new StringLikeRequest("a", "valLike")));
+        Assert.assertFalse(new StringLikeRequest("col", "valLike").hashCode() ==
+                new StringLikeRequest("a", "valLike").hashCode());
+    }
+
 }
