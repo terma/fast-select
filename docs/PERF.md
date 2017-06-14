@@ -4,6 +4,7 @@ Below you can find comparision of fast-select with other databases by 3 differen
 * [fast-select vs MongoDB](#fast-select-vs-mongodb)
 * [fast-select vs Spark Draft](#fast-select-vs-spark-draft)
 * [fast-select vs Apache Impala](#fast-select-vs-apache-impala)
+* [fast-select vs Redis](#fast-select-vs-redis)
 
 # fast-select vs H2
 
@@ -170,3 +171,8 @@ selectOrderByLimit                                    Impala   1000000  avgt    
 * I expect much better performance according to http://cidrdb.org/cidr2015/Papers/CIDR15_Paper28.pdf 
 * My initial idea was that ```200-300ms``` is data access price however it's not because ```count(*)``` takes only ```160ms```
 Need more investigation.
+
+
+# fast-select vs Redis
+
+_Testing in progress will be soon..._
