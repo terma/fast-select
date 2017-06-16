@@ -1,5 +1,9 @@
 ## How to use
 
+* [Get count with grouping](#Get-count-with-grouping)
+* [Select first 25 items from sorted dataset](#Select-first-25-items-from-sorted-dataset)
+* [Filter data set get total and render only one page](#Filter-dataset-get-total-and-render-only-one-page)
+
 ### Create Data Class
 
 ```java
@@ -34,7 +38,7 @@ fastSelect.selectAndSort(where, callback, "a");
 callback.getResult();
 ```
 
-### Filter data set get total and render only one page
+### Filter dataset get total and render only one page
 ```java
 // get ref to real data
 IntData id = (IntData) fastSelect.getColumnsByNames().get("id").data;
