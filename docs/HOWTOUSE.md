@@ -1,8 +1,8 @@
 ## How to use
 
-* [Get count with grouping](#Get-count-with-grouping)
-* [Select first 25 items from sorted dataset](#Select-first-25-items-from-sorted-dataset)
-* [Filter data set get total and render only one page](#Filter-dataset-get-total-and-render-only-one-page)
+* [Get count with grouping](#get-count-with-grouping)
+* [Select first 25 items from sorted dataset](#select-first-25-items-from-sorted-dataset)
+* [Filter data set get total and render only one page](#filter-dataset-get-total-and-render-only-one-page)
 
 ### Create Data Class
 
