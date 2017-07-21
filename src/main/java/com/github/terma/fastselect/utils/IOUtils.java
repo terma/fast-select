@@ -55,7 +55,7 @@ public final class IOUtils {
 
     public static void writeString(final FileChannel fileChannel, final String value) throws IOException {
         if (value != null) {
-            byte[] b = value.getBytes();
+            byte[] b = Utf8Utils.stringToBytes(value);
             writeInt(fileChannel, b.length);
             fileChannel.write(ByteBuffer.wrap(b));
         } else {
@@ -65,7 +65,7 @@ public final class IOUtils {
 
     public static void writeString(final ByteBuffer buffer, final String value) throws IOException {
         if (value != null) {
-            byte[] b = value.getBytes();
+            byte[] b = Utf8Utils.stringToBytes(value);
             buffer.putInt(b.length);
             buffer.put(b);
         } else {
@@ -75,7 +75,7 @@ public final class IOUtils {
 
     public static int getStringBytesSize(final String value) {
         if (value != null) {
-            byte[] b = value.getBytes();
+            byte[] b = Utf8Utils.stringToBytes(value);
             return Data.INT_BYTES + b.length;
         } else {
             return Data.INT_BYTES;
@@ -89,7 +89,7 @@ public final class IOUtils {
         } else {
             final byte[] b = new byte[size];
             fileChannel.read(ByteBuffer.wrap(b));
-            return new String(b);
+            return Utf8Utils.bytesToString(b);
         }
     }
 
@@ -100,7 +100,7 @@ public final class IOUtils {
         } else {
             final byte[] b = new byte[size];
             buffer.get(b);
-            return new String(b);
+            return Utf8Utils.bytesToString(b);
         }
     }
 

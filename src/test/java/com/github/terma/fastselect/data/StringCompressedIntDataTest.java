@@ -81,4 +81,20 @@ public class StringCompressedIntDataTest {
         Assert.assertEquals(null, data1.get(3));
     }
 
+    @Test
+    public void saveLoadNonAscIICharacters() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(1024 * 1024);
+
+        StringCompressedIntData data = new StringCompressedIntData(100);
+        data.add("侍");
+        data.save(buffer);
+        buffer.flip();
+
+        StringCompressedIntData data1 = new StringCompressedIntData(100);
+        data1.load("", buffer, 1);
+
+        Assert.assertEquals(data1.size(), 1);
+        Assert.assertEquals("侍", data1.get(0));
+    }
+
 }

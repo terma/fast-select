@@ -16,9 +16,17 @@ limitations under the License.
 
 package com.github.terma.fastselect.data;
 
+import com.github.terma.fastselect.utils.Utf8Utils;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+/**
+ * Simple string storage
+ * <p>
+ * Internally store string data as decoded UTF-8 <code>byte[]</code>
+ * Save and load use same <code>byte[]</code> representation
+ */
 public class StringData implements Data {
 
     private static final byte[] ZERO = new byte[0];
@@ -34,7 +42,7 @@ public class StringData implements Data {
     }
 
     public void add(String v) {
-        final byte[] bytes = v == null ? ZERO : v.getBytes();
+        final byte[] bytes = v == null ? ZERO : Utf8Utils.stringToBytes(v);
         data.add(bytes);
     }
 
@@ -56,7 +64,7 @@ public class StringData implements Data {
     @Override
     public Object get(int position) {
         final byte[] bytes = getRaw(position);
-        return new String(bytes);
+        return Utf8Utils.bytesToString(bytes);
     }
 
     @Override
