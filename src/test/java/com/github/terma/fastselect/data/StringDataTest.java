@@ -19,6 +19,9 @@ package com.github.terma.fastselect.data;
 import junit.framework.Assert;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
 public class StringDataTest {
 
     @Test
@@ -78,6 +81,44 @@ public class StringDataTest {
     @Test
     public void provideInc() {
         Assert.assertEquals(33, new StringData(33).inc());
+    }
+
+    @Test
+    public void saveLoadNonAscIICharacters() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(1024 * 1024);
+
+        StringData data = new StringData(100);
+        data.add("侍");
+        data.save(buffer);
+        buffer.flip();
+
+        StringData data1 = new StringData(100);
+        data1.load("", buffer, 1);
+
+        Assert.assertEquals(data1.size(), 1);
+        Assert.assertEquals("侍", data1.get(0));
+    }
+
+    @Test
+    public void saveLoad() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(1024 * 1024);
+
+        StringData data = new StringData(100);
+        data.add("arg");
+        data.add("Z");
+        data.add(null);
+        data.add("");
+        data.save(buffer);
+        buffer.flip();
+
+        StringData data1 = new StringData(100);
+        data1.load("", buffer, 4);
+
+        Assert.assertEquals(data1.size(), 4);
+        Assert.assertEquals("arg", data1.get(0));
+        Assert.assertEquals("Z", data1.get(1));
+        Assert.assertEquals("", data1.get(2));
+        Assert.assertEquals("", data1.get(3));
     }
 
 }

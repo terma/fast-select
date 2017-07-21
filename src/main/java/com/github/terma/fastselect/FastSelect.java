@@ -99,8 +99,7 @@ import java.util.concurrent.Future;
  * return data. That's why this storage not good for selection big portion of data compare to original result set.
  * <p>
  * We use {@link MethodHandle#invoke(Object...)} here to field values from object.
- * You could be surprised but it has same performance as normal reflect. Other alternative
- * which you can think will be faster {@link MethodHandle#invokeExact(Object...)} however it's not.
+ * You could be surprised but it has same performance as normal access.
  * <p>
  * More information about that:
  * <a href="https://gist.github.com/raphw/881e1745996f9d314ab0#file-result-field-txt">

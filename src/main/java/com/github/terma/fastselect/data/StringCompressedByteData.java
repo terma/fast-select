@@ -28,6 +28,8 @@ import java.util.Map;
  * <p>
  * To use that type of data field should have type {@link String} and additionally
  * marked by {@link StringCompressedByte}
+ * <p>
+ * Save and load string as decoded to UTF-8 <code>byte[]</code> representation
  *
  * @see StringCompressedShortData
  * @see StringData

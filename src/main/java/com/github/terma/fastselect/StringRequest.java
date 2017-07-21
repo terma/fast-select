@@ -17,6 +17,7 @@ limitations under the License.
 package com.github.terma.fastselect;
 
 import com.github.terma.fastselect.data.StringData;
+import com.github.terma.fastselect.utils.Utf8Utils;
 
 import java.util.Arrays;
 
@@ -30,7 +31,7 @@ public class StringRequest extends ColumnRequest {
 
     public StringRequest(String name, String value) {
         super(name);
-        bytes = value.getBytes();
+        bytes = Utf8Utils.stringToBytes(value);
     }
 
     @Override
@@ -42,7 +43,7 @@ public class StringRequest extends ColumnRequest {
 
     @Override
     public String toString() {
-        return name + " = '" + new String(bytes) + "'";
+        return name + " = '" + Utf8Utils.bytesToString(bytes) + "'";
     }
 
     @Override

@@ -16,31 +16,36 @@ limitations under the License.
 
 package com.github.terma.fastselect.benchmark;
 
+import com.github.terma.fastselect.utils.Utf8Utils;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
+import java.nio.charset.Charset;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Mac Air
  * <pre>
- *     Benchmark                                     Mode  Cnt     Score   Error  Units
- *     StringGetBytesBenchmark.createString          avgt        833.393          ms/op
- *     StringGetBytesBenchmark.createStringGetBytes  avgt       1500.364          ms/op
+ * Benchmark                                          Mode  Cnt     Score   Error  Units
+ * StringGetBytesBenchmark.createString               avgt        833.600          ms/op
+ * StringGetBytesBenchmark.createStringGetBytes       avgt       1364.009          ms/op <<< was before
+ * StringGetBytesBenchmark.createStringGetBytesAscII  avgt       1250.423          ms/op
+ * StringGetBytesBenchmark.createStringGetBytesUtf8   avgt       1500.474          ms/op
  * </pre>
  */
 @Fork(value = 1, jvmArgs = "-Xmx6g")
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
-@Warmup(timeUnit = TimeUnit.SECONDS, time = 15, iterations = 1)
-@Measurement(timeUnit = TimeUnit.SECONDS, time = 15, iterations = 1, batchSize = 6000000)
+@Warmup(time = 15, iterations = 1)
+@Measurement(time = 15, iterations = 1, batchSize = 6000000)
 public class StringGetBytesBenchmark {
 
+    private Charset ascIICharset = Charset.forName("ascII");
     private Random random = new Random();
 
     public static void main(String[] args) throws RunnerException {
@@ -63,6 +68,16 @@ public class StringGetBytesBenchmark {
     @Benchmark
     public Object createStringGetBytes() throws Exception {
         return ("SOME STRING " + random.nextInt()).getBytes();
+    }
+
+    @Benchmark
+    public Object createStringGetBytesAscII() throws Exception {
+        return ("SOME STRING " + random.nextInt()).getBytes(ascIICharset);
+    }
+
+    @Benchmark
+    public Object createStringGetBytesUtf8() throws Exception {
+        return Utf8Utils.stringToBytes(("SOME STRING " + random.nextInt()));
     }
 
 }
