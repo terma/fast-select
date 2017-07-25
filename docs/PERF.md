@@ -133,7 +133,7 @@ groupByWhereStringLike           N/A  FastSelect   1000000    141  ms/op
 
 * Impala Daemon version ```2.8.0```
 * On top of Hadoop
-* Data stored in (Parquet)[https://parquet.apache.org] within Impala (not Hadoop)
+* Data stored in [Parquet](https://parquet.apache.org) within Impala (not Hadoop)
  * CSV table tested as well but in general in two times slower than Parquet
 * It's hard to install JDBC driver for Impala so testing was done from Impala console
 
