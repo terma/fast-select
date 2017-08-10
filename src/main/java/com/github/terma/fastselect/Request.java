@@ -16,6 +16,7 @@ limitations under the License.
 
 package com.github.terma.fastselect;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -38,7 +39,7 @@ import java.util.Map;
  * as in general request classes don't expose data</li>
  * </ul>
  */
-public abstract class Request {
+public abstract class Request implements Serializable {
 
     /**
      * Called before filtering in each of block in {@link FastSelect}
