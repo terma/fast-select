@@ -83,6 +83,7 @@ public interface Data {
      *
      * @param position - position of data
      * @return hashCode
+     * @since 3.2.0
      */
     int hashCode(int position);
 
