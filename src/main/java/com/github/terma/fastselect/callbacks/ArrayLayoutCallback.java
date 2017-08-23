@@ -19,7 +19,7 @@ package com.github.terma.fastselect.callbacks;
 import com.github.terma.fastselect.FastSelect;
 
 /**
- * <h3>Example of Callback</h3>
+ * <h3>Base callback</h3>
  * Next example show how to get sum by specific column of filtered data
  * <pre>
  * class SumCallback implements ArrayLayoutCallback {

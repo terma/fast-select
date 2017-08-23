@@ -458,6 +458,7 @@ public class FastSelect<T> {
      * In case if unknown columnName is passed will throw {@link IllegalArgumentException}
      *
      * @param columnName - columnName should be present in {@link FastSelect}
+     * @param <R>        - type of data
      * @return - {@link Data} for column or throw {@link IllegalArgumentException}
      * @since 3.2.0
      */

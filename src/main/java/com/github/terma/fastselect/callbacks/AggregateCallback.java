@@ -24,11 +24,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Analog of SQL expression:
- * <pre>select [user function](COLUMN, ...) from TABLE where CONDITION group by COLUMN, ... (at least 2)</pre>
- *
+ * Analog of SQL expression: <code>select [user function](COLUMNS) from TABLE where CONDITION group by COLUMNS</code>
+ * <p>
  * Result will be map of aggregate object and {@link AggregateKey}.
- *
+ * <p>
  * Calling {@link FastSelect#select(com.github.terma.fastselect.Request[], ArrayLayoutCallback)} twice with same instance is ok.
  * Result will be counter twice.
  *

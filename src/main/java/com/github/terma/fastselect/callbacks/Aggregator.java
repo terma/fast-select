@@ -17,7 +17,7 @@ limitations under the License.
 package com.github.terma.fastselect.callbacks;
 
 /**
- * @param <T>
+ * @param <T> - type of aggregation
  * @author Artem Stasiuk
  * @see AggregateCallback
  * @see AggregateKey
