@@ -1,5 +1,5 @@
 /*
-Copyright 2015-2016 Artem Stasiuk
+Copyright 2015-2017 Artem Stasiuk
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -33,8 +33,8 @@ import java.util.concurrent.TimeUnit;
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
-@Warmup(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
-@Measurement(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
+@Warmup(time = 30, iterations = 1)
+@Measurement(time = 30, iterations = 1)
 public class MultiGroupCountBenchmark {
 
     @Param({"1000"})
