@@ -89,8 +89,8 @@ public class ByteDataTest {
         Assert.assertEquals(12, data.hashCode(0));
         Assert.assertEquals(-90, data.hashCode(1));
         Assert.assertEquals(0, data.hashCode(2));
-        Assert.assertEquals(Byte.MAX_VALUE, data.hashCode(2));
-        Assert.assertEquals(Byte.MIN_VALUE, data.hashCode(2));
+        Assert.assertEquals(Byte.MAX_VALUE, data.hashCode(3));
+        Assert.assertEquals(Byte.MIN_VALUE, data.hashCode(4));
     }
 
     @Test
