@@ -95,7 +95,8 @@ public class LongData implements Data {
 
     @Override
     public int hashCode(int position) {
-        return (int) data[position];
+        // similar approach starting in Java 8 Long.hashCode(value)
+        return (int) (data[position] ^ (data[position] >>> 32));
     }
 
     @Override

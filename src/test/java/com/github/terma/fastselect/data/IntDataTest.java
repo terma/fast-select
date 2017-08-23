@@ -25,6 +25,21 @@ import java.nio.ByteBuffer;
 public class IntDataTest {
 
     @Test
+    public void provideHashCode() {
+        IntData data = new IntData(100);
+        data.add(12);
+        data.add(-90);
+        data.add(0);
+        data.add(Integer.MAX_VALUE);
+        data.add(Integer.MIN_VALUE);
+        Assert.assertEquals(12, data.hashCode(0));
+        Assert.assertEquals(-90, data.hashCode(1));
+        Assert.assertEquals(0, data.hashCode(2));
+        Assert.assertEquals(Integer.MAX_VALUE, data.hashCode(3));
+        Assert.assertEquals(Integer.MIN_VALUE, data.hashCode(4));
+    }
+
+    @Test
     public void provideAllocatedSize() {
         IntData data = new IntData(100);
         Assert.assertEquals(Data.DEFAULT_SIZE, data.allocatedSize());
