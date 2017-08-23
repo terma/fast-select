@@ -9,7 +9,7 @@ Compact in-memory read-only storage with lock free ultra-fast quering by any att
 * [Use Cases](#use-cases)
 * [Architecture](docs/ARHI.md), [Performance](docs/PERF.md), [Javadoc](http://terma.github.io/fast-select/)
 * [How To Use](#how-to-use)
-  * [Group By](#get-count-with-grouping)
+  * [Aggregate/Group By/Pivot](#aggregate)
   * [Filter, Sort and first 25](#select-first-25-items-from-sorted-dataset)
   * [Filter, Sort and get page](#filter-dataset-get-total-and-render-only-one-page)
   * [JMX](#jmx)
@@ -56,13 +56,40 @@ FastSelect<Data> database = new FastSelectBuilder<>(Data.class).create();
 database.addAll(new ArrayList<Data>(...)); 
 ```
 
-### Get count with grouping
+### Aggregate
+
+In case if you just want ```select F1, F2, count(X) ... group by F1, F2```
 ```java
 MultiGroupCountCallback callback = new MultiGroupCountCallback(fastSelect.getColumnsByNames().get("a"));
 database.select(
   new Request[] {new IntRequest("a", new int[]{12, 3})}, 
   callback);
 callback.getCounters(); // your result here grouped by field 'a'
+```
+For more sophisticated and flexible cases you can use ```AggregateCallback``` which support user defined aggregation in fast way, so you don't need to worry about aggregation key perfromance etc.
+```java
+FastSelect fastSelect = ...;
+final ByteData data = fastSelect.getData("columnWithData");
+AggregateCallback<MutableInt> callback = new AggregateCallback<>(
+    new Aggregator<MutableInt>() {
+        @Override
+        public MutableInt create(int position) {
+           // will be called when this unique key happens first time
+           return new MutableInt(data.data[position]);
+        }
+        
+        @Override
+        public void aggregate(MutableInt agg, int position) {
+            // will be called all other times
+            agg.add(data.data[position]);
+        }
+    },
+    fastSelect.getColumnsByNames().get("aggregationColumn1"),
+    fastSelect.getColumnsByNames().get("aggregationColumn2")
+    // you can specify any amount of columns with any type
+);
+fastSelect.select(new Request[0], callback);
+Map<AggregateKey, MutableInt> result = callback.getResult();
 ```
 
 ### Select first 25 items from sorted dataset
