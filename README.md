@@ -66,7 +66,8 @@ database.select(
   callback);
 callback.getCounters(); // your result here grouped by field 'a'
 ```
-For more sophisticated and flexible cases you can use ```AggregateCallback``` which support user defined aggregation in fast way, so you don't need to worry about aggregation key perfromance etc.
+
+Starting from version ```3.2.0``` For more sophisticated and flexible cases you can use ```AggregateCallback``` which support user defined aggregation in fast way, so you don't need to worry about aggregation key perfromance etc.
 ```java
 FastSelect fastSelect = ...;
 final ByteData data = fastSelect.getData("columnWithData");
