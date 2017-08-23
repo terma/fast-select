@@ -1,5 +1,5 @@
 /*
-Copyright 2015-2016 Artem Stasiuk
+Copyright 2015-2017 Artem Stasiuk
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -80,6 +80,11 @@ public class ShortData implements Data {
     @Override
     public int compare(int position1, int position2) {
         return data[position1] - data[position2];
+    }
+
+    @Override
+    public int hashCode(int position) {
+        return data[position];
     }
 
     @Override

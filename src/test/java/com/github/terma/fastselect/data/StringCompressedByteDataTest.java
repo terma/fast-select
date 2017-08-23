@@ -1,5 +1,5 @@
 /*
-Copyright 2015-2016 Artem Stasiuk
+Copyright 2015-2017 Artem Stasiuk
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -23,6 +23,21 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class StringCompressedByteDataTest {
+
+    @Test
+    public void provideHashCode() {
+        StringCompressedByteData data = new StringCompressedByteData(100);
+        data.add(null);
+        data.add("");
+        data.add("ABA");
+        data.add("ABC");
+        data.add("ABC");
+        Assert.assertEquals(0, data.hashCode(0));
+        Assert.assertEquals(1, data.hashCode(1));
+        Assert.assertEquals(2, data.hashCode(2));
+        Assert.assertEquals(3, data.hashCode(3));
+        Assert.assertEquals(3, data.hashCode(4));
+    }
 
     @Test
     public void initWillResizeDataAndFillByZero() {

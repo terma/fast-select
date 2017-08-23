@@ -1,5 +1,5 @@
 /*
-Copyright 2015-2016 Artem Stasiuk
+Copyright 2015-2017 Artem Stasiuk
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.github.terma.fastselect.data;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public class MultiLongData implements Data {
 
@@ -87,6 +88,11 @@ public class MultiLongData implements Data {
     @Override
     public int compare(int position1, int position2) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int hashCode(int position) {
+        return Arrays.hashCode((long[]) get(position));
     }
 
     @Override

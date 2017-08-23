@@ -1,5 +1,5 @@
 /*
-Copyright 2015-2016 Artem Stasiuk
+Copyright 2015-2017 Artem Stasiuk
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -72,6 +72,20 @@ public interface Data {
     Object get(int position);
 
     int compare(int position1, int position2);
+
+    /**
+     * Result depends on implementation and in general doesn't guarantee same value as direct call to object.
+     * For example if you store "AAA" to {@link StringData} and ask hashCode it's not required to be same
+     * with <code>"AAA".hashCode()</code>
+     * <p>
+     * Method is no trying to create better hashCode strategy, instead is trying to speed up
+     * hashing by avoiding as much as possible extracting data from {@link Data}.
+     *
+     * @param position - position of data
+     * @return hashCode
+     * @since 3.2.0
+     */
+    int hashCode(int position);
 
     /**
      * Init data with default value for requested size.

@@ -1,5 +1,5 @@
 /*
-Copyright 2015-2016 Artem Stasiuk
+Copyright 2015-2017 Artem Stasiuk
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@ limitations under the License.
 package com.github.terma.fastselect.benchmark;
 
 import com.github.terma.fastselect.FastSelect;
+import com.github.terma.fastselect.Request;
 import com.github.terma.fastselect.callbacks.MultiGroupCountCallback;
 import com.github.terma.fastselect.demo.DemoData;
-import com.github.terma.fastselect.demo.DemoUtils;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -29,12 +29,12 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-@Fork(value = 1, jvmArgs = "-Xmx6g")
+@Fork(value = 1, jvmArgs = "-Xmx3g")
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
-@Warmup(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
-@Measurement(timeUnit = TimeUnit.SECONDS, time = 30, iterations = 1)
+@Warmup(time = 15, iterations = 1)
+@Measurement(time = 15, iterations = 1)
 public class MultiGroupCountBenchmark {
 
     @Param({"1000"})
@@ -60,18 +60,19 @@ public class MultiGroupCountBenchmark {
         fastSelect = SingleGroupCountBenchmark.initDatabase(blockSize, volume);
 
         System.out.println(">>>> TRY TEST:");
-        System.out.println(test());
+        System.out.println(fastSelect.getColumnsByNames());
+        System.out.println(fullVolume());
         System.out.println(">>>> TEST RESULT");
     }
 
     @Benchmark
-    public Object test() throws Exception {
+    public Object fullVolume() throws Exception {
         Map<String, FastSelect.Column> columnsByNames = fastSelect.getColumnsByNames();
         MultiGroupCountCallback counter = new MultiGroupCountCallback(
-                columnsByNames.get("g"),
-                columnsByNames.get("r")
+                columnsByNames.get("prg"),
+                columnsByNames.get("prr")
         );
-        fastSelect.select(DemoUtils.whereGAndR(), counter);
+        fastSelect.select(new Request[0], counter);
         return counter.getCounters();
     }
 

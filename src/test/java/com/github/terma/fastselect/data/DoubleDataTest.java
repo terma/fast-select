@@ -1,5 +1,5 @@
 /*
-Copyright 2015-2016 Artem Stasiuk
+Copyright 2015-2017 Artem Stasiuk
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -64,6 +64,21 @@ public class DoubleDataTest {
 
         Assert.assertEquals(17, data.allocatedSize());
         for (long i = 0; i < data.size(); i++) Assert.assertEquals((double) i, data.get((int) i));
+    }
+
+    @Test
+    public void provideHashCode() {
+        DoubleData data = new DoubleData(100);
+        data.add(12);
+        data.add(-90);
+        data.add(0);
+        data.add(0.0000012);
+        data.add(100000000000.0);
+        Assert.assertEquals(12, data.hashCode(0));
+        Assert.assertEquals(-90, data.hashCode(1));
+        Assert.assertEquals(0, data.hashCode(2));
+        Assert.assertEquals(0, data.hashCode(3));
+        Assert.assertEquals(2147483647, data.hashCode(4));
     }
 
     @Test

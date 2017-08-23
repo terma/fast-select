@@ -1,5 +1,5 @@
 /*
-Copyright 2015-2016 Artem Stasiuk
+Copyright 2015-2017 Artem Stasiuk
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -23,6 +23,21 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class ShortDataTest {
+
+    @Test
+    public void provideHashCode() {
+        ShortData data = new ShortData(100);
+        data.add((short)12);
+        data.add((short)-90);
+        data.add((short)0);
+        data.add(Short.MAX_VALUE);
+        data.add(Short.MIN_VALUE);
+        Assert.assertEquals(12, data.hashCode(0));
+        Assert.assertEquals(-90, data.hashCode(1));
+        Assert.assertEquals(0, data.hashCode(2));
+        Assert.assertEquals(32767, data.hashCode(3));
+        Assert.assertEquals(-32768, data.hashCode(4));
+    }
 
     @Test
     public void provideAllocatedSize() {

@@ -1,5 +1,5 @@
 /*
-Copyright 2015-2016 Artem Stasiuk
+Copyright 2015-2017 Artem Stasiuk
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -451,6 +451,22 @@ public class FastSelect<T> {
 
     public Map<String, Column> getColumnsByNames() {
         return columnsByNames;
+    }
+
+    /**
+     * Helper method to get column {@link Data} object by column name.
+     * In case if unknown columnName is passed will throw {@link IllegalArgumentException}
+     *
+     * @param columnName - columnName should be present in {@link FastSelect}
+     * @param <R>        - type of data
+     * @return - {@link Data} for column or throw {@link IllegalArgumentException}
+     * @since 3.2.0
+     */
+    @SuppressWarnings("unchecked")
+    public <R extends Data> R getData(final String columnName) {
+        final Column column = columnsByNames.get(columnName);
+        if (column == null) throw new IllegalArgumentException("Can't find " + columnName + " in " + columnsByNames);
+        return (R) column.data;
     }
 
     @Override

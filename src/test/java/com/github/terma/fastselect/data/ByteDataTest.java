@@ -1,5 +1,5 @@
 /*
-Copyright 2015-2016 Artem Stasiuk
+Copyright 2015-2017 Artem Stasiuk
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -76,6 +76,21 @@ public class ByteDataTest {
 
         for (byte i = 0; i < 50; i++) data.add(i);
         Assert.assertEquals(144, data.mem());
+    }
+
+    @Test
+    public void provideHashCode() {
+        ByteData data = new ByteData(100);
+        data.add((byte)12);
+        data.add((byte)-90);
+        data.add((byte)0);
+        data.add(Byte.MAX_VALUE);
+        data.add(Byte.MIN_VALUE);
+        Assert.assertEquals(12, data.hashCode(0));
+        Assert.assertEquals(-90, data.hashCode(1));
+        Assert.assertEquals(0, data.hashCode(2));
+        Assert.assertEquals(Byte.MAX_VALUE, data.hashCode(3));
+        Assert.assertEquals(Byte.MIN_VALUE, data.hashCode(4));
     }
 
     @Test

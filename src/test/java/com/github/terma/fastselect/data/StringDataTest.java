@@ -1,5 +1,5 @@
 /*
-Copyright 2015-2016 Artem Stasiuk
+Copyright 2015-2017 Artem Stasiuk
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -23,6 +23,21 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class StringDataTest {
+
+    @Test
+    public void provideHashCode() {
+        StringData data = new StringData(100);
+        data.add(null);
+        data.add("");
+        data.add("ABA");
+        data.add("ABC");
+        data.add("ABC");
+        Assert.assertEquals(1, data.hashCode(0));
+        Assert.assertEquals(1, data.hashCode(1));
+        Assert.assertEquals(94367, data.hashCode(2));
+        Assert.assertEquals(94369, data.hashCode(3));
+        Assert.assertEquals(94369, data.hashCode(4));
+    }
 
     @Test
     public void provideAllocatedSize() {

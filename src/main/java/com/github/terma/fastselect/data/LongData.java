@@ -1,5 +1,5 @@
 /*
-Copyright 2015-2016 Artem Stasiuk
+Copyright 2015-2017 Artem Stasiuk
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -91,6 +91,12 @@ public class LongData implements Data {
     @Override
     public void compact() {
         data = Arrays.copyOf(data, size);
+    }
+
+    @Override
+    public int hashCode(int position) {
+        // similar approach starting in Java 8 Long.hashCode(value)
+        return (int) (data[position] ^ (data[position] >>> 32));
     }
 
     @Override

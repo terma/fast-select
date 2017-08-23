@@ -1,5 +1,5 @@
 /*
-Copyright 2015-2016 Artem Stasiuk
+Copyright 2015-2017 Artem Stasiuk
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -20,6 +20,17 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class MultiByteDataTest {
+
+    @Test
+    public void provideHashCode() {
+        MultiByteData data = new MultiByteData(100);
+        data.add(new byte[0]);
+        data.add(new byte[]{Byte.MIN_VALUE, Byte.MAX_VALUE});
+        data.add(new byte[]{Byte.MIN_VALUE, Byte.MAX_VALUE - 10});
+        Assert.assertEquals(1, data.hashCode(0));
+        Assert.assertEquals(-2880, data.hashCode(1));
+        Assert.assertEquals(-2890, data.hashCode(2));
+    }
 
     @Test
     public void provideAllocatedSize() {
