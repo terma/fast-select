@@ -22,6 +22,17 @@ import org.junit.Test;
 public class MultiByteDataTest {
 
     @Test
+    public void provideHashCode() {
+        MultiByteData data = new MultiByteData(100);
+        data.add(new byte[0]);
+        data.add(new byte[]{Byte.MIN_VALUE, Byte.MAX_VALUE});
+        data.add(new byte[]{Byte.MIN_VALUE, Byte.MAX_VALUE - 10});
+        Assert.assertEquals(1, data.hashCode(0));
+        Assert.assertEquals(-2880, data.hashCode(1));
+        Assert.assertEquals(-2890, data.hashCode(2));
+    }
+
+    @Test
     public void provideAllocatedSize() {
         MultiByteData data = new MultiByteData(100);
         Assert.assertEquals(Data.DEFAULT_SIZE, data.allocatedSize());

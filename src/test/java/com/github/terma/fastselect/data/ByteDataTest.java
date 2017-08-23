@@ -79,6 +79,21 @@ public class ByteDataTest {
     }
 
     @Test
+    public void provideHashCode() {
+        ByteData data = new ByteData(100);
+        data.add((byte)12);
+        data.add((byte)-90);
+        data.add((byte)0);
+        data.add(Byte.MAX_VALUE);
+        data.add(Byte.MIN_VALUE);
+        Assert.assertEquals(12, data.hashCode(0));
+        Assert.assertEquals(-90, data.hashCode(1));
+        Assert.assertEquals(0, data.hashCode(2));
+        Assert.assertEquals(Byte.MAX_VALUE, data.hashCode(3));
+        Assert.assertEquals(Byte.MIN_VALUE, data.hashCode(4));
+    }
+
+    @Test
     public void provideInc() {
         Assert.assertEquals(33, new ByteData(33).inc());
     }

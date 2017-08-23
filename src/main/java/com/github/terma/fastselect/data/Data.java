@@ -74,6 +74,20 @@ public interface Data {
     int compare(int position1, int position2);
 
     /**
+     * Result depends on implementation and in general doesn't guarantee same value as direct call to object.
+     * For example if you store "AAA" to {@link StringData} and ask hashCode it's not required to be same
+     * with <code>"AAA".hashCode()</code>
+     * <p>
+     * Method is no trying to create better hashCode strategy, instead is trying to speed up
+     * hashing by avoiding as much as possible extracting data from {@link Data}.
+     *
+     * @param position - position of data
+     * @return hashCode
+     * @since 3.2.0
+     */
+    int hashCode(int position);
+
+    /**
      * Init data with default value for requested size.
      *
      * @param size - requested size

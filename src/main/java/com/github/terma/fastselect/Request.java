@@ -21,12 +21,10 @@ import java.util.Map;
 
 /**
  * Parent for all kind of predicates for filtering inside of {@link FastSelect}.
- * <p>
  * <h3>Abstract class! Why not interface?</h3>
  * Because that's a little bit faster from performance
  * prospective you can take a look <a href="https://shipilev.net/blog/2015/black-magic-method-dispatch/">details</a>
  * but impact is really small
- * <p>
  * <h3>Rules for implementations</h3>
  * <ul>
  * <li>Should immutable until you need to cover really special

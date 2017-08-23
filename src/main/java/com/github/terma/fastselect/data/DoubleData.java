@@ -89,6 +89,11 @@ public class DoubleData implements Data {
     }
 
     @Override
+    public int hashCode(int position) {
+        return (int) data[position];
+    }
+
+    @Override
     public void init(int size) {
         this.data = new double[size];
         this.size = size;

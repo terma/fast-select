@@ -25,6 +25,23 @@ import java.nio.ByteBuffer;
 public class LongDataTest {
 
     @Test
+    public void provideHashCode() {
+        LongData data = new LongData(100);
+        data.add(12);
+        data.add(-90);
+        data.add(0);
+        data.add(Long.MAX_VALUE);
+        data.add(Long.MIN_VALUE);
+        data.add(Long.MIN_VALUE + 10);
+        Assert.assertEquals(12, data.hashCode(0));
+        Assert.assertEquals(89, data.hashCode(1));
+        Assert.assertEquals(0, data.hashCode(2));
+        Assert.assertEquals(-2147483648, data.hashCode(3));
+        Assert.assertEquals(-2147483648, data.hashCode(4));
+        Assert.assertEquals(-2147483638, data.hashCode(5));
+    }
+
+    @Test
     public void provideAllocatedSize() {
         LongData data = new LongData(100);
         Assert.assertEquals(Data.DEFAULT_SIZE, data.allocatedSize());

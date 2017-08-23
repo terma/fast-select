@@ -123,6 +123,11 @@ public class StringCompressedShortData implements Data {
     }
 
     @Override
+    public int hashCode(int position) {
+        return data.data[position];
+    }
+
+    @Override
     public void init(int size) {
         data.init(size);
         values[0] = null;

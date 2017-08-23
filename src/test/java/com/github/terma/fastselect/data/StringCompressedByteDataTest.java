@@ -25,6 +25,21 @@ import java.nio.ByteBuffer;
 public class StringCompressedByteDataTest {
 
     @Test
+    public void provideHashCode() {
+        StringCompressedByteData data = new StringCompressedByteData(100);
+        data.add(null);
+        data.add("");
+        data.add("ABA");
+        data.add("ABC");
+        data.add("ABC");
+        Assert.assertEquals(0, data.hashCode(0));
+        Assert.assertEquals(1, data.hashCode(1));
+        Assert.assertEquals(2, data.hashCode(2));
+        Assert.assertEquals(3, data.hashCode(3));
+        Assert.assertEquals(3, data.hashCode(4));
+    }
+
+    @Test
     public void initWillResizeDataAndFillByZero() {
         Data data = new StringCompressedByteData(100);
         data.init(100);

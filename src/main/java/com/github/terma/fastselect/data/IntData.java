@@ -93,6 +93,11 @@ public class IntData implements Data {
     }
 
     @Override
+    public int hashCode(int position) {
+        return data[position];
+    }
+
+    @Override
     public void init(int size) {
         this.data = new int[size];
         this.size = size;

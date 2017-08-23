@@ -18,6 +18,7 @@ package com.github.terma.fastselect.data;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 /**
  * @see com.github.terma.fastselect.MultiShortRequest
@@ -91,6 +92,11 @@ public class MultiShortData implements Data {
     @Override
     public int compare(int position1, int position2) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int hashCode(int position) {
+        return Arrays.hashCode((short[]) get(position));
     }
 
     @Override

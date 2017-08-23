@@ -67,6 +67,21 @@ public class DoubleDataTest {
     }
 
     @Test
+    public void provideHashCode() {
+        DoubleData data = new DoubleData(100);
+        data.add(12);
+        data.add(-90);
+        data.add(0);
+        data.add(0.0000012);
+        data.add(100000000000.0);
+        Assert.assertEquals(12, data.hashCode(0));
+        Assert.assertEquals(-90, data.hashCode(1));
+        Assert.assertEquals(0, data.hashCode(2));
+        Assert.assertEquals(0, data.hashCode(3));
+        Assert.assertEquals(2147483647, data.hashCode(4));
+    }
+
+    @Test
     public void supportCompare() {
         DoubleData data = new DoubleData(100);
         data.add(0);

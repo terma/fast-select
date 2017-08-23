@@ -18,15 +18,17 @@ package com.github.terma.fastselect.benchmark;
 
 import com.github.terma.fastselect.FastSelect;
 import com.github.terma.fastselect.Request;
-import com.github.terma.fastselect.callbacks.MultiGroupCountCallback;
+import com.github.terma.fastselect.callbacks.AggregateCallback;
+import com.github.terma.fastselect.callbacks.Aggregator;
+import com.github.terma.fastselect.data.ByteData;
 import com.github.terma.fastselect.demo.DemoData;
+import oadd.org.apache.commons.lang.mutable.MutableInt;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Fork(value = 1, jvmArgs = "-Xmx3g")
@@ -35,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 @State(Scope.Benchmark)
 @Warmup(time = 15, iterations = 1)
 @Measurement(time = 15, iterations = 1)
-public class MultiGroupCountBenchmark {
+public class AggregateCallbackBenchmark {
 
     @Param({"1000"})
     private int blockSize;
@@ -50,7 +52,7 @@ public class MultiGroupCountBenchmark {
 
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
-                .include("." + MultiGroupCountBenchmark.class.getSimpleName() + ".*")
+                .include("." + AggregateCallbackBenchmark.class.getSimpleName() + ".*")
                 .build();
         new Runner(opt).run();
     }
@@ -60,20 +62,30 @@ public class MultiGroupCountBenchmark {
         fastSelect = SingleGroupCountBenchmark.initDatabase(blockSize, volume);
 
         System.out.println(">>>> TRY TEST:");
-        System.out.println(fastSelect.getColumnsByNames());
-        System.out.println(fullVolume());
+        System.out.println(fullVolumeTwoColumns());
         System.out.println(">>>> TEST RESULT");
     }
 
     @Benchmark
-    public Object fullVolume() throws Exception {
-        Map<String, FastSelect.Column> columnsByNames = fastSelect.getColumnsByNames();
-        MultiGroupCountCallback counter = new MultiGroupCountCallback(
-                columnsByNames.get("prg"),
-                columnsByNames.get("prr")
+    public Object fullVolumeTwoColumns() throws Exception {
+        final ByteData prgData = fastSelect.getData("prg");
+        AggregateCallback<MutableInt> counter = new AggregateCallback<>(
+                new Aggregator<MutableInt>() {
+                    @Override
+                    public void aggregate(MutableInt agg, int position) {
+                        agg.add(prgData.data[position]);
+                    }
+
+                    @Override
+                    public MutableInt create(int position) {
+                        return new MutableInt(prgData.data[position]);
+                    }
+                },
+                fastSelect.getColumnsByNames().get("prg"),
+                fastSelect.getColumnsByNames().get("prr")
         );
         fastSelect.select(new Request[0], counter);
-        return counter.getCounters();
+        return counter.getResult();
     }
 
 }
