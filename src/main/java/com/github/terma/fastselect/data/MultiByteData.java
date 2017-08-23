@@ -50,7 +50,7 @@ public class MultiByteData implements Data {
 
     public void add(byte[] values) {
         index.add(data.size); // store index of first element of data
-        for (byte v : values) data.add(v);
+        for (byte v : values) data.add(v); // todo optimize for batch
     }
 
     public int getDataStart(int position) {
