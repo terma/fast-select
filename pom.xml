@@ -7,7 +7,7 @@
     <version>3.1.1-SNAPSHOT</version>
 
     <name>Fast Select</name>
-    <description>Read Only In-Memory Storage with Fast MultiFilter Select</description>
+    <description>Extremely fast and compact in-memory embedded column oriented database </description>
     <url>https://github.com/terma/fast-select</url>
 
     <licenses>
