@@ -126,6 +126,11 @@ public class StringCompressedIntData implements Data {
     }
 
     @Override
+    public int hashCode(int position) {
+        return data.data[position];
+    }
+
+    @Override
     public void init(int size) {
         data.init(size);
         values.add(null);

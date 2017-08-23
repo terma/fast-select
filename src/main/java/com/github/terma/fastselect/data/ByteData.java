@@ -104,6 +104,11 @@ public class ByteData implements Data {
     }
 
     @Override
+    public int hashCode(int position) {
+        return data[position];
+    }
+
+    @Override
     public void init(int size) {
         this.data = new byte[size];
         this.size = size;

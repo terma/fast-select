@@ -453,6 +453,21 @@ public class FastSelect<T> {
         return columnsByNames;
     }
 
+    /**
+     * Helper method to get column {@link Data} object by column name.
+     * In case if unknown columnName is passed will throw {@link IllegalArgumentException}
+     *
+     * @param columnName - columnName should be present in {@link FastSelect}
+     * @return - {@link Data} for column or throw {@link IllegalArgumentException}
+     * @since 3.2.0
+     */
+    @SuppressWarnings("unchecked")
+    public <R extends Data> R getData(final String columnName) {
+        final Column column = columnsByNames.get(columnName);
+        if (column == null) throw new IllegalArgumentException("Can't find " + columnName + " in " + columnsByNames);
+        return (R) column.data;
+    }
+
     @Override
     public String toString() {
         return getClass().getSimpleName() + " {blockSizes: " + Arrays.toString(blockSizes) + ", data: " + size()

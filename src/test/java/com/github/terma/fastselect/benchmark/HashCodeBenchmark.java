@@ -16,64 +16,58 @@ limitations under the License.
 
 package com.github.terma.fastselect.benchmark;
 
-import com.github.terma.fastselect.FastSelect;
-import com.github.terma.fastselect.Request;
-import com.github.terma.fastselect.callbacks.MultiGroupCountCallback;
-import com.github.terma.fastselect.demo.DemoData;
+import com.github.terma.fastselect.data.ByteData;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-@Fork(value = 1, jvmArgs = "-Xmx3g")
+@Fork(value = 1, jvmArgs = "-Xmx2g")
 @BenchmarkMode({Mode.AverageTime})
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
 @Warmup(time = 15, iterations = 1)
 @Measurement(time = 15, iterations = 1)
-public class MultiGroupCountBenchmark {
+public class HashCodeBenchmark {
 
-    @Param({"1000"})
-    private int blockSize;
+    private static final int SIZE = 10000;
 
-    @Param({"1000000"})
-    private int volume;
-
-    @Param({"FastSelect"})
-    private String impl;
-
-    private FastSelect<DemoData> fastSelect;
+    private ByteData data;
 
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
-                .include("." + MultiGroupCountBenchmark.class.getSimpleName() + ".*")
+                .include("." + HashCodeBenchmark.class.getSimpleName() + ".*")
                 .build();
         new Runner(opt).run();
     }
 
     @Setup
     public void init() throws Exception {
-        fastSelect = SingleGroupCountBenchmark.initDatabase(blockSize, volume);
+        data = new ByteData(SIZE);
+        for (int i = 0; i < SIZE; i++) data.add((byte) i);
 
-        System.out.println(">>>> TRY TEST:");
-        System.out.println(fastSelect.getColumnsByNames());
-        System.out.println(fullVolume());
-        System.out.println(">>>> TEST RESULT");
+        System.out.println();
+        System.out.println("objectAndObjectsHashCode " + objectAndObjectsHashCode());
+        System.out.println("dataHashCode " + dataHashCode());
+        if (!objectAndObjectsHashCode().equals(dataHashCode())) throw new IllegalArgumentException();
     }
 
     @Benchmark
-    public Object fullVolume() throws Exception {
-        Map<String, FastSelect.Column> columnsByNames = fastSelect.getColumnsByNames();
-        MultiGroupCountCallback counter = new MultiGroupCountCallback(
-                columnsByNames.get("prg"),
-                columnsByNames.get("prr")
-        );
-        fastSelect.select(new Request[0], counter);
-        return counter.getCounters();
+    public Object objectAndObjectsHashCode() throws Exception {
+        long acc = 0;
+        for (int i = 0; i < data.size; i++) acc += Objects.hashCode(data.get(i));
+        return acc;
+    }
+
+    @Benchmark
+    public Object dataHashCode() throws Exception {
+        long acc = 0;
+        for (int i = 0; i < data.size; i++) acc += data.hashCode(i);
+        return acc;
     }
 
 }

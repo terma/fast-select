@@ -83,6 +83,11 @@ public class ShortData implements Data {
     }
 
     @Override
+    public int hashCode(int position) {
+        return data[position];
+    }
+
+    @Override
     public void init(int size) {
         this.data = new short[size];
         this.size = size;

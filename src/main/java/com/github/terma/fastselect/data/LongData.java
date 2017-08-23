@@ -94,6 +94,11 @@ public class LongData implements Data {
     }
 
     @Override
+    public int hashCode(int position) {
+        return (int) data[position];
+    }
+
+    @Override
     public int size() {
         return size;
     }

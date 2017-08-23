@@ -333,3 +333,18 @@ Benchmark                    (volume)  Mode  Cnt    Score   Error  Units
 CopyBenchmark.oneColumn       1000000  avgt         3.803          ms/op
 CopyBenchmark.scalarColumns   1000000  avgt        23.269          ms/op
 CopyBenchmark.stringColumns   1000000  avgt       130.495          ms/op
+
+Benchmark                            (blockSize)      (impl)  (volume)  Mode  Cnt   Score   Error  Units
+MultiGroupCountBenchmark.fullVolume         1000  FastSelect   1000000  avgt       38.451          ms/op
+
+### add aggregate callback
+Benchmark                                        (blockSize)      (impl)  (volume)  Mode  Cnt   Score   Error  Units
+AggregateCallbackBenchmark.fullVolumeTwoColumns         1000  FastSelect   1000000  avgt       36.247          ms/op
+### use data.compare to avoid type unpacking
+Benchmark                                        (blockSize)      (impl)  (volume)  Mode  Cnt   Score   Error  Units
+AggregateCallbackBenchmark.fullVolumeTwoColumns         1000  FastSelect   1000000  avgt       36.912          ms/op
+
+### introduce data.hashCode(position)
+Benchmark                                   Mode  Cnt  Score   Error  Units
+HashCodeBenchmark.dataHashCode              avgt       0.005          ms/op
+HashCodeBenchmark.objectAndObjectsHashCode  avgt       0.006          ms/op

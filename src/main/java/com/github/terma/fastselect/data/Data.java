@@ -73,6 +73,8 @@ public interface Data {
 
     int compare(int position1, int position2);
 
+    int hashCode(int position);
+
     /**
      * Init data with default value for requested size.
      *
