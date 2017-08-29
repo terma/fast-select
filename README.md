@@ -13,6 +13,7 @@ Compact in-memory read-only storage with lock free ultra-fast quering by any att
   * [Filter, Sort and first 25](#select-first-25-items-from-sorted-dataset)
   * [Filter, Sort and get page](#filter-dataset-get-total-and-render-only-one-page)
   * [JMX](#jmx)
+  * [Low Cardinality Strings](#low-cardinality-strings)
 
 ## Key Properties
 
@@ -173,3 +174,13 @@ mbs.unregisterMBean(new ObjectName("fastselect:type=mbeanname"));
 
 
 More use cases you can find in javadoc ```callbacks``` package
+
+### Low Cardinality Strings
+
+```fast-select``` provides very compact storage for ```small``` Java types and String, which is provide you
+ mem benefits because of no Java object overhead and ```UTF-8``` compression. However you can
+ get even better result for low cardinality columns. Take a look on:
+ 
+ * ```com.github.terma.fastselect.data.StringCompressedByteData```
+ * ```com.github.terma.fastselect.data.StringCompressedShortData```
+ * ```com.github.terma.fastselect.data.StringCompressedIntData```

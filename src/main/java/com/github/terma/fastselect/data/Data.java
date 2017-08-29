@@ -20,6 +20,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
+/**
+ * Representation of column of data.
+ */
 public interface Data {
 
     int STORAGE_FORMAT_VERSION = 1;
@@ -71,6 +74,14 @@ public interface Data {
      */
     Object get(int position);
 
+    /**
+     * Effective method to compare two data inside column and avoid data extracting (unboxing/boxing)
+     * Method logic same as {@link Comparable#compareTo(Object)}
+     *
+     * @param position1 - position of first item to compare
+     * @param position2 - position of second item to compare
+     * @return - comparision result same logic as {@link Comparable#compareTo(Object)}
+     */
     int compare(int position1, int position2);
 
     /**
@@ -96,12 +107,17 @@ public interface Data {
 
     void compact();
 
+    /**
+     * Count of items in column
+     *
+     * @return - count of items in column
+     */
     int size();
 
     int allocatedSize();
 
     /**
-     * Approximate size of Data structure in heap memory.
+     * Approximate size of Data structure in heap memory. Bytes.
      *
      * @return - size in bytes
      */

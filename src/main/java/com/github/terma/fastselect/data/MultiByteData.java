@@ -21,6 +21,8 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 /**
+ * Storage of <code>byte[]</code>
+ *
  * @see com.github.terma.fastselect.MultiByteRequest
  */
 public class MultiByteData implements Data {
